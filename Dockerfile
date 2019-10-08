@@ -13,10 +13,13 @@ RUN apt-get update \
 COPY src /jsh/src
 COPY pom.xml /jsh/pom.xml
 COPY jsh /jsh/jsh
+RUN chmod +x /jsh/jsh
 COPY analysis /jsh/analysis
+RUN chmod +x /jsh/analysis
 COPY test /jsh/test
+RUN chmod +x /jsh/test
 COPY coverage /jsh/coverage
-
+RUN chmod +x /jsh/coverage
 RUN cd /jsh && mvn package
 
 ENV DEBIAN_FRONTEND=
