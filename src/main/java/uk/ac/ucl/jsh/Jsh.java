@@ -303,6 +303,7 @@ public class Jsh {
                 System.out.println("jsh: " + e.getMessage());
             }
         } else {
+            System.out.println("Welcome to JSH!");
             Scanner input = new Scanner(System.in);
             try {
                 while (true) {

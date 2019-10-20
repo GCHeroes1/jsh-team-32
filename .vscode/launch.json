@@ -8,7 +8,7 @@
             "console": "internalConsole",
             "stopOnEntry": false,
             "mainClass": "uk.ac.ucl.jsh.Jsh",
-            "args": ["-c","cd src"],
+            "args": ["-c","echo hello world"],
             "projectName": "jsh"
         }
     ]
