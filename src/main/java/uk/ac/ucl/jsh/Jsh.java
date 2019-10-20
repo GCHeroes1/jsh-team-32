@@ -21,7 +21,7 @@ public class Jsh {
 
     private static String currentDirectory = System.getProperty("user.dir");                    // gets current directory 
 
-    public static void eval(String cmdline, OutputStream output) throws IOException {           // some sort of evaluation
+    public static void eval(String cmdline, OutputStream output) throws IOException {           // main interpretation function for the shell (what handles executing commands)
         OutputStreamWriter writer = new OutputStreamWriter(output);                             
         ArrayList<String> rawCommands = new ArrayList<String>();                                // assume will be used later for raw commands 
 		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;                           // used to be a comment censored by alex 
@@ -53,99 +53,99 @@ public class Jsh {
             Matcher regexMatcher = regex.matcher(rawCommand);                                   // creates a "matcher" 
             String nonQuote;                                                                    
             while (regexMatcher.find()) {                                                       // as long as there is a match it will continue the while loop
-                if (regexMatcher.group(1) != null || regexMatcher.group(2) != null) {           // 
-                    String quoted = regexMatcher.group(0).trim();                               //
-                    tokens.add(quoted.substring(1,quoted.length()-1));                          //
-                } else {
-                    nonQuote = regexMatcher.group().trim();
-                    ArrayList<String> globbingResult = new ArrayList<String>();
-                    Path dir = Paths.get(currentDirectory);
-                    DirectoryStream<Path> stream = Files.newDirectoryStream(dir, nonQuote);
-                    for (Path entry : stream) {
-                        globbingResult.add(entry.getFileName().toString());
+                if (regexMatcher.group(1) != null || regexMatcher.group(2) != null) {           // checking if there is a first and second group (itd be null if it didnt exist?)
+                    String quoted = regexMatcher.group(0).trim();                               // group(0) is the entire thing, trims it? 
+                    tokens.add(quoted.substring(1,quoted.length()-1));                          // just removes the quotes 
+                } else {                                                    
+                    nonQuote = regexMatcher.group().trim();                                     // trims the entire regex 
+                    ArrayList<String> globbingResult = new ArrayList<String>();                  
+                    Path dir = Paths.get(currentDirectory);                                     // path object, represents operating system level directory 
+                    DirectoryStream<Path> stream = Files.newDirectoryStream(dir, nonQuote);     // using the OS to do globbing for him 
+                    for (Path entry : stream) {                                                 
+                        globbingResult.add(entry.getFileName().toString());                     // putting results back into the variable 
+                    }                                                                           
+                    if (globbingResult.isEmpty()) {                                              
+                        globbingResult.add(nonQuote);                                            
                     }
-                    if (globbingResult.isEmpty()) {
-                        globbingResult.add(nonQuote);
-                    }
-                    tokens.addAll(globbingResult);
+                    tokens.addAll(globbingResult);                                              
                 }
             }
-            String appName = tokens.get(0);
-            ArrayList<String> appArgs = new ArrayList<String>(tokens.subList(1, tokens.size()));
-            switch (appName) {
-            case "cd":
-                if (appArgs.isEmpty()) {
-                    throw new RuntimeException("cd: missing argument");
-                } else if (appArgs.size() > 1) {
+            String appName = tokens.get(0);                                                     // gets first token 
+            ArrayList<String> appArgs = new ArrayList<String>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
+            switch (appName) {                                                                  // selects the app based on the first token at the command line
+            case "cd":                                                                          // change directory
+                if (appArgs.isEmpty()) {                                                        // throw an exception if they dont provide a directory to switch to 
+                    throw new RuntimeException("cd: missing argument");                         
+                } else if (appArgs.size() > 1) {                                                // throws exception if you give too much stuff to cd 
                     throw new RuntimeException("cd: too many arguments");
                 }
-                String dirString = appArgs.get(0);
-                File dir = new File(currentDirectory, dirString);
-                if (!dir.exists() || !dir.isDirectory()) {
-                    throw new RuntimeException("cd: " + dirString + " is not an existing directory");
+                String dirString = appArgs.get(0);                                              // gets the string representation of the path to switch to  
+                File dir = new File(currentDirectory, dirString);                               // gets a file system node 
+                if (!dir.exists() || !dir.isDirectory()) {                                      // checks if the file exists and is a directory 
+                    throw new RuntimeException("cd: " + dirString + " is not an existing directory"); // throw exception if it cant find the path 
                 }
-                currentDirectory = dir.getCanonicalPath();
+                currentDirectory = dir.getCanonicalPath();                                      // fully qualified path - absolute directory - way back up to root
                 break;
-            case "pwd":
+            case "pwd":                                                                         // present working directory, gets the current working directory 
                 writer.write(currentDirectory);
-                writer.write(System.getProperty("line.separator"));
-                writer.flush();
+                writer.write(System.getProperty("line.separator"));                             // gets property that defines what separates the directories - actually useless 
+                writer.flush();                                                                 // writes thing to terminal 
                 break;
-            case "ls":
-                File currDir;
-                if (appArgs.isEmpty()) {
-                    currDir = new File(currentDirectory);
-                } else if (appArgs.size() == 1) {
-                    currDir = new File(appArgs.get(0));
+            case "ls":                                                                          // list directory
+                File currDir;                                                                    
+                if (appArgs.isEmpty()) {                                                         
+                    currDir = new File(currentDirectory);                                       // if there is no argument to ls, it just puts the current directory as the directory to list 
+                } else if (appArgs.size() == 1) {                                               
+                    currDir = new File(appArgs.get(0));                                         // if there is an argument, list the directory specified by the argument
                 } else {
-                    throw new RuntimeException("ls: too many arguments");
+                    throw new RuntimeException("ls: too many arguments");                       // otherwise throw an error 
                 }
                 try {
-                    File[] listOfFiles = currDir.listFiles();
-                    boolean atLeastOnePrinted = false;
-                    for (File file : listOfFiles) {
-                        if (!file.getName().startsWith(".")) {
-                            writer.write(file.getName());
-                            writer.write("\t");
-                            writer.flush();
-                            atLeastOnePrinted = true;
+                    File[] listOfFiles = currDir.listFiles();                                   // carries the OS for files present in the directory 
+                    boolean atLeastOnePrinted = false;                                          // avoids printing new line if no files are present
+                    for (File file : listOfFiles) {                                             
+                        if (!file.getName().startsWith(".")) {                                  // hides names that start with a .
+                            writer.write(file.getName());                                       // prints it to terminal 
+                            writer.write("\t");                                                 // line feed
+                            writer.flush();                                                      
+                            atLeastOnePrinted = true;                                            
                         }
                     }
-                    if (atLeastOnePrinted) {
-                        writer.write(System.getProperty("line.separator"));
+                    if (atLeastOnePrinted) {                                                    // 
+                        writer.write(System.getProperty("line.separator"));                     // prints a new line after its done printing 
                         writer.flush();
                     }
                 } catch (NullPointerException e) {
-                    throw new RuntimeException("ls: no such directory");
+                    throw new RuntimeException("ls: no such directory");                        // if it cant find the directory 
                 }
                 break;
-            case "cat":
-                if (appArgs.isEmpty()) {
-                    throw new RuntimeException("cat: missing arguments");
-                } else {
-                    for (String arg : appArgs) {
-                        Charset encoding = StandardCharsets.UTF_8;
-                        File currFile = new File(currentDirectory + File.separator + arg);
-                        if (currFile.exists()) {
-                            Path filePath = Paths.get(currentDirectory + File.separator + arg);
-                            try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
-                                String line = null;
-                                while ((line = reader.readLine()) != null) {
-                                    writer.write(String.valueOf(line));
-                                    writer.write(System.getProperty("line.separator"));
+            case "cat":                                                                          
+                if (appArgs.isEmpty()) {                                                        // if there is no argument, cant cat nothing
+                    throw new RuntimeException("cat: missing arguments");                        
+                } else {                                                                        
+                    for (String arg : appArgs) {                                                // for each file specified in the arguments 
+                        Charset encoding = StandardCharsets.UTF_8;                              // print it using UTF 8 
+                        File currFile = new File(currentDirectory + File.separator + arg);      // gets the absolute path of the file
+                        if (currFile.exists()) {                                                // checks if it exists 
+                            Path filePath = Paths.get(currentDirectory + File.separator + arg); // gets a path object from the filepath 
+                            try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) { // tries offering a buffered reader on the file 
+                                String line = null;                                             // initialises the line variable 
+                                while ((line = reader.readLine()) != null) {                    // for each line that isnt empty in the file 
+                                    writer.write(String.valueOf(line));                         // print the contents 
+                                    writer.write(System.getProperty("line.separator"));         // necessary 
                                     writer.flush();
                                 }
-                            } catch (IOException e) {
-                                throw new RuntimeException("cat: cannot open " + arg);
-                            }
-                        } else {
-                            throw new RuntimeException("cat: file does not exist");
+                            } catch (IOException e) {                                           //
+                                throw new RuntimeException("cat: cannot open " + arg);          //
+                            }   
+                        } else {    
+                            throw new RuntimeException("cat: file does not exist");             //
                         }
                     }
                 }
                 break;
-            case "echo":
-                boolean atLeastOnePrinted = false;
+            case "echo":                                                                        // echo will print back what the shell interprets from the input string 
+                boolean atLeastOnePrinted = false;                                              // i.e. globbing will happen before echo prints it back 
                 for (String arg : appArgs) {
                     writer.write(arg);
                     writer.write(" ");
@@ -157,29 +157,29 @@ public class Jsh {
                     writer.flush();
                 }
                 break;
-            case "head":
-                if (appArgs.isEmpty()) {
-                    throw new RuntimeException("head: missing arguments");
+            case "head":                                                                        // 
+                if (appArgs.isEmpty()) {                                                        // 
+                    throw new RuntimeException("head: missing arguments");                      // no file specified 
                 }
-                if (appArgs.size() != 1 && appArgs.size() != 3) {
-                    throw new RuntimeException("head: wrong arguments");
+                if (appArgs.size() != 1 && appArgs.size() != 3) {                               // 
+                    throw new RuntimeException("head: wrong arguments");                        // 
                 }
-                if (appArgs.size() == 3 && !appArgs.get(0).equals("-n")) {
-                    throw new RuntimeException("head: wrong argument " + appArgs.get(0));
+                if (appArgs.size() == 3 && !appArgs.get(0).equals("-n")) {                      // 
+                    throw new RuntimeException("head: wrong argument " + appArgs.get(0));       // 
                 }
-                int headLines = 10;
-                String headArg;
-                if (appArgs.size() == 3) {
+                int headLines = 10;                                                             // 
+                String headArg;                                 
+                if (appArgs.size() == 3) {                                                      // 
                     try {
-                        headLines = Integer.parseInt(appArgs.get(1));
+                        headLines = Integer.parseInt(appArgs.get(1));                           // 
                     } catch (Exception e) {
-                        throw new RuntimeException("head: wrong argument " + appArgs.get(1));
+                        throw new RuntimeException("head: wrong argument " + appArgs.get(1));   // 
                     }
-                    headArg = appArgs.get(2);
+                    headArg = appArgs.get(2);                                                   // 
                 } else {
-                    headArg = appArgs.get(0);
+                    headArg = appArgs.get(0);                                                   // 
                 }
-                File headFile = new File(currentDirectory + File.separator + headArg);
+                File headFile = new File(currentDirectory + File.separator + headArg);          //
                 if (headFile.exists()) {
                     Charset encoding = StandardCharsets.UTF_8;
                     Path filePath = Paths.get((String) currentDirectory + File.separator + headArg);
