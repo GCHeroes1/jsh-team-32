@@ -19,43 +19,43 @@ import java.util.regex.Pattern;
 
 public class Jsh {
 
-    private static String currentDirectory = System.getProperty("user.dir");
+    private static String currentDirectory = System.getProperty("user.dir");                    // gets current directory 
 
-    public static void eval(String cmdline, OutputStream output) throws IOException {
-        OutputStreamWriter writer = new OutputStreamWriter(output);
-        ArrayList<String> rawCommands = new ArrayList<String>();
-		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;
-		for (splitIndex = 0; splitIndex < cmdline.length(); splitIndex++) {
-			char ch = cmdline.charAt(splitIndex);
-			if (ch == ';') {
-				String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();
-				rawCommands.add(command);
-				prevDelimiterIndex = splitIndex + 1;
-			} else if (ch == '\'' || ch == '\"') {
-				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);
-				if (closingPairIndex == -1) {
-					continue;
-				} else {
-					splitIndex = closingPairIndex;
+    public static void eval(String cmdline, OutputStream output) throws IOException {           // some sort of evaluation
+        OutputStreamWriter writer = new OutputStreamWriter(output);                             
+        ArrayList<String> rawCommands = new ArrayList<String>();                                // assume will be used later for raw commands 
+		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;                           // used to be a comment censored by alex 
+		for (splitIndex = 0; splitIndex < cmdline.length(); splitIndex++) {                     // iterates through the command line characters  
+			char ch = cmdline.charAt(splitIndex);                                               // isolates each character of the command line input  
+			if (ch == ';') {                                                                    
+				String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();      // stores and trims the command line up to the semi colon as a command 
+				rawCommands.add(command);                                                       // adds that command to the arraylist of commands 
+				prevDelimiterIndex = splitIndex + 1;                                            // jumps to the section after semi-colon 
+			} else if (ch == '\'' || ch == '\"') {                                              // if it finds a quote (' or ")
+				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);                         // finds index of second matching quote 
+				if (closingPairIndex == -1) {                                                   // if there isnt one 
+					continue;                                                                   
+				} else {                                                                         
+					splitIndex = closingPairIndex;                                              // skips to after the closing quote (ignores enquoted areas)
 				}
 			}
-		}
-		if (!cmdline.isEmpty() && prevDelimiterIndex != splitIndex) {
-			String command = cmdline.substring(prevDelimiterIndex).trim();
-			if (!command.isEmpty()) {
-				rawCommands.add(command);
+        }
+		if (!cmdline.isEmpty() && prevDelimiterIndex != splitIndex) {                           // if the command line wasnt empty and the line didnt end with a semi colon / can be tested very easily later
+			String command = cmdline.substring(prevDelimiterIndex).trim();                      // creates a substring at the index and trims the word 
+			if (!command.isEmpty()) {                                                           
+				rawCommands.add(command);                                                       // adds command to arraylist of commands if there wasnt a semi colon detected previosulsy 
 			}
 		}
-        for (String rawCommand : rawCommands) {
-            String spaceRegex = "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'";
-            ArrayList<String> tokens = new ArrayList<String>();
-            Pattern regex = Pattern.compile(spaceRegex);
-            Matcher regexMatcher = regex.matcher(rawCommand);
-            String nonQuote;
-            while (regexMatcher.find()) {
-                if (regexMatcher.group(1) != null || regexMatcher.group(2) != null) {
-                    String quoted = regexMatcher.group(0).trim();
-                    tokens.add(quoted.substring(1,quoted.length()-1));
+        for (String rawCommand : rawCommands) {                                                 // iterating through the arraylist of raw commands
+            String spaceRegex = "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'";                            // REGEX WARNING, misses "s" and "\" LAST PART SEEMS BUGGY NGL recognises anything following '
+            ArrayList<String> tokens = new ArrayList<String>();                                  
+            Pattern regex = Pattern.compile(spaceRegex);                                        // just compiles the regex 
+            Matcher regexMatcher = regex.matcher(rawCommand);                                   // creates a "matcher" 
+            String nonQuote;                                                                    
+            while (regexMatcher.find()) {                                                       // as long as there is a match it will continue the while loop
+                if (regexMatcher.group(1) != null || regexMatcher.group(2) != null) {           // 
+                    String quoted = regexMatcher.group(0).trim();                               //
+                    tokens.add(quoted.substring(1,quoted.length()-1));                          //
                 } else {
                     nonQuote = regexMatcher.group().trim();
                     ArrayList<String> globbingResult = new ArrayList<String>();
@@ -303,6 +303,7 @@ public class Jsh {
                 System.out.println("jsh: " + e.getMessage());
             }
         } else {
+            System.out.println("Welcome to JSH!");
             Scanner input = new Scanner(System.in);
             try {
                 while (true) {
