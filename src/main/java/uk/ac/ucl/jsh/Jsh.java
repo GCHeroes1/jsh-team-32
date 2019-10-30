@@ -14,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +27,7 @@ public class Jsh {
     // main interpretation function for the shell (what handles executing commands)
     public static void eval(String cmdline, OutputStream output) throws IOException {
         OutputStreamWriter writer = new OutputStreamWriter(output);
-        ArrayList<String> rawCommands = new ArrayList<String>();                                // assume will be used later for raw commands
+        ArrayList<String> rawCommands = new ArrayList<>();                                      // assume will be used later for raw commands
 		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;                           // used to be a comment censored by alex
 		for (splitIndex = 0; splitIndex < cmdline.length(); splitIndex++) {                     // iterates through the command line characters  
 			char ch = cmdline.charAt(splitIndex);                                               // isolates each character of the command line input  
@@ -86,13 +85,11 @@ public class Jsh {
 
             //Here is the mess - does all the running the commands stuff
             switch (appName) {                                                                  // selects the app based on the first token at the command line
-            case "cd":                                                                          // change directory
+            case "cd":
                 spFactory.getSP("cd").execute(appArgs.toArray(new String[0]));
                 break;
-            case "pwd":                                                                         // present working directory, gets the current working directory 
-                writer.write(currentDirectory);
-                writer.write(System.getProperty("line.separator"));                             // gets property that defines what separates the directories - actually useless 
-                writer.flush();                                                                 // writes thing to terminal 
+            case "pwd":
+                spFactory.getSP("pwd").execute(appArgs.toArray(new String[0]));
                 break;
             case "ls":                                                                          // list directory
                 File currDir;                                                                    
