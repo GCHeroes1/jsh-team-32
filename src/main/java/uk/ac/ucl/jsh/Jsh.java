@@ -288,8 +288,8 @@ public class Jsh {
         }
     }
 
-
-    public static void main(String[] args) {
+    private void shell(String[] args)
+    {
         if (args.length > 0) {
             if (args.length != 2) {
                 System.out.println("jsh: wrong number of arguments");
@@ -321,6 +321,12 @@ public class Jsh {
                 input.close();
             }
         }
+    }
+
+    public static void main(String[] args)
+    {
+        Jsh jsh = new Jsh();
+        jsh.shell(args);
     }
 
 }
