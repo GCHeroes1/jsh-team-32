@@ -1,5 +1,7 @@
 package uk.ac.ucl.jsh;
 
+import uk.ac.ucl.jsh.shellprorgams.SPFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -19,23 +21,32 @@ import java.util.regex.Pattern;
 
 public class Jsh {
 
-    private static String currentDirectory = System.getProperty("user.dir");                    // gets current directory 
+    // gets current directory
+    protected static String currentDirectory = System.getProperty("user.dir");
+    private static SPFactory spFactory = new SPFactory();
 
-    public static void eval(String cmdline, OutputStream output) throws IOException {           // main interpretation function for the shell (what handles executing commands)
-        OutputStreamWriter writer = new OutputStreamWriter(output);                             
-        ArrayList<String> rawCommands = new ArrayList<String>();                                // assume will be used later for raw commands 
-		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;                           // used to be a comment censored by alex 
+    // main interpretation function for the shell (what handles executing commands)
+    public static void eval(String cmdline, OutputStream output) throws IOException {
+        OutputStreamWriter writer = new OutputStreamWriter(output);
+        ArrayList<String> rawCommands = new ArrayList<String>();                                // assume will be used later for raw commands
+		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;                           // used to be a comment censored by alex
 		for (splitIndex = 0; splitIndex < cmdline.length(); splitIndex++) {                     // iterates through the command line characters  
 			char ch = cmdline.charAt(splitIndex);                                               // isolates each character of the command line input  
-			if (ch == ';') {                                                                    
+			if (ch == ';')
+			{
 				String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();      // stores and trims the command line up to the semi colon as a command 
 				rawCommands.add(command);                                                       // adds that command to the arraylist of commands 
 				prevDelimiterIndex = splitIndex + 1;                                            // jumps to the section after semi-colon 
-			} else if (ch == '\'' || ch == '\"') {                                              // if it finds a quote (' or ")
-				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);                         // finds index of second matching quote 
-				if (closingPairIndex == -1) {                                                   // if there isnt one 
+			}
+			else if (ch == '\'' || ch == '\"')
+			{                                              // if it finds a quote (' or ")
+				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);               // finds index of second matching quote
+				if (closingPairIndex == -1)                                                     // if there isnt one
+				{
 					continue;                                                                   
-				} else {                                                                         
+				}
+				else
+                {
 					splitIndex = closingPairIndex;                                              // skips to after the closing quote (ignores enquoted areas)
 				}
 			}
@@ -72,19 +83,11 @@ public class Jsh {
             }
             String appName = tokens.get(0);                                                     // gets first token 
             ArrayList<String> appArgs = new ArrayList<String>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
+
+            //Here is the mess - does all the running the commands stuff
             switch (appName) {                                                                  // selects the app based on the first token at the command line
             case "cd":                                                                          // change directory
-                if (appArgs.isEmpty()) {                                                        // throw an exception if they dont provide a directory to switch to 
-                    throw new RuntimeException("cd: missing argument");                         
-                } else if (appArgs.size() > 1) {                                                // throws exception if you give too much stuff to cd 
-                    throw new RuntimeException("cd: too many arguments");
-                }
-                String dirString = appArgs.get(0);                                              // gets the string representation of the path to switch to  
-                File dir = new File(currentDirectory, dirString);                               // gets a file system node 
-                if (!dir.exists() || !dir.isDirectory()) {                                      // checks if the file exists and is a directory 
-                    throw new RuntimeException("cd: " + dirString + " is not an existing directory"); // throw exception if it cant find the path 
-                }
-                currentDirectory = dir.getCanonicalPath();                                      // fully qualified path - absolute directory - way back up to root
+                spFactory.getSP("cd").execute(appArgs.toArray(new String[0]));
                 break;
             case "pwd":                                                                         // present working directory, gets the current working directory 
                 writer.write(currentDirectory);
@@ -287,6 +290,7 @@ public class Jsh {
             }
         }
     }
+
 
     public static void main(String[] args) {
         if (args.length > 0) {
