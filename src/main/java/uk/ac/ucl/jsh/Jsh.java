@@ -147,11 +147,11 @@ public class Jsh {
             case "echo":                                                                        // echo will print back what the shell interprets from the input string 
                 spFactory.getSP("echo").execute(appArgs.toArray(new String[0]));
                 break;
-            case "head":                                                                        // 
+            case "head":
                 spFactory.getSP("head").execute(appArgs.toArray(new String[0]));
                 break;
             case "tail":
-
+                spFactory.getSP("tail").execute(appArgs.toArray(new String[0]));
                 break;
             case "grep":
                 if (appArgs.size() < 2) {
