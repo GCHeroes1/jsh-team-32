@@ -145,108 +145,13 @@ public class Jsh {
                 }
                 break;
             case "echo":                                                                        // echo will print back what the shell interprets from the input string 
-                boolean atLeastOnePrinted = false;                                              // i.e. globbing will happen before echo prints it back 
-                for (String arg : appArgs) {
-                    writer.write(arg);
-                    writer.write(" ");
-                    writer.flush();
-                    atLeastOnePrinted = true;
-                }
-                if (atLeastOnePrinted) {
-                    writer.write(System.getProperty("line.separator"));
-                    writer.flush();
-                }
+                spFactory.getSP("echo").execute(appArgs.toArray(new String[0]));
                 break;
             case "head":                                                                        // 
-                if (appArgs.isEmpty()) {                                                        // 
-                    throw new RuntimeException("head: missing arguments");                      // no file specified 
-                }
-                if (appArgs.size() != 1 && appArgs.size() != 3) {                               // 
-                    throw new RuntimeException("head: wrong arguments");                        // 
-                }
-                if (appArgs.size() == 3 && !appArgs.get(0).equals("-n")) {                      // 
-                    throw new RuntimeException("head: wrong argument " + appArgs.get(0));       // 
-                }
-                int headLines = 10;                                                             // 
-                String headArg;                                 
-                if (appArgs.size() == 3) {                                                      // 
-                    try {
-                        headLines = Integer.parseInt(appArgs.get(1));                           // 
-                    } catch (Exception e) {
-                        throw new RuntimeException("head: wrong argument " + appArgs.get(1));   // 
-                    }
-                    headArg = appArgs.get(2);                                                   // 
-                } else {
-                    headArg = appArgs.get(0);                                                   // 
-                }
-                File headFile = new File(currentDirectory + File.separator + headArg);          //
-                if (headFile.exists()) {
-                    Charset encoding = StandardCharsets.UTF_8;
-                    Path filePath = Paths.get((String) currentDirectory + File.separator + headArg);
-                    try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
-                        for (int i = 0; i < headLines; i++) {
-                            String line = null;
-                            if ((line = reader.readLine()) != null) {
-                                writer.write(line);
-                                writer.write(System.getProperty("line.separator"));
-                                writer.flush();
-                            }
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException("head: cannot open " + headArg);
-                    }
-                } else {
-                    throw new RuntimeException("head: " + headArg + " does not exist");
-                }
+                spFactory.getSP("head").execute(appArgs.toArray(new String[0]));
                 break;
             case "tail":
-                if (appArgs.isEmpty()) {
-                    throw new RuntimeException("tail: missing arguments");
-                }
-                if (appArgs.size() != 1 && appArgs.size() != 3) {
-                    throw new RuntimeException("tail: wrong arguments");
-                }
-                if (appArgs.size() == 3 && !appArgs.get(0).equals("-n")) {
-                    throw new RuntimeException("tail: wrong argument " + appArgs.get(0));
-                }
-                int tailLines = 10;
-                String tailArg;
-                if (appArgs.size() == 3) {
-                    try {
-                        tailLines = Integer.parseInt(appArgs.get(1));
-                    } catch (Exception e) {
-                        throw new RuntimeException("tail: wrong argument " + appArgs.get(1));
-                    }
-                    tailArg = appArgs.get(2);
-                } else {
-                    tailArg = appArgs.get(0);
-                }
-                File tailFile = new File(currentDirectory + File.separator + tailArg);
-                if (tailFile.exists()) {
-                    Charset encoding = StandardCharsets.UTF_8;
-                    Path filePath = Paths.get((String) currentDirectory + File.separator + tailArg);
-                    ArrayList<String> storage = new ArrayList<>();
-                    try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
-                        String line = null;
-                        while ((line = reader.readLine()) != null) {
-                            storage.add(line);
-                        }
-                        int index = 0;
-                        if (tailLines > storage.size()) {
-                            index = 0;
-                        } else {
-                            index = storage.size() - tailLines;
-                        }
-                        for (int i = index; i < storage.size(); i++) {
-                            writer.write(storage.get(i) + System.getProperty("line.separator"));
-                            writer.flush();
-                        }            
-                    } catch (IOException e) {
-                        throw new RuntimeException("tail: cannot open " + tailArg);
-                    }
-                } else {
-                    throw new RuntimeException("tail: " + tailArg + " does not exist");
-                }
+
                 break;
             case "grep":
                 if (appArgs.size() < 2) {
