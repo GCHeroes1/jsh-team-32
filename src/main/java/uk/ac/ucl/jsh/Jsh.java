@@ -84,110 +84,12 @@ public class Jsh {
             ArrayList<String> appArgs = new ArrayList<String>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
 
             //Here is the mess - does all the running the commands stuff
-            switch (appName) {                                                                  // selects the app based on the first token at the command line
-            case "cd":
-                spFactory.getSP("cd").execute(appArgs.toArray(new String[0]));
-                break;
-            case "pwd":
-                spFactory.getSP("pwd").execute(appArgs.toArray(new String[0]));
-                break;
-            case "ls":                                                                          // list directory
-                File currDir;                                                                    
-                if (appArgs.isEmpty()) {                                                         
-                    currDir = new File(currentDirectory);                                       // if there is no argument to ls, it just puts the current directory as the directory to list 
-                } else if (appArgs.size() == 1) {                                               
-                    currDir = new File(appArgs.get(0));                                         // if there is an argument, list the directory specified by the argument
-                } else {
-                    throw new RuntimeException("ls: too many arguments");                       // otherwise throw an error 
-                }
-                try {
-                    File[] listOfFiles = currDir.listFiles();                                   // carries the OS for files present in the directory 
-                    boolean atLeastOnePrinted = false;                                          // avoids printing new line if no files are present
-                    for (File file : listOfFiles) {                                             
-                        if (!file.getName().startsWith(".")) {                                  // hides names that start with a .
-                            writer.write(file.getName());                                       // prints it to terminal 
-                            writer.write("\t");                                                 // line feed
-                            writer.flush();                                                      
-                            atLeastOnePrinted = true;                                            
-                        }
-                    }
-                    if (atLeastOnePrinted) {                                                    // 
-                        writer.write(System.getProperty("line.separator"));                     // prints a new line after its done printing 
-                        writer.flush();
-                    }
-                } catch (NullPointerException e) {
-                    throw new RuntimeException("ls: no such directory");                        // if it cant find the directory 
-                }
-                break;
-            case "cat":                                                                          
-                if (appArgs.isEmpty()) {                                                        // if there is no argument, cant cat nothing
-                    throw new RuntimeException("cat: missing arguments");                        
-                } else {                                                                        
-                    for (String arg : appArgs) {                                                // for each file specified in the arguments 
-                        Charset encoding = StandardCharsets.UTF_8;                              // print it using UTF 8 
-                        File currFile = new File(currentDirectory + File.separator + arg);      // gets the absolute path of the file
-                        if (currFile.exists()) {                                                // checks if it exists 
-                            Path filePath = Paths.get(currentDirectory + File.separator + arg); // gets a path object from the filepath 
-                            try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) { // tries offering a buffered reader on the file 
-                                String line = null;                                             // initialises the line variable 
-                                while ((line = reader.readLine()) != null) {                    // for each line that isnt empty in the file 
-                                    writer.write(String.valueOf(line));                         // print the contents 
-                                    writer.write(System.getProperty("line.separator"));         // necessary 
-                                    writer.flush();
-                                }
-                            } catch (IOException e) {                                           //
-                                throw new RuntimeException("cat: cannot open " + arg);          //
-                            }   
-                        } else {    
-                            throw new RuntimeException("cat: file does not exist");             //
-                        }
-                    }
-                }
-                break;
-            case "echo":                                                                        // echo will print back what the shell interprets from the input string 
-                spFactory.getSP("echo").execute(appArgs.toArray(new String[0]));
-                break;
-            case "head":
-                spFactory.getSP("head").execute(appArgs.toArray(new String[0]));
-                break;
-            case "tail":
-                spFactory.getSP("tail").execute(appArgs.toArray(new String[0]));
-                break;
-            case "grep":
-                if (appArgs.size() < 2) {
-                    throw new RuntimeException("grep: wrong number of arguments");
-                }
-                Pattern grepPattern = Pattern.compile(appArgs.get(0));
-                int numOfFiles = appArgs.size() - 1;
-                Path filePath;
-                Path[] filePathArray = new Path[numOfFiles];
-                Path currentDir = Paths.get(currentDirectory);
-                for (int i = 0; i < numOfFiles; i++) {
-                    filePath = currentDir.resolve(appArgs.get(i + 1));
-                    if (Files.notExists(filePath) || Files.isDirectory(filePath) || 
-                        !Files.exists(filePath) || !Files.isReadable(filePath)) {
-                        throw new RuntimeException("grep: wrong file argument");
-                    }
-                    filePathArray[i] = filePath;
-                }
-                for (int j = 0; j < filePathArray.length; j++) {
-                    Charset encoding = StandardCharsets.UTF_8;
-                    try (BufferedReader reader = Files.newBufferedReader(filePathArray[j], encoding)) {
-                        String line = null;
-                        while ((line = reader.readLine()) != null) {
-                            Matcher matcher = grepPattern.matcher(line);
-                            if (matcher.find()) {
-                                writer.write(line);
-                                writer.write(System.getProperty("line.separator"));
-                                writer.flush();
-                            }
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException("grep: cannot open " + appArgs.get(j + 1));
-                    }
-                }
-                break;
-            default:
+            try
+            {
+                spFactory.getSP(appName).execute(appArgs.toArray(new String[0]));
+            }
+            catch (NullPointerException e)
+            {
                 throw new RuntimeException(appName + ": unknown application");
             }
         }
