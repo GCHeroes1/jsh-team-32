@@ -38,8 +38,8 @@ public class Jsh {
 				prevDelimiterIndex = splitIndex + 1;                                            // jumps to the section after semi-colon 
 			}
 			else if (ch == '\'' || ch == '\"')
-			{                                              // if it finds a quote (' or ")
-				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);               // finds index of second matching quote
+			{                                                                                   // if it finds a quote (' or ")
+				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);                         // finds index of second matching quote
 				if (closingPairIndex == -1)                                                     // if there isnt one
 				{
 					continue;                                                                   
@@ -93,7 +93,7 @@ public class Jsh {
                 throw new RuntimeException(appName + ": unknown application");
             }
         }
-    }
+    }// this is a test comment because i'm frustrated <33333
 
     private void shell(String[] args)
     {
