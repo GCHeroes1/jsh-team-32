@@ -13,7 +13,13 @@ public class Pipe extends ShellProgram
 {
     public void execute(String[] args)
     {
-        
+        // so we need this to check for this at the end of any other instruction 
+        // Pipe is a left-associative operator that can be used to bind a set of call commands into a 
+        // chain. Each pipe operator binds the output of the left part to the input of the right part, 
+        // then evaluates these parts concurrently. If an exception occurred in any of these parts, 
+        // the execution of the other parts must be terminated 
+        // <pipe> ::= <call> "|" <call> |
+        //            <pipe> "|" <call>
     }
 }
     /*@Override
