@@ -19,7 +19,7 @@ public class Pipe extends ShellProgram
         // then evaluates these parts concurrently. If an exception occurred in any of these parts, 
         // the execution of the other parts must be terminated 
         // <pipe> ::= <call> "|" <call> |
-        //            <pipe> "|" <call>
+        //            <pipe> "|" <call
     }
 }
     /*@Override
