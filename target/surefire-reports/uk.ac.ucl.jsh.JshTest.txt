@@ -1,8 +1,0 @@
--------------------------------------------------------------------------------
-Test set: uk.ac.ucl.jsh.JshTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.077 s <<< FAILURE! - in uk.ac.ucl.jsh.JshTest
-testJsh(uk.ac.ucl.jsh.JshTest)  Time elapsed: 0.029 s  <<< ERROR!
-java.lang.RuntimeException: echo: unknown application
-	at uk.ac.ucl.jsh.JshTest.testJsh(JshTest.java:19)
-
