@@ -29,8 +29,8 @@ public class Jsh {
 			char ch = cmdline.charAt(splitIndex);                                               // isolates each character of the command line input  
 			if (ch == ';')
 			{
-				String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();      // stores and trims the command line up to the semi colon as a command 
-				rawCommands.add(command);                                                       // adds that command to the arraylist of commands 
+				String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();      // stores and trims the command line up to the semi colon as a command
+				rawCommands.add(command);                                                       // adds that command to the arraylist of commands
 				prevDelimiterIndex = splitIndex + 1;                                            // jumps to the section after semi-colon 
 			}
 			else if (ch == '\'' || ch == '\"')
@@ -47,9 +47,9 @@ public class Jsh {
 			}
         }
 		if (!cmdline.isEmpty() && prevDelimiterIndex != splitIndex) {                           // if the command line wasnt empty and the line didnt end with a semi colon / can be tested very easily later
-			String command = cmdline.substring(prevDelimiterIndex).trim();                      // creates a substring at the index and trims the word 
-			if (!command.isEmpty()) {                                                           
-				rawCommands.add(command);                                                       // adds command to arraylist of commands if there wasnt a semi colon detected previosulsy 
+			String command = cmdline.substring(prevDelimiterIndex).trim();                      // creates a substring at the index and trims the word
+			if (!command.isEmpty()) {
+				rawCommands.add(command);                                                       // adds command to arraylist of commands if there wasnt a semi colon detected previosulsy
 			}
 		}
         for (String rawCommand : rawCommands) {                                                 // iterating through the arraylist of raw commands
