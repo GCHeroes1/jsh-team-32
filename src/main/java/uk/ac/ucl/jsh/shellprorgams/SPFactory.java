@@ -7,10 +7,14 @@ public class SPFactory
     private HashMap<String, ShellProgram> programs = new HashMap<>();
     public SPFactory()
     {
-        programs.put("grep", new Grep());
-        programs.put("pwd", new Pwd());
         programs.put("cat", new Cat());
         programs.put("cd", new Cd());
+        programs.put("echo", new Echo());
+        programs.put("grep", new Grep());
+        programs.put("head", new Head());
+        programs.put("ls", new Ls());
+        programs.put("pwd", new Pwd());
+        programs.put("tail", new Tail());
     }
 
     public ShellProgram getSP(String program)
