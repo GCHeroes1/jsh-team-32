@@ -2,13 +2,9 @@ package uk.ac.ucl.jsh;
 
 import uk.ac.ucl.jsh.shellprorgams.SPFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -83,7 +79,6 @@ public class Jsh {
             String appName = tokens.get(0);                                                     // gets first token 
             ArrayList<String> appArgs = new ArrayList<String>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
 
-            //Here is the mess - does all the running the commands stuff
             try
             {
                 spFactory.getSP(appName).execute(appArgs.toArray(new String[0]));
@@ -117,14 +112,19 @@ public class Jsh {
                 while (true) {
                     String prompt = currentDirectory + "> ";
                     System.out.print(prompt);
-                    try {
+                    try
+                    {
                         String cmdline = input.nextLine();
                         eval(cmdline, System.out);
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e)
+                    {
                         System.out.println("jsh: " + e.getMessage());
                     }
                 }
-            } finally {
+            }
+            finally
+            {
                 input.close();
             }
         }
