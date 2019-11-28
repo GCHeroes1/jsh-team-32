@@ -22,6 +22,8 @@ public class Jsh {
 
     // main interpretation function for the shell (what handles executing commands)
     public static void eval(String cmdline, OutputStream output) throws IOException {
+
+        //MOVE INTO OWN CLASS FOR COMMAND
         OutputStreamWriter writer = new OutputStreamWriter(output);
         ArrayList<String> rawCommands = new ArrayList<>();                                      // assume will be used later for raw commands
 		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;                           // used to be a comment censored by alex
@@ -36,12 +38,8 @@ public class Jsh {
 			else if (ch == '\'' || ch == '\"')
 			{                                                                                   // if it finds a quote (' or ")
 				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);                         // finds index of second matching quote
-				if (closingPairIndex == -1)                                                     // if there isnt one
+				if (closingPairIndex != -1)                                                     // if there isnt one
 				{
-					continue;                                                                   
-				}
-				else
-                {
 					splitIndex = closingPairIndex;                                              // skips to after the closing quote (ignores enquoted areas)
 				}
 			}
@@ -52,9 +50,15 @@ public class Jsh {
 				rawCommands.add(command);                                                       // adds command to arraylist of commands if there wasnt a semi colon detected previosulsy
 			}
 		}
+
+
+
+
+		//TOKENNIZER
         for (String rawCommand : rawCommands) {                                                 // iterating through the arraylist of raw commands
+            // https://i.imgur.com/byCa9TA.png
             String spaceRegex = "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'";                            // REGEX WARNING, misses "s" and "\" LAST PART SEEMS BUGGY NGL recognises anything following '
-            ArrayList<String> tokens = new ArrayList<String>();                                  
+            ArrayList<String> tokens = new ArrayList<>();
             Pattern regex = Pattern.compile(spaceRegex);                                        // just compiles the regex 
             Matcher regexMatcher = regex.matcher(rawCommand);                                   // creates a "matcher" 
             String nonQuote;                                                                    
@@ -76,9 +80,9 @@ public class Jsh {
                     tokens.addAll(globbingResult);                                              
                 }
             }
-            String appName = tokens.get(0);                                                     // gets first token 
-            ArrayList<String> appArgs = new ArrayList<String>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
 
+            String appName = tokens.get(0);                                                     // gets first token - must be appname
+            ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
             try
             {
                 spFactory.getSP(appName).execute(appArgs.toArray(new String[0]));
