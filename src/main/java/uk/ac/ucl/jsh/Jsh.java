@@ -2,9 +2,13 @@ package uk.ac.ucl.jsh;
 
 import uk.ac.ucl.jsh.shellprorgams.SPFactory;
 
+git import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,48 +26,44 @@ public class Jsh {
 
     // main interpretation function for the shell (what handles executing commands)
     public static void eval(String cmdline, OutputStream output) throws IOException {
-
-        //MOVE INTO OWN CLASS FOR COMMAND
         OutputStreamWriter writer = new OutputStreamWriter(output);
         ArrayList<String> rawCommands = new ArrayList<>();                                      // assume will be used later for raw commands
-		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;                           // used to be a comment censored by alex
+		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;                           
 		for (splitIndex = 0; splitIndex < cmdline.length(); splitIndex++) {                     // iterates through the command line characters  
 			char ch = cmdline.charAt(splitIndex);                                               // isolates each character of the command line input  
 			if (ch == ';')
 			{
-				String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();      // stores and trims the command line up to the semi colon as a command
-				rawCommands.add(command);                                                       // adds that command to the arraylist of commands
+				String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();      // stores and trims the command line up to the semi colon as a command 
+				rawCommands.add(command);                                                       // adds that command to the arraylist of commands 
 				prevDelimiterIndex = splitIndex + 1;                                            // jumps to the section after semi-colon 
 			}
 			else if (ch == '\'' || ch == '\"')
 			{                                                                                   // if it finds a quote (' or ")
 				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);                         // finds index of second matching quote
-				if (closingPairIndex != -1)                                                     // if there isnt one
+				if (closingPairIndex == -1)                                                     // if there isnt one
 				{
+					continue;                                                                   
+				}
+				else
+                {
 					splitIndex = closingPairIndex;                                              // skips to after the closing quote (ignores enquoted areas)
 				}
 			}
         }
-		if (!cmdline.isEmpty() && prevDelimiterIndex != splitIndex) {                           // if the command line wasnt empty and the line didnt end with a semi colon / can be tested very easily later
-			String command = cmdline.substring(prevDelimiterIndex).trim();                      // creates a substring at the index and trims the word
-			if (!command.isEmpty()) {
-				rawCommands.add(command);                                                       // adds command to arraylist of commands if there wasnt a semi colon detected previosulsy
+		if (!cmdline.isEmpty() && prevDelimiterIndex != splitIndex) {                           // if the command line wasn't empty and the line didn't end with a semi colon / can be tested very easily later
+			String command = cmdline.substring(prevDelimiterIndex).trim();                      // creates a substring at the index and trims the word 
+			if (!command.isEmpty()) {                                                           
+				rawCommands.add(command);                                                       // adds command to arraylist of commands if there wasn't a semi colon detected previously 
 			}
 		}
-
-
-
-
-		//TOKENNIZER
         for (String rawCommand : rawCommands) {                                                 // iterating through the arraylist of raw commands
-            // https://i.imgur.com/byCa9TA.png
-            String spaceRegex = "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'";                            // REGEX WARNING, misses "s" and "\" LAST PART SEEMS BUGGY NGL recognises anything following '
-            ArrayList<String> tokens = new ArrayList<>();
+            String spaceRegex = "[^\\s\"'\\|]+|\"([^\"]*)\"|'([^']*)'";                         // regex separates input into tokens by spaces, lonely single or double quotes, or pipe characters unless there's quotes around it
+            ArrayList<String> tokens = new ArrayList<String>();                                 // for the above regex, know that whitespace \s is \\s in java and \| is \\|
             Pattern regex = Pattern.compile(spaceRegex);                                        // just compiles the regex 
             Matcher regexMatcher = regex.matcher(rawCommand);                                   // creates a "matcher" 
             String nonQuote;                                                                    
             while (regexMatcher.find()) {                                                       // as long as there is a match it will continue the while loop
-                if (regexMatcher.group(1) != null || regexMatcher.group(2) != null) {           // checking if there is a first and second group (itd be null if it didnt exist?)
+                if (regexMatcher.group(1) != null || regexMatcher.group(2) != null) {           // checking if there is a first and second group (it'd be null if it didn't exist?)
                     String quoted = regexMatcher.group(0).trim();                               // group(0) is the entire thing, trims it? 
                     tokens.add(quoted.substring(1,quoted.length()-1));                          // just removes the quotes 
                 } else {                                                    
@@ -80,9 +80,9 @@ public class Jsh {
                     tokens.addAll(globbingResult);                                              
                 }
             }
-
-            String appName = tokens.get(0);                                                     // gets first token - must be appname
-            ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
+            String appName = tokens.get(0);                                                     // gets first token 
+            ArrayList<String> appArgs = new ArrayList<String>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
+            // Here is the mess - does all the running the commands stuff
             try
             {
                 spFactory.getSP(appName).execute(appArgs.toArray(new String[0]));
@@ -92,7 +92,7 @@ public class Jsh {
                 throw new RuntimeException(appName + ": unknown application");
             }
         }
-    }// this is a test comment because i'm frustrated <33333
+    }
 
     private void shell(String[] args)
     {
@@ -116,19 +116,14 @@ public class Jsh {
                 while (true) {
                     String prompt = currentDirectory + "> ";
                     System.out.print(prompt);
-                    try
-                    {
+                    try {
                         String cmdline = input.nextLine();
                         eval(cmdline, System.out);
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         System.out.println("jsh: " + e.getMessage());
                     }
                 }
-            }
-            finally
-            {
+            } finally {
                 input.close();
             }
         }
