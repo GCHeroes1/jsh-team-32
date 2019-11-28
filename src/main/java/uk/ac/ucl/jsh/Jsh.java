@@ -57,8 +57,9 @@ public class Jsh {
 			}
 		}
         for (String rawCommand : rawCommands) {                                                 // iterating through the arraylist of raw commands
-            String spaceRegex = "[^\\s\"'\\|]+|\"([^\"]*)\"|'([^']*)'";                         // regex separates input into tokens by spaces, lonely single or double quotes, or pipe characters unless there's quotes around it
-            ArrayList<String> tokens = new ArrayList<String>();                                 // for the above regex, know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
+            String spaceRegex = "[^\\s\"'\\|]+([\\s]*\\|[\\s]*[^\\s\"'\\|]+)*|\"([^\"]*)\"|'([^']*)'"; 
+            // regex above separates input into tokens by space and lonely single or double quotes, and keeps pipe characters in between words if surrounded by spaces or not. The pipe has to be between words.
+            ArrayList<String> tokens = new ArrayList<String>();                                 // know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
             Pattern regex = Pattern.compile(spaceRegex);                                        // just compiles the regex 
             Matcher regexMatcher = regex.matcher(rawCommand);                                   // creates a "matcher" 
             String nonQuote;                                                                    
