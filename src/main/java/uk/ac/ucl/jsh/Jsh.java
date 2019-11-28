@@ -2,7 +2,7 @@ package uk.ac.ucl.jsh;
 
 import uk.ac.ucl.jsh.shellprorgams.SPFactory;
 
-git import java.io.BufferedReader;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -40,7 +40,7 @@ public class Jsh {
 			else if (ch == '\'' || ch == '\"')
 			{                                                                                   // if it finds a quote (' or ")
 				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);                         // finds index of second matching quote
-				if (closingPairIndex == -1)                                                     // if there isnt one
+				if (closingPairIndex == -1)                                                     // if there isn't one
 				{
 					continue;                                                                   
 				}
@@ -48,9 +48,9 @@ public class Jsh {
                 {
 					splitIndex = closingPairIndex;                                              // skips to after the closing quote (ignores enquoted areas)
 				}
-			}
+            }
         }
-		if (!cmdline.isEmpty() && prevDelimiterIndex != splitIndex) {                           // if the command line wasn't empty and the line didn't end with a semi colon / can be tested very easily later
+		if (!cmdline.isEmpty() && prevDelimiterIndex != splitIndex) {                           // if the command line wasn't empty and the line didn't end with a semi colon
 			String command = cmdline.substring(prevDelimiterIndex).trim();                      // creates a substring at the index and trims the word 
 			if (!command.isEmpty()) {                                                           
 				rawCommands.add(command);                                                       // adds command to arraylist of commands if there wasn't a semi colon detected previously 
@@ -58,7 +58,7 @@ public class Jsh {
 		}
         for (String rawCommand : rawCommands) {                                                 // iterating through the arraylist of raw commands
             String spaceRegex = "[^\\s\"'\\|]+|\"([^\"]*)\"|'([^']*)'";                         // regex separates input into tokens by spaces, lonely single or double quotes, or pipe characters unless there's quotes around it
-            ArrayList<String> tokens = new ArrayList<String>();                                 // for the above regex, know that whitespace \s is \\s in java and \| is \\|
+            ArrayList<String> tokens = new ArrayList<String>();                                 // for the above regex, know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
             Pattern regex = Pattern.compile(spaceRegex);                                        // just compiles the regex 
             Matcher regexMatcher = regex.matcher(rawCommand);                                   // creates a "matcher" 
             String nonQuote;                                                                    
@@ -113,7 +113,7 @@ public class Jsh {
             System.out.println("Welcome to JSH!");
             Scanner input = new Scanner(System.in);
             try {
-                while (true) {
+                while (true) {                                                                // this infinite loop just waits for the user to input and enter
                     String prompt = currentDirectory + "> ";
                     System.out.print(prompt);
                     try {
