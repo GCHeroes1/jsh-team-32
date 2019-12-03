@@ -1,8 +1,11 @@
 package uk.ac.ucl.jsh;
 
+import java.io.OutputStream;
+import java.util.List;
+
 interface CommandInterface
 {
-    void accept(String input_string);
+    void accept(List<String> input_cmds);
 
-    void eval(String input, String output);
+    void eval(List<String> input, OutputStream output);
 }

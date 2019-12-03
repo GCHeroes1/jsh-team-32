@@ -2,13 +2,9 @@ package uk.ac.ucl.jsh;
 
 import uk.ac.ucl.jsh.shellprorgams.SPFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,11 +45,7 @@ public class Jsh {
 					splitIndex = closingPairIndex;                                              // skips to after the closing quote (ignores enquoted areas)
 				}
             }
-			else if (ch == '|')
-            {
-                rawCommands.add("PIPE");
-                prevDelimiterIndex = splitIndex + 1;
-            }
+
         }
 		if (!cmdline.isEmpty() && prevDelimiterIndex != splitIndex) {                           // if the command line wasn't empty and the line didn't end with a semi colon
 			String command = cmdline.substring(prevDelimiterIndex).trim();                      // creates a substring at the index and trims the word 
@@ -63,8 +55,9 @@ public class Jsh {
 		}
         for (String rawCommand : rawCommands) {                                                 // iterating through the arraylist of raw commands
             String spaceRegex = "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'";
+            //String spaceRegex = "[^\\s\"'|]+([\\s]*\\|[\\s]*[^\\s\"'|]+)*|\"([^\"]*)\"|'([^']*)'";
             // regex above separates input into tokens by space and lonely single or double quotes, and keeps pipe characters in between words if surrounded by spaces or not. The pipe has to be between words.
-            ArrayList<String> tokens = new ArrayList<String>();                                 // know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
+            ArrayList<String> tokens = new ArrayList<>();                                 // know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
             Pattern regex = Pattern.compile(spaceRegex);                                        // just compiles the regex 
             Matcher regexMatcher = regex.matcher(rawCommand);                                   // creates a "matcher" 
             String nonQuote;                                                                    
@@ -74,7 +67,7 @@ public class Jsh {
                     tokens.add(quoted.substring(1,quoted.length()-1));                          // just removes the quotes 
                 } else {                                                    
                     nonQuote = regexMatcher.group().trim();                                     // trims the entire regex 
-                    ArrayList<String> globbingResult = new ArrayList<String>();                  
+                    ArrayList<String> globbingResult = new ArrayList<>();
                     Path dir = Paths.get(currentDirectory);                                     // path object, represents operating system level directory 
                     DirectoryStream<Path> stream = Files.newDirectoryStream(dir, nonQuote);     // using the OS to do globbing for him 
                     for (Path entry : stream) {                                                 
