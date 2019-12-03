@@ -39,7 +39,7 @@ public class Jsh {
 			}
 			else if (ch == '\'' || ch == '\"')
 			{                                                                                   // if it finds a quote (' or ")
-				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);                         // finds index of second matching quote
+				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);               // finds index of second matching quote
 				if (closingPairIndex == -1)                                                     // if there isn't one
 				{
 					continue;                                                                   
@@ -49,6 +49,11 @@ public class Jsh {
 					splitIndex = closingPairIndex;                                              // skips to after the closing quote (ignores enquoted areas)
 				}
             }
+			else if (ch == '|')
+            {
+                rawCommands.add("PIPE");
+                prevDelimiterIndex = splitIndex + 1;
+            }
         }
 		if (!cmdline.isEmpty() && prevDelimiterIndex != splitIndex) {                           // if the command line wasn't empty and the line didn't end with a semi colon
 			String command = cmdline.substring(prevDelimiterIndex).trim();                      // creates a substring at the index and trims the word 
@@ -57,7 +62,7 @@ public class Jsh {
 			}
 		}
         for (String rawCommand : rawCommands) {                                                 // iterating through the arraylist of raw commands
-            String spaceRegex = "[^\\s\"'\\|]+([\\s]*\\|[\\s]*[^\\s\"'\\|]+)*|\"([^\"]*)\"|'([^']*)'"; 
+            String spaceRegex = "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'";
             // regex above separates input into tokens by space and lonely single or double quotes, and keeps pipe characters in between words if surrounded by spaces or not. The pipe has to be between words.
             ArrayList<String> tokens = new ArrayList<String>();                                 // know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
             Pattern regex = Pattern.compile(spaceRegex);                                        // just compiles the regex 
@@ -82,7 +87,7 @@ public class Jsh {
                 }
             }
             String appName = tokens.get(0);                                                     // gets first token 
-            ArrayList<String> appArgs = new ArrayList<String>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
+            ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
             // Here is the mess - does all the running the commands stuff
             try
             {
