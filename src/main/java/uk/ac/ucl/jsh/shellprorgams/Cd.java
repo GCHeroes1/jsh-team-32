@@ -4,6 +4,7 @@ import uk.ac.ucl.jsh.Jsh;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,7 +12,7 @@ import java.util.Collections;
 public class Cd extends ShellProgram
 {
     @Override
-    public void execute(String[] args) throws IOException
+    public void execute(String[] args, OutputStream output) throws IOException
     {
         ArrayList<String> appArgs = new ArrayList<>();
         Collections.addAll(appArgs, args);
