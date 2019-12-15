@@ -25,6 +25,14 @@ public class Sequence extends Jsh implements CommandInterface{
                     rawCommands.add(command);                                                       // adds that command to the arraylist of commands 
                     prevDelimiterIndex = splitIndex + 1;                                            // jumps to the section after semi-colon 
                 }
+                else if (ch == '\'' || ch == '\"')
+                {                                                                                   // if it finds a quote (' or ")
+                    closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);               // finds index of second matching quote
+                    if (closingPairIndex != -1)                                                     // if there isn't one
+                    {
+                        splitIndex = closingPairIndex;                                              // skips to after the closing quote (ignores enquoted areas)
+                    }
+                }
             }
     }//what do we even want this class to output?? -> a String ArrayList
 
