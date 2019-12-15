@@ -1,15 +1,13 @@
  package uk.ac.ucl.jsh.shellprograms;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class Cd extends ShellProgram
 {
     @Override
-    public void execute(String[] args, OutputStream output) throws IOException
+    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException
     {
         ArrayList<String> appArgs = new ArrayList<>();
         Collections.addAll(appArgs, args);
