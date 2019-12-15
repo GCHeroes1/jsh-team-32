@@ -1,9 +1,7 @@
 package uk.ac.ucl.jsh;
 
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -59,13 +57,19 @@ public class Pipe extends Jsh implements CommandInterface
 //        }
 
 
+        //InputStream instream = new ByteArrayInputStream(piped_cmds.get(0).getBytes());
+        String cmdoutput = "";
+//        ByteArrayInputStream outputStream = new ByteArrayInputStream();
+        //OutputStreamWriter hellothere = new OutputStreamWriter(outstream);
         for(String command : piped_cmds) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[2048]);
             String spaceRegex = "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'";
             //String spaceRegex = "[^\\s\"'|]+([\\s]*\\|[\\s]*[^\\s\"'|]+)*|\"([^\"]*)\"|'([^']*)'";
             // regex above separates input into tokens by space and lonely single or double quotes, and keeps pipe characters in between words if surrounded by spaces or not. The pipe has to be between words.
-            ArrayList<String> tokens = new ArrayList<>();                                 // know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
+            ArrayList<String> tokens = new ArrayList<>();                                       // know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
             Pattern regex = Pattern.compile(spaceRegex);                                        // just compiles the regex
-            Matcher regexMatcher = regex.matcher(command);                                   // creates a "matcher"
+            Matcher regexMatcher = regex.matcher(command);                                      // creates a "matcher"
             String nonQuote;
             while (regexMatcher.find()) {                                                       // as long as there is a match it will continue the while loop
                 if (regexMatcher.group(1) != null || regexMatcher.group(2) != null) {           // checking if there is a first and second group (it'd be null if it didn't exist?)
@@ -89,15 +93,31 @@ public class Pipe extends Jsh implements CommandInterface
             String appName = tokens.get(0);                                                     // gets first token
             ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
             // Here is the mess - does all the running the commands stuff
-            try {
-                System.out.println("running app " + appName + " with args " + appArgs);
-                spFactory.getSP(appName).execute(appArgs.toArray(new String[0]), System.out); //EHERERERERERE
-            } catch (NullPointerException e) {
+
+
+            try
+            {
+                inputStream = new ByteArrayInputStream(cmdoutput.getBytes());
+                System.out.println("running app " + appName + " with args " + appArgs + " and stdin " + inputStream);
+                //appArgs.toArray(new String[0])
+                spFactory.getSP(appName).execute(appArgs.toArray(new String[0]), inputStream, outputStream); //EHERERERERERE
+                cmdoutput = (new String(outputStream.toByteArray()));
+            }
+            catch (NullPointerException e)
+            {
                 throw new RuntimeException(appName + ": unknown application");
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 e.printStackTrace();
             }
         }
+        OutputStreamWriter osw = new OutputStreamWriter(System.out);
+        osw.write(cmdoutput);
+        osw.flush();
+        //osw.close();
+
+
 
     }
 

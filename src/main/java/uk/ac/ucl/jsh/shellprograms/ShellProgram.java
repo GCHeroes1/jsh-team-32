@@ -2,21 +2,19 @@ package uk.ac.ucl.jsh.shellprograms;
 
 import uk.ac.ucl.jsh.Jsh;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 
 public abstract class ShellProgram extends Jsh
 {
     OutputStreamWriter writer = new OutputStreamWriter(System.out);
 
-    abstract public void execute(String[] args, OutputStream output) throws IOException;
+    abstract public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException;
 
-    public void executeUnsafe(String[] args, OutputStream output)
+    public void executeUnsafe(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output)
     {
         try
         {
-            execute(args, output);
+            execute(args, stdin, output);
         }
         catch(Exception e)
         {

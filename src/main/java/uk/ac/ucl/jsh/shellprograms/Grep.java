@@ -1,8 +1,6 @@
 package uk.ac.ucl.jsh.shellprograms;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,12 +12,31 @@ import java.util.regex.Pattern;
 public class Grep extends ShellProgram
 {
     @Override
-    public void execute(String[] args, OutputStream output) throws IOException
+    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException
     {
-        if (args.length < 2) {
-            throw new RuntimeException("grep: wrong number of arguments");
-        }
+        OutputStreamWriter str_to_bytes = new OutputStreamWriter(output);
         Pattern grepPattern = Pattern.compile(args[0]);
+
+        //int n = stdin.available();
+        //byte[] a = new byte[n];
+        //stdin.read(a, 0, n);
+        //System.out.println(new String(a));
+        if (args.length == 1) {
+            //throw new RuntimeException("grep: wrong number of arguments");
+            String line = null;
+            BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
+            while((line = bfr.readLine()) != null)
+            {
+                Matcher matcher = grepPattern.matcher(line);
+                if(matcher.find())
+                {
+                    str_to_bytes.write(line);
+                    str_to_bytes.write(System.getProperty("line.separator"));
+                    str_to_bytes.flush();
+                }
+            }
+
+        }
         int numOfFiles = args.length - 1;
         Path filePath;
         Path[] filePathArray = new Path[numOfFiles];

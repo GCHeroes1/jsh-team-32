@@ -1,9 +1,6 @@
 package uk.ac.ucl.jsh.shellprograms;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,7 +11,7 @@ import java.util.ArrayList;
 public class Tail extends ShellProgram
 {
     @Override
-    public void execute(String[] args, OutputStream output) throws IOException
+    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException
     {
         if (args.length == 0) {
             throw new RuntimeException("tail: missing arguments");
