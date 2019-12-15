@@ -3,6 +3,7 @@ package uk.ac.ucl.jsh.shellprorgams;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,7 +13,7 @@ import java.nio.file.Paths;
 public class Head extends ShellProgram
 {
     @Override
-    public void execute(String[] args)
+    public void execute(String[] args, OutputStream output) throws IOException
     {
         if (args.length == 0) {                                                       
             throw new RuntimeException("head: missing arguments");
@@ -55,4 +56,5 @@ public class Head extends ShellProgram
             throw new RuntimeException("head: " + headArg + " does not exist");
         }
     }
+
 }

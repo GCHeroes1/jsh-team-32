@@ -5,23 +5,17 @@ import uk.ac.ucl.jsh.shellprorgams.SPFactory;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Jsh {
 
     // gets current directory
     protected static String currentDirectory = System.getProperty("user.dir");
-    private static SPFactory spFactory = new SPFactory();
+    static SPFactory spFactory = new SPFactory();
 
     // main interpretation function for the shell (what handles executing commands)
-    public static void eval(String cmdline, OutputStream output) throws IOException {
+    private static void eval(String cmdline, OutputStream output) throws IOException {
         OutputStreamWriter writer = new OutputStreamWriter(output);
         ArrayList<String> rawCommands = new ArrayList<>();                                      // assume will be used later for raw commands
 		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;                           
@@ -38,8 +32,7 @@ public class Jsh {
 				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);               // finds index of second matching quote
 				if (closingPairIndex == -1)                                                     // if there isn't one
 				{
-					continue;                                                                   
-				}
+                }
 				else
                 {
 					splitIndex = closingPairIndex;                                              // skips to after the closing quote (ignores enquoted areas)
@@ -54,42 +47,7 @@ public class Jsh {
 			}
 		}
         for (String rawCommand : rawCommands) {                                                 // iterating through the arraylist of raw commands
-            String spaceRegex = "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'";
-            //String spaceRegex = "[^\\s\"'|]+([\\s]*\\|[\\s]*[^\\s\"'|]+)*|\"([^\"]*)\"|'([^']*)'";
-            // regex above separates input into tokens by space and lonely single or double quotes, and keeps pipe characters in between words if surrounded by spaces or not. The pipe has to be between words.
-            ArrayList<String> tokens = new ArrayList<>();                                 // know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
-            Pattern regex = Pattern.compile(spaceRegex);                                        // just compiles the regex 
-            Matcher regexMatcher = regex.matcher(rawCommand);                                   // creates a "matcher" 
-            String nonQuote;                                                                    
-            while (regexMatcher.find()) {                                                       // as long as there is a match it will continue the while loop
-                if (regexMatcher.group(1) != null || regexMatcher.group(2) != null) {           // checking if there is a first and second group (it'd be null if it didn't exist?)
-                    String quoted = regexMatcher.group(0).trim();                               // group(0) is the entire thing, trims it? 
-                    tokens.add(quoted.substring(1,quoted.length()-1));                          // just removes the quotes 
-                } else {                                                    
-                    nonQuote = regexMatcher.group().trim();                                     // trims the entire regex 
-                    ArrayList<String> globbingResult = new ArrayList<>();
-                    Path dir = Paths.get(currentDirectory);                                     // path object, represents operating system level directory 
-                    DirectoryStream<Path> stream = Files.newDirectoryStream(dir, nonQuote);     // using the OS to do globbing for him 
-                    for (Path entry : stream) {                                                 
-                        globbingResult.add(entry.getFileName().toString());                     // putting results back into the variable 
-                    }                                                                           
-                    if (globbingResult.isEmpty()) {                                              
-                        globbingResult.add(nonQuote);                                            
-                    }
-                    tokens.addAll(globbingResult);                                              
-                }
-            }
-            String appName = tokens.get(0);                                                     // gets first token 
-            ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
-            // Here is the mess - does all the running the commands stuff
-            try
-            {
-                spFactory.getSP(appName).execute(appArgs.toArray(new String[0]));
-            }
-            catch (NullPointerException e)
-            {
-                throw new RuntimeException(appName + ": unknown application");
-            }
+            new Pipe().run(rawCommand, output);
         }
     }
 
@@ -110,20 +68,21 @@ public class Jsh {
             }
         } else {
             System.out.println("Welcome to JSH!");
-            Scanner input = new Scanner(System.in);
-            try {
+            try (Scanner input = new Scanner(System.in)) {
                 while (true) {                                                                // this infinite loop just waits for the user to input and enter
                     String prompt = currentDirectory + "> ";
                     System.out.print(prompt);
                     try {
                         String cmdline = input.nextLine();
+                        if(cmdline.equals("exit"))
+                        {
+                            break;
+                        }
                         eval(cmdline, System.out);
                     } catch (Exception e) {
                         System.out.println("jsh: " + e.getMessage());
                     }
                 }
-            } finally {
-                input.close();
             }
         }
     }
