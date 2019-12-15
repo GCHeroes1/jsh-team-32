@@ -13,8 +13,22 @@ import java.util.regex.Pattern;
 public class Sequence extends Jsh implements CommandInterface{
     @Override
     public void run(String input, OutputStream output) throws IOException {
+        //Here is the code that separates by semicolons
+        //this has just been copy/pasted in and will probz not work lolz
+        OutputStreamWriter writer = new OutputStreamWriter(output);
+		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;                           
+		for (splitIndex = 0; splitIndex < cmdline.length(); splitIndex++) {                     // iterates through the command line characters  
+            char ch = cmdline.charAt(splitIndex);                                               // isolates each character of the command line input  
+                if (ch == ';')
+                {
+                    String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();      // stores and trims the command line up to the semi colon as a command 
+                    rawCommands.add(command);                                                       // adds that command to the arraylist of commands 
+                    prevDelimiterIndex = splitIndex + 1;                                            // jumps to the section after semi-colon 
+                }
+            }
+    }//what do we even want this class to output?? -> a String ArrayList
 
-    }
+//this next bit is just the Pipe class copied in
 //
 //    @Override
 //    public void run(String input, OutputStream output) throws IOException
