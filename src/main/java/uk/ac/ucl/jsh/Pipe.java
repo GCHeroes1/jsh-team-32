@@ -21,14 +21,42 @@ public class Pipe extends Jsh implements CommandInterface
     {
         //OutputStreamWriter temp_writer = new OutputStreamWriter(System.out);
 
-        String pipeRegex = "[^|]+";
         ArrayList<String> piped_cmds = new ArrayList<>();
-        Pattern piperegex = Pattern.compile(pipeRegex);
-        Matcher piperegexmatcher = piperegex.matcher(input);
-        while(piperegexmatcher.find())
-        {
-            piped_cmds.add(piperegexmatcher.group());
+        int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0, start_quote = 0;
+        boolean inside_quote = false;
+        for (splitIndex = 0; splitIndex < input.length(); splitIndex++) {                     // iterates through the command line characters
+            char ch = input.charAt(splitIndex);                                               // isolates each character of the command line input
+            if (ch == '\'' || ch == '\"')
+            {                                                                                   // if it finds a quote (' or ")
+                inside_quote = !inside_quote;
+                if(inside_quote)
+                {
+                    start_quote = splitIndex;
+                }
+            }
+            else if(ch == '|')
+            {
+                if(!inside_quote)
+                {
+                    piped_cmds.add(input.substring(start_quote, splitIndex));
+                    piped_cmds.add(input.substring(splitIndex+1));
+                }
+            }
         }
+
+        if(piped_cmds.isEmpty())
+        {
+            piped_cmds.add(input);
+        }
+
+//        String pipeRegex = "[^|]+";
+//        Pattern piperegex = Pattern.compile(pipeRegex);
+//        Matcher piperegexmatcher = piperegex.matcher(input);
+//
+//        while(piperegexmatcher.find())
+//        {
+//            piped_cmds.add(piperegexmatcher.group());
+//        }
 
 
         for(String command : piped_cmds) {
@@ -62,7 +90,7 @@ public class Pipe extends Jsh implements CommandInterface
             ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
             // Here is the mess - does all the running the commands stuff
             try {
-                System.out.println("running app " + appName);
+                System.out.println("running app " + appName + " with args " + appArgs);
                 spFactory.getSP(appName).execute(appArgs.toArray(new String[0]), System.out); //EHERERERERERE
             } catch (NullPointerException e) {
                 throw new RuntimeException(appName + ": unknown application");

@@ -18,7 +18,10 @@ public class Jsh {
     private static void eval(String cmdline, OutputStream output) throws IOException {
         OutputStreamWriter writer = new OutputStreamWriter(output);
         ArrayList<String> rawCommands = new ArrayList<>();                                      // assume will be used later for raw commands
-		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;                           
+		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;
+
+		//this part splits into separate commands (seqs) if necessary;
+        //ignores quotes altogether and sends it straight to the program
 		for (splitIndex = 0; splitIndex < cmdline.length(); splitIndex++) {                     // iterates through the command line characters  
 			char ch = cmdline.charAt(splitIndex);                                               // isolates each character of the command line input  
 			if (ch == ';')
@@ -30,11 +33,8 @@ public class Jsh {
 			else if (ch == '\'' || ch == '\"')
 			{                                                                                   // if it finds a quote (' or ")
 				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);               // finds index of second matching quote
-				if (closingPairIndex == -1)                                                     // if there isn't one
+				if (closingPairIndex != -1)                                                     // if there isn't one
 				{
-                }
-				else
-                {
 					splitIndex = closingPairIndex;                                              // skips to after the closing quote (ignores enquoted areas)
 				}
             }
