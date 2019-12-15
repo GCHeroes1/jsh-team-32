@@ -19,27 +19,28 @@ public class Jsh {
         OutputStreamWriter writer = new OutputStreamWriter(output);
         ArrayList<String> rawCommands = new ArrayList<>();                                      // assume will be used later for raw commands
 		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;
-
+        Sequence().run(rawCommands, output);
 		//this part splits into separate commands (seqs) if necessary;
         //ignores quotes altogether and sends it straight to the program
-		for (splitIndex = 0; splitIndex < cmdline.length(); splitIndex++) {                     // iterates through the command line characters  
-			char ch = cmdline.charAt(splitIndex);                                               // isolates each character of the command line input  
-			if (ch == ';')
-			{
-				String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();      // stores and trims the command line up to the semi colon as a command 
-				rawCommands.add(command);                                                       // adds that command to the arraylist of commands 
-				prevDelimiterIndex = splitIndex + 1;                                            // jumps to the section after semi-colon 
-			}
-			else if (ch == '\'' || ch == '\"')
-			{                                                                                   // if it finds a quote (' or ")
-				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);               // finds index of second matching quote
-				if (closingPairIndex != -1)                                                     // if there isn't one
-				{
-					splitIndex = closingPairIndex;                                              // skips to after the closing quote (ignores enquoted areas)
-				}
-            }
+        
+		// for (splitIndex = 0; splitIndex < cmdline.length(); splitIndex++) {                     // iterates through the command line characters  
+		// 	char ch = cmdline.charAt(splitIndex);                                               // isolates each character of the command line input  
+		// 	if (ch == ';')
+		// 	{
+		// 		String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();      // stores and trims the command line up to the semi colon as a command 
+		// 		rawCommands.add(command);                                                       // adds that command to the arraylist of commands 
+		// 		prevDelimiterIndex = splitIndex + 1;                                            // jumps to the section after semi-colon 
+		// 	}
+		// 	else if (ch == '\'' || ch == '\"')
+		// 	{                                                                                   // if it finds a quote (' or ")
+		// 		closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);               // finds index of second matching quote
+		// 		if (closingPairIndex != -1)                                                     // if there isn't one
+		// 		{
+		// 			splitIndex = closingPairIndex;                                              // skips to after the closing quote (ignores enquoted areas)
+		// 		}
+        //     }
 
-        }
+        // }
 		if (!cmdline.isEmpty() && prevDelimiterIndex != splitIndex) {                           // if the command line wasn't empty and the line didn't end with a semi colon
 			String command = cmdline.substring(prevDelimiterIndex).trim();                      // creates a substring at the index and trims the word 
 			if (!command.isEmpty()) {                                                           
