@@ -2,6 +2,7 @@ package uk.ac.ucl.jsh;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,10 +13,11 @@ import java.util.regex.Pattern;
 
 public class Sequence extends Jsh implements CommandInterface{
     @Override
-    public void run(String input, OutputStream output) throws IOException {
+    public void run(String cmdline, OutputStream output) throws IOException {
         //Here is the code that separates by semicolons
         //this has just been copy/pasted in and will probz not work lolz
         OutputStreamWriter writer = new OutputStreamWriter(output);
+        ArrayList<String> rawCommands = new ArrayList<>();                                      // assume will be used later for raw commands
 		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;                           
 		for (splitIndex = 0; splitIndex < cmdline.length(); splitIndex++) {                     // iterates through the command line characters  
             char ch = cmdline.charAt(splitIndex);                                               // isolates each character of the command line input  
