@@ -1,11 +1,10 @@
-package uk.ac.ucl.jsh.shellprorgams;
+package uk.ac.ucl.jsh.shellprograms;
 
 import uk.ac.ucl.jsh.Jsh;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.concurrent.ExecutionException;
 
 public abstract class ShellProgram extends Jsh
 {

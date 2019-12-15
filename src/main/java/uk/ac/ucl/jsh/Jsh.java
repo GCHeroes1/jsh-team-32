@@ -1,6 +1,6 @@
 package uk.ac.ucl.jsh;
 
-import uk.ac.ucl.jsh.shellprorgams.SPFactory;
+import uk.ac.ucl.jsh.shellprograms.SPFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;

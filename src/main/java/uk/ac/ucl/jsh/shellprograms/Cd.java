@@ -1,12 +1,9 @@
- package uk.ac.ucl.jsh.shellprorgams;
-
-import uk.ac.ucl.jsh.Jsh;
+ package uk.ac.ucl.jsh.shellprograms;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class Cd extends ShellProgram

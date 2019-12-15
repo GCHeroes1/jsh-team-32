@@ -1,4 +1,4 @@
-package uk.ac.ucl.jsh.shellprorgams;
+package uk.ac.ucl.jsh.shellprograms;
 
 import java.util.HashMap;
 
