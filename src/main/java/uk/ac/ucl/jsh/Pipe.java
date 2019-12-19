@@ -98,7 +98,7 @@ public class Pipe extends Jsh implements CommandInterface
             try
             {
                 inputStream = new ByteArrayInputStream(cmdoutput.getBytes());
-                System.out.println("running app " + appName + " with args " + appArgs + " and stdin " + inputStream);
+                //System.out.println("running app " + appName + " with args " + appArgs + " and stdin " + inputStream);
                 //appArgs.toArray(new String[0])
                 spFactory.getSP(appName).execute(appArgs.toArray(new String[0]), inputStream, outputStream); //EHERERERERERE
                 cmdoutput = (new String(outputStream.toByteArray()));
