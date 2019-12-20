@@ -56,9 +56,9 @@ public class Grep extends ShellProgram
                 while ((line = reader.readLine()) != null) {
                     Matcher matcher = grepPattern.matcher(line);
                     if (matcher.find()) {
-                        writer.write(line);
-                        writer.write(System.getProperty("line.separator"));
-                        writer.flush();
+                        str_to_bytes.write(line);
+                        str_to_bytes.write(System.getProperty("line.separator"));
+                        str_to_bytes.flush();
                     }
                 }
             } catch (IOException e) {

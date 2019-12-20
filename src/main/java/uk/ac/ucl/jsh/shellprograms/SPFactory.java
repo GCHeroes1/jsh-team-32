@@ -14,7 +14,9 @@ public class SPFactory
         programs.put("head", new Head());
         programs.put("ls", new Ls());
         programs.put("pwd", new Pwd());
+        programs.put("sed", new Sed());
         programs.put("tail", new Tail());
+
     }
 
     public ShellProgram getSP(String program)

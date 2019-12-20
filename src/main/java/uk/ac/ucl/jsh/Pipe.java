@@ -20,7 +20,7 @@ public class Pipe extends Jsh implements CommandInterface
         //OutputStreamWriter temp_writer = new OutputStreamWriter(System.out);
 
         ArrayList<String> piped_cmds = new ArrayList<>();
-        int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0, start_quote = 0;
+        int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0, start_quote = 0, last_pipe = 0;
         boolean inside_quote = false;
         for (splitIndex = 0; splitIndex < input.length(); splitIndex++) {                     // iterates through the command line characters
             char ch = input.charAt(splitIndex);                                               // isolates each character of the command line input
@@ -36,16 +36,14 @@ public class Pipe extends Jsh implements CommandInterface
             {
                 if(!inside_quote)
                 {
-                    piped_cmds.add(input.substring(start_quote, splitIndex));
-                    piped_cmds.add(input.substring(splitIndex+1));
+                    piped_cmds.add(input.substring(last_pipe, splitIndex));
+                    last_pipe = splitIndex + 1;
+                    //piped_cmds.add(input.substring(splitIndex+1));
                 }
             }
         }
 
-        if(piped_cmds.isEmpty())
-        {
-            piped_cmds.add(input);
-        }
+        piped_cmds.add(input.substring(last_pipe, splitIndex));
 
 //        String pipeRegex = "[^|]+";
 //        Pattern piperegex = Pattern.compile(pipeRegex);
