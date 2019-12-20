@@ -21,10 +21,27 @@ public class Pipe extends Jsh implements CommandInterface
 
         ArrayList<String> piped_cmds = new ArrayList<>();
         int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0, start_quote = 0;
+        int openingBackquoteIndex, closingBackquoteIndex = 0;
         boolean inside_quote = false;
+        String cmdoutput = "";
         for (splitIndex = 0; splitIndex < input.length(); splitIndex++) {                     // iterates through the command line characters
             char ch = input.charAt(splitIndex);                                               // isolates each character of the command line input
-            if (ch == '\'' || ch == '\"')
+            if (ch == '`')
+			{
+				//String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();
+				openingBackquoteIndex = input.indexOf(ch, '`');
+				closingBackquoteIndex = input.indexOf(ch, splitIndex + 1);
+				if (closingBackquoteIndex != -1)
+				{
+					splitIndex = closingBackquoteIndex;
+                    String subCommand = input.substring((openingBackquoteIndex+1), closingBackquoteIndex); // create a command of the 
+                    Sequence sequence = new Sequence();
+                    //THIS IS TO BE CHANGED - NEED TO USE BYTE ARRAY IDK 
+                    cmdoutput = "foo bar";
+                    //sequence.run(subCommand, output);
+				}
+			}
+            else if (ch == '\'' || ch == '\"')
             {                                                                                   // if it finds a quote (' or ")
                 inside_quote = !inside_quote;
                 if(inside_quote)
@@ -58,7 +75,6 @@ public class Pipe extends Jsh implements CommandInterface
 
 
         //InputStream instream = new ByteArrayInputStream(piped_cmds.get(0).getBytes());
-        String cmdoutput = "";
 //        ByteArrayInputStream outputStream = new ByteArrayInputStream();
         //OutputStreamWriter hellothere = new OutputStreamWriter(outstream);
         for(String command : piped_cmds) {
