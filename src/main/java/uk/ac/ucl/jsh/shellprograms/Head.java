@@ -15,13 +15,15 @@ public class Head extends ShellProgram
         if (args.length == 0) {                                                       
             throw new RuntimeException("head: missing arguments");
         }
-        if (args.length != 1 && args.length != 3) {                              
-            throw new RuntimeException("head: wrong arguments");                       
+        if (args.length != 1 && args.length != 3) { // this isn't right because there's other options where there's 2 args (if number is specififed but not file) or 0 args (neither number nor file specified)                                                  
+            throw new RuntimeException("head: wrong arguments"); 
         }
         if (args.length == 3 && !args[0].equals("-n")) {                     
             throw new RuntimeException("head: wrong argument " + args[0]);      
         }
-        int headLines = 10;                                                            
+        // if no file specified (if 2 args where arg[0] == '-n' and arg[1] is an int, or 0 arg) use stdin
+        //if no number specified (if 1 arg where arg[0] is a file or 0 arg) use 10, see:
+        int headLines = 10; //this gets changed if a number of lines is specified                                                            
         String headArg;
         if (args.length == 3) {                                                     
             try {
