@@ -69,7 +69,7 @@ public class Head extends ShellProgram
                 Path filePath = Paths.get((String) currentDirectory + File.separator + headArg);
                 try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
                     for (int i = 0; i < headLines; i++) {
-                        String line = null;
+                        String line;
                         if ((line = reader.readLine()) != null) {
                             str_to_bytes.write(line);
                             str_to_bytes.write(System.getProperty("line.separator"));

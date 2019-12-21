@@ -48,40 +48,43 @@ public class Tail extends ShellProgram
         tailArg = "stdin";
         }
         if (tailArg.equals("stdin")){
+            String line;
             BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
-            int lines = 0;
-            while (reader.readLine() != null) lines++;
+            ArrayList<String> lines = new ArrayList<>();
+            while ((line = reader.readLine()) != null) lines.add(line);
             reader.close();
             //this is very inefficient and I'm sorry
-            BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
-            for (int i = (lines - tailLines); i < lines; i++){
-                String line = null;
-                if ((line = bfr.readLine()) != null) {
-                    str_to_bytes.write(line);
+            if(lines.size()>0)
+            {
+                int index = Math.max(lines.size() - tailLines, 0);
+                for (; index < lines.size(); index++){
+                    str_to_bytes.write(lines.get(index));
                     str_to_bytes.write(System.getProperty("line.separator"));
                     str_to_bytes.flush();
                 }
             }
+
         }
         else{
             File tailFile = new File(currentDirectory + File.separator + tailArg);
             if (tailFile.exists()) {
                 Charset encoding = StandardCharsets.UTF_8;
                 Path filePath = Paths.get((String) currentDirectory + File.separator + tailArg);
+
                 ArrayList<String> storage = new ArrayList<>();
                 try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
-                    String line = null;
+                    String line;
                     while ((line = reader.readLine()) != null) {
                         storage.add(line);
                     }
                     int index = 0;
-                    if (tailLines > storage.size()) {
-                        index = 0;
-                    } else {
+                    if (tailLines < storage.size())
+                    {
                         index = storage.size() - tailLines;
                     }
                     for (int i = index; i < storage.size(); i++) {
-                        str_to_bytes.write(storage.get(i) + System.getProperty("line.separator"));
+                        str_to_bytes.write(storage.get(i));
+                        str_to_bytes.write(System.getProperty("line.separator"));
                         str_to_bytes.flush();
                     }
                 } catch (IOException e) {
