@@ -38,38 +38,56 @@ public class Tail extends ShellProgram
             } catch (Exception e) {
                 throw new RuntimeException("tail: wrong argument " + args[1]);
             }
-            tailArg = stdin; //fix this pls alex
+            tailArg = "stdin";
         } else if (args.length == 1){
             tailArg = args[0];
         } else if (args.length == 0){
-        tailArg = stdin; //fix this pls alex
+        tailArg = "stdin";
         }
-        //make sure if there's less than N lines it just prints them all without raising an exception
-        File tailFile = new File(currentDirectory + File.separator + tailArg);
-        if (tailFile.exists()) {
-            Charset encoding = StandardCharsets.UTF_8;
-            Path filePath = Paths.get((String) currentDirectory + File.separator + tailArg);
-            ArrayList<String> storage = new ArrayList<>();
-            try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
+        if (tailArg.equals("stdin")){
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
+            int lines = 0;
+            while (reader.readLine() != null) lines++;
+            reader.close();
+            //this is very inefficient and I'm sorry
+            BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
+            for (int i = (lines - tailLines); i < lines; i++){
                 String line = null;
-                while ((line = reader.readLine()) != null) {
-                    storage.add(line);
+                if ((line = reader.readLine()) != null) {
+                    str_to_bytes.write(line);
+                    str_to_bytes.write(System.getProperty("line.separator"));
+                    str_to_bytes.flush();
                 }
-                int index = 0;
-                if (tailLines > storage.size()) {
-                    index = 0;
-                } else {
-                    index = storage.size() - tailLines;
-                }
-                for (int i = index; i < storage.size(); i++) {
-                    writer.write(storage.get(i) + System.getProperty("line.separator"));
-                    writer.flush();
-                }
-            } catch (IOException e) {
-                throw new RuntimeException("tail: cannot open " + tailArg);
             }
-        } else {
-            throw new RuntimeException("tail: " + tailArg + " does not exist");
+        }
+        else{
+            File tailFile = new File(currentDirectory + File.separator + tailArg);
+            if (tailFile.exists()) {
+                Charset encoding = StandardCharsets.UTF_8;
+                Path filePath = Paths.get((String) currentDirectory + File.separator + tailArg);
+                ArrayList<String> storage = new ArrayList<>();
+                try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        storage.add(line);
+                    }
+                    int index = 0;
+                    if (tailLines > storage.size()) {
+                        index = 0;
+                    } else {
+                        index = storage.size() - tailLines;
+                    }
+                    for (int i = index; i < storage.size(); i++) {
+                        writer.write(storage.get(i) + System.getProperty("line.separator"));
+                        writer.flush();
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException("tail: cannot open " + tailArg);
+                }
+            } else {
+                throw new RuntimeException("tail: " + tailArg + " does not exist");
+            }
         }
     }
 }
+// also have not tested this yet. potentially should close our buffer readers.

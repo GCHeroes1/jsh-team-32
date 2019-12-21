@@ -39,32 +39,44 @@ public class Head extends ShellProgram
             } catch (Exception e) {
                 throw new RuntimeException("head: wrong argument " + args[1]);  
             }
-            headArg = stdin; //fix this pls alex
+            headArg = "stdin";
         } else if (args.length == 1){
             headArg = args[0];
         } else if (args.length == 0){
-            headArg = stdin; //fix this pls alex
+            headArg = "stdin";
         }
-        //Make sure if there's less than n lines it doesn't raise an exception! it just prints all the lines
-        File headFile = new File(currentDirectory + File.separator + headArg);         
-        if (headFile.exists()) {
-            Charset encoding = StandardCharsets.UTF_8;
-            Path filePath = Paths.get((String) currentDirectory + File.separator + headArg);
-            try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
-                for (int i = 0; i < headLines; i++) {
-                    String line = null;
-                    if ((line = reader.readLine()) != null) {
-                        writer.write(line);
-                        writer.write(System.getProperty("line.separator"));
-                        writer.flush();
-                    }
+        if (headArg.equals("stdin")){
+            BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
+            for (int i = 0; i < headLines; i++){
+                String line = null;
+                if ((line = reader.readLine()) != null) {
+                    str_to_bytes.write(line);
+                    str_to_bytes.write(System.getProperty("line.separator"));
+                    str_to_bytes.flush();
                 }
-            } catch (IOException e) {
-                throw new RuntimeException("head: cannot open " + headArg);
             }
-        } else {
-            throw new RuntimeException("head: " + headArg + " does not exist");
+        }
+        else {
+            File headFile = new File(currentDirectory + File.separator + headArg);         
+            if (headFile.exists()) {
+                Charset encoding = StandardCharsets.UTF_8;
+                Path filePath = Paths.get((String) currentDirectory + File.separator + headArg);
+                try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
+                    for (int i = 0; i < headLines; i++) {
+                        String line = null;
+                        if ((line = reader.readLine()) != null) {
+                            writer.write(line);
+                            writer.write(System.getProperty("line.separator"));
+                            writer.flush();
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException("head: cannot open " + headArg);
+                }
+            } else {
+                throw new RuntimeException("head: " + headArg + " does not exist");
+            }
         }
     }
-
+    //I haven't tested this so don't kill me if it's broken oops
 }
