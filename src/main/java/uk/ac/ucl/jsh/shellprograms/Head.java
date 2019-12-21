@@ -71,9 +71,9 @@ public class Head extends ShellProgram
                     for (int i = 0; i < headLines; i++) {
                         String line = null;
                         if ((line = reader.readLine()) != null) {
-                            writer.write(line);
-                            writer.write(System.getProperty("line.separator"));
-                            writer.flush();
+                            str_to_bytes.write(line);
+                            str_to_bytes.write(System.getProperty("line.separator"));
+                            str_to_bytes.flush();
                         }
                     }
                 } catch (IOException e) {

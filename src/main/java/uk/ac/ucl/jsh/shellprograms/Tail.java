@@ -81,8 +81,8 @@ public class Tail extends ShellProgram
                         index = storage.size() - tailLines;
                     }
                     for (int i = index; i < storage.size(); i++) {
-                        writer.write(storage.get(i) + System.getProperty("line.separator"));
-                        writer.flush();
+                        str_to_bytes.write(storage.get(i) + System.getProperty("line.separator"));
+                        str_to_bytes.flush();
                     }
                 } catch (IOException e) {
                     throw new RuntimeException("tail: cannot open " + tailArg);
