@@ -23,6 +23,7 @@ public class Grep extends ShellProgram
         //System.out.println(new String(a));
         if (args.length == 1) {
             //throw new RuntimeException("grep: wrong number of arguments");
+            //line above not valid anymore. 1 arg == use stdin
             String line = null;
             BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
             while((line = bfr.readLine()) != null)

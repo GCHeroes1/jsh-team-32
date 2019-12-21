@@ -13,11 +13,12 @@ public class Tail extends ShellProgram
     @Override
     public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException
     {
+        OutputStreamWriter str_to_bytes = new OutputStreamWriter(output);
         /*if (args.length == 0) {
             throw new RuntimeException("tail: missing arguments");
         }*/ 
         // Correct me if I'm wrong but theoretically if there's 0 args it should print the last 10 lines of stdin?
-        if (args.length < 0 || args.length > 3) {
+        if (args.length > 3) {  //args.length < 0 always false
             throw new RuntimeException("tail: wrong arguments");
         }
         if (args.length == 3 && !args[0].equals("-n")) {
@@ -41,7 +42,9 @@ public class Tail extends ShellProgram
             tailArg = "stdin";
         } else if (args.length == 1){
             tailArg = args[0];
-        } else if (args.length == 0){
+        }
+        else
+        {
         tailArg = "stdin";
         }
         if (tailArg.equals("stdin")){
@@ -53,7 +56,7 @@ public class Tail extends ShellProgram
             BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
             for (int i = (lines - tailLines); i < lines; i++){
                 String line = null;
-                if ((line = reader.readLine()) != null) {
+                if ((line = bfr.readLine()) != null) {
                     str_to_bytes.write(line);
                     str_to_bytes.write(System.getProperty("line.separator"));
                     str_to_bytes.flush();
