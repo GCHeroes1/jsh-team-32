@@ -12,10 +12,11 @@ public class Head extends ShellProgram
     @Override
     public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException
     {
-        if (args.length == 0) {                                                       
+        /*if (args.length == 0) {                                                       
             throw new RuntimeException("head: missing arguments");
-        }
-        if (args.length < 0 && args.length > 3) {  
+        }*/
+        //Correct me if I'm  wrong but theoretically if there's no args it should print the first 10 lines of stdin?
+        if (args.length < 0 || args.length > 3) {  
             throw new RuntimeException("head: wrong arguments"); 
         }
         if (args.length == 3 && !args[0].equals("-n")) {                     
@@ -44,9 +45,7 @@ public class Head extends ShellProgram
         } else if (args.length == 0){
             headArg = stdin; //fix this pls alex
         }
-
-            headArg = args[0];
-        }
+        //Make sure if there's less than n lines it doesn't raise an exception! it just prints all the lines
         File headFile = new File(currentDirectory + File.separator + headArg);         
         if (headFile.exists()) {
             Charset encoding = StandardCharsets.UTF_8;
