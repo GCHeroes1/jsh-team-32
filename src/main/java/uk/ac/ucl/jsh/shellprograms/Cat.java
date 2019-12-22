@@ -14,7 +14,18 @@ public class Cat extends ShellProgram
     {
         OutputStreamWriter str_to_bytes = new OutputStreamWriter(output);
         if (args.length == 0) {                                                        // if there is no argument, cant cat nothing
-            throw new RuntimeException("cat: missing arguments");
+            String line = null;
+            BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
+            while((line = bfr.readLine()) != null)
+            {
+                Matcher matcher = grepPattern.matcher(line);
+                if(matcher.find())
+                {
+                    str_to_bytes.write(line);
+                    str_to_bytes.write(System.getProperty("line.separator"));
+                    str_to_bytes.flush();
+                }
+            }
         } else {
             for (String arg : args) {                                                // for each file specified in the arguments 
                 Charset encoding = StandardCharsets.UTF_8;                              // print it using UTF 8 
