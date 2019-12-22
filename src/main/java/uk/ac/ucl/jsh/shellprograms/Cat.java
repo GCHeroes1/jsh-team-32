@@ -18,13 +18,9 @@ public class Cat extends ShellProgram
             BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
             while((line = bfr.readLine()) != null)
             {
-                Matcher matcher = grepPattern.matcher(line);
-                if(matcher.find())
-                {
-                    str_to_bytes.write(line);
-                    str_to_bytes.write(System.getProperty("line.separator"));
-                    str_to_bytes.flush();
-                }
+                str_to_bytes.write(line);
+                str_to_bytes.write(System.getProperty("line.separator"));
+                str_to_bytes.flush();
             }
         } else {
             for (String arg : args) {                                                // for each file specified in the arguments 
