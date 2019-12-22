@@ -29,16 +29,21 @@ public class Pipe extends Jsh implements CommandInterface
             if (ch == '`')
 			{
 				//String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();
-				openingBackquoteIndex = input.indexOf(ch, '`');
+				openingBackquoteIndex = input.indexOf(ch);
 				closingBackquoteIndex = input.indexOf(ch, splitIndex + 1);
 				if (closingBackquoteIndex != -1)
 				{
 					splitIndex = closingBackquoteIndex;
                     String subCommand = input.substring((openingBackquoteIndex+1), closingBackquoteIndex); // create a command of the 
                     Sequence sequence = new Sequence();
-                    //THIS IS TO BE CHANGED - NEED TO USE BYTE ARRAY IDK 
-                    cmdoutput = "foo bar";
-                    //sequence.run(subCommand, output);
+                    //subCommand = "\"" + subCommand + "\""; // bit hacky...
+                    System.out.println("the sub command is " + subCommand); //its definitely getting the right argument for the next sequence call
+                    //THIS IS TO BE CHANGED - NEED TO USE BYTE ARRAY IDK - not necessary?
+                    // First call sequence, skip over the ` (doesnt actually seem to work but not sure), then call pipe with the contents of `...` as the argument 
+                    // In pipe, check for `, in this case, run sequence with the subset of commands that were within `
+                    //cmdoutput = "foo bar";
+                    // my logic is flawed, the result of the next sequence call is the thing that needs quotes around it 
+                    sequence.run(subCommand, output);
 				}
 			}
             else if (ch == '\'' || ch == '\"')
