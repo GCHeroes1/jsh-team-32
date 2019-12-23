@@ -42,10 +42,10 @@ public class Pipe extends Jsh implements CommandInterface
 //                    {
 //                        cmdoutput = cmdoutput.substring(0, cmdoutput.length()-2);
 //                    }
-                    cmdoutput = cmdoutput.replace("\n", " ").replace("\r", "");
+                    cmdoutput = cmdoutput.replace("\n", " ").replace("\r", "").strip();
                     // System.out.println("pre: " + input);
-                    input = input.substring(0, openingBackquoteIndex) + "\"" + cmdoutput + "\" " + input.substring(closingBackquoteIndex + 1);
-                    splitIndex = openingBackquoteIndex + cmdoutput.length() + 1; // +1 and not -2 because we added '"', '"' and ' '
+                    input = input.substring(0, openingBackquoteIndex) + "\"" + cmdoutput + "\"" + input.substring(closingBackquoteIndex + 1);
+                    splitIndex = openingBackquoteIndex + cmdoutput.length(); // +1 and not -2 because we added '"', '"' and ' '
                     // System.out.println("post: " + input);
 
                 }
@@ -87,32 +87,10 @@ public class Pipe extends Jsh implements CommandInterface
         for(String command : piped_cmds) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[2048]);
-            String spaceRegex = "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'";
-            //String spaceRegex = "[^\\s\"'|]+([\\s]*\\|[\\s]*[^\\s\"'|]+)*|\"([^\"]*)\"|'([^']*)'";
-            // regex above separates input into tokens by space and lonely single or double quotes, and keeps pipe characters in between words if surrounded by spaces or not. The pipe has to be between words.
-            ArrayList<String> tokens = new ArrayList<>();                                       // know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
-            Pattern regex = Pattern.compile(spaceRegex);                                        // just compiles the regex
-            Matcher regexMatcher = regex.matcher(command);                                      // creates a "matcher"
-            String nonQuote;
-            while (regexMatcher.find()) {                                                       // as long as there is a match it will continue the while loop
-                if (regexMatcher.group(1) != null || regexMatcher.group(2) != null) {           // checking if there is a first and second group (it'd be null if it didn't exist?)
-                    String quoted = regexMatcher.group(0).trim();                               // group(0) is the entire thing, trims it?
-                    tokens.add(quoted.substring(1, quoted.length() - 1));                          // just removes the quotes
-                } else {
-                    nonQuote = regexMatcher.group().trim();                                     // trims the entire regex
-                    ArrayList<String> globbingResult = new ArrayList<>();
-                    Path dir = Paths.get(currentDirectory);                                     // path object, represents operating system level directory
-                    DirectoryStream<Path> stream = null;     // using the OS to do globbing for him
-                    stream = Files.newDirectoryStream(dir, nonQuote);
-                    for (Path entry : stream) {
-                        globbingResult.add(entry.getFileName().toString());                     // putting results back into the variable
-                    }
-                    if (globbingResult.isEmpty()) {
-                        globbingResult.add(nonQuote);
-                    }
-                    tokens.addAll(globbingResult);
-                }
-            }
+
+            command = merge_collated_quotes(command);
+            ArrayList<String> tokens = split_quotes(command);
+
             String appName = tokens.get(0);                                                     // gets first token
             ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
             // Here is the mess - does all the running the commands stuff
@@ -142,6 +120,57 @@ public class Pipe extends Jsh implements CommandInterface
 
 
 
+    }
+
+    private String merge_collated_quotes(String command)
+    {
+        String collated_quotes_regex = "([^\\s\"]*(\"[^\"]*\")*[^\\s\"]*)|([^\\s\']*(\'[^\']*\')*[^\\s\']*)";
+        Pattern regex_pattern = Pattern.compile(collated_quotes_regex);
+        Matcher regex_matcher = regex_pattern.matcher(command);
+        ArrayList<String> pieces = new ArrayList<>();
+        String match;
+        while (regex_matcher.find())
+        {
+            match = regex_matcher.group();
+            if(match.indexOf('"') != -1)  // only put quotes around if the part contains quotes
+            {
+                match = match.replace("\"", "");
+                match = "\"" + match + "\"";
+            }
+            pieces.add(match);
+        }
+        return String.join(" ", pieces);
+    }
+
+    private ArrayList<String> split_quotes(String command) throws IOException
+    {
+        String spaceRegex = "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'";
+        //String spaceRegex = "[^\\s\"'|]+([\\s]*\\|[\\s]*[^\\s\"'|]+)*|\"([^\"]*)\"|'([^']*)'";
+        // regex above separates input into tokens by space and lonely single or double quotes, and keeps pipe characters in between words if surrounded by spaces or not. The pipe has to be between words.
+        ArrayList<String> tokens = new ArrayList<>();                                       // know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
+        Pattern regex = Pattern.compile(spaceRegex);                                        // just compiles the regex
+        Matcher regexMatcher = regex.matcher(command);                                      // creates a "matcher"
+        String nonQuote;
+        while (regexMatcher.find()) {                                                       // as long as there is a match it will continue the while loop
+            if (regexMatcher.group(1) != null || regexMatcher.group(2) != null) {           // check if is quoted
+                String quoted = regexMatcher.group(0).trim();                               // group(0) is the entire thing, trims it?
+                tokens.add(quoted.substring(1, quoted.length() - 1));                          // just removes the quotes
+            } else {
+                nonQuote = regexMatcher.group().trim();                                     // trims the entire regex
+                ArrayList<String> globbingResult = new ArrayList<>();
+                Path dir = Paths.get(currentDirectory);                                     // path object, represents operating system level directory
+                DirectoryStream<Path> stream = null;     // using the OS to do globbing for him
+                stream = Files.newDirectoryStream(dir, nonQuote);
+                for (Path entry : stream) {
+                    globbingResult.add(entry.getFileName().toString());                     // putting results back into the variable
+                }
+                if (globbingResult.isEmpty()) {
+                    globbingResult.add(nonQuote);
+                }
+                tokens.addAll(globbingResult);
+            }
+        }
+        return tokens;
     }
 
 }
