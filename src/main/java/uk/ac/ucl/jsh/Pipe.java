@@ -30,7 +30,8 @@ public class Pipe extends Jsh implements CommandInterface
 			{
 				//String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();
 				openingBackquoteIndex = input.indexOf(ch);
-				closingBackquoteIndex = input.indexOf(ch, splitIndex + 1);
+                closingBackquoteIndex = input.indexOf(ch, splitIndex + 1);                    
+                ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
 				if (closingBackquoteIndex != -1)
 				{
 					splitIndex = closingBackquoteIndex;
@@ -43,8 +44,10 @@ public class Pipe extends Jsh implements CommandInterface
                     // In pipe, check for `, in this case, run sequence with the subset of commands that were within `
                     //cmdoutput = "foo bar";
                     // my logic is flawed, the result of the next sequence call is the thing that needs quotes around it 
-                    sequence.run(subCommand, output);
-				}
+                    sequence.run(subCommand, byteArray);
+                }
+                cmdoutput = (byteArray.toString());
+                cmdoutput = "\"" + cmdoutput + "\"";
 			}
             else if (ch == '\'' || ch == '\"')
             {                                                                                   // if it finds a quote (' or ")
