@@ -64,7 +64,7 @@ public class Jsh {
             try {
                 eval(args[1], System.out);
             } catch (Exception e) {
-                System.out.println("jsh: " + e.getMessage());
+                // System.out.println("jsh: " + e.getMessage());
             }
         } else {
             System.out.println("Welcome to JSH!");
@@ -80,7 +80,7 @@ public class Jsh {
                         }
                         eval(cmdline, System.out);
                     } catch (Exception e) {
-                        System.out.println("jsh: " + e.getMessage());
+                        // System.out.println("jsh: " + e.getMessage());
                     }
                 }
             }
