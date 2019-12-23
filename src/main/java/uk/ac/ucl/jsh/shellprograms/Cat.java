@@ -14,7 +14,7 @@ public class Cat extends ShellProgram
     {
         OutputStreamWriter str_to_bytes = new OutputStreamWriter(output);
         if (args.length == 0) {                                                        // if there is no argument, cant cat nothing
-            String line = null;
+            String line;
             BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
             while((line = bfr.readLine()) != null)
             {
