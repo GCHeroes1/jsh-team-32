@@ -17,17 +17,30 @@ public class Sequence extends Jsh implements CommandInterface{
         OutputStreamWriter writer = new OutputStreamWriter(output);
         ArrayList<String> rawCommands = new ArrayList<>();                                      // assume will be used later for raw commands
 		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;
+		// int openingBackquoteIndex, closingBackquoteIndex = 0;
         //Here is the code that separates by semicolons
         //this has just been copy/pasted in and will probz not work lolz
 		for (splitIndex = 0; splitIndex < cmdline.length(); splitIndex++) {                     // iterates through the command line characters  
 			char ch = cmdline.charAt(splitIndex);                                               // isolates each character of the command line input  
+			// if (ch == '`')
+			// {
+			// 	//String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();
+			// 	openingBackquoteIndex = cmdline.indexOf(ch, '`');
+			// 	closingBackquoteIndex = cmdline.indexOf(ch, splitIndex + 1);
+			// 	if (closingBackquoteIndex != -1)
+			// 	{
+			// 		splitIndex = closingBackquoteIndex;
+			// 		String subCommand = cmdline.substring((openingBackquoteIndex+1), closingBackquoteIndex);
+			// 		this.run(subCommand, output);
+			// 	}
+			// }
 			if (ch == ';')
 			{
 				String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();      // stores and trims the command line up to the semi colon as a command 
 				rawCommands.add(command);                                                       // adds that command to the arraylist of commands 
 				prevDelimiterIndex = splitIndex + 1;                                            // jumps to the section after semi-colon 
 			}
-			else if (ch == '\'' || ch == '\"')
+			else if (ch == '\'' || ch == '\"' || ch == '`')										// modified to help with 
 			{                                                                                   // if it finds a quote (' or ")
 				closingPairIndex = cmdline.indexOf(ch, splitIndex + 1);               // finds index of second matching quote
 				if (closingPairIndex != -1)                                                     // if there isn't one
