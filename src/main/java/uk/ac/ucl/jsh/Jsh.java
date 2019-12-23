@@ -4,8 +4,6 @@ import uk.ac.ucl.jsh.shellprograms.SPFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Jsh {
