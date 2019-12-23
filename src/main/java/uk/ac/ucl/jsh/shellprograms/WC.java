@@ -1,51 +1,79 @@
 
-
 package uk.ac.ucl.jsh.shellprograms;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class WC extends ShellProgram
-{
+public class WC extends ShellProgram {
+    private int countChar(Reader file) {
+        BufferedReader reader = new BufferedReader(file);
+        int charCount = 0;
+        String data = " ";
+        while (data != null) {
+            try {
+                data = reader.readLine();
+            } catch (IOException e) {
+                
+                e.printStackTrace();
+            }
+            charCount += data.length();
+        }
+      return charCount;
+    }
+    private int countWord(Reader file) throws IOException {
+        BufferedReader reader = new BufferedReader(file);     
+        String line = reader.readLine();
+        int count = 0;
+        while (line != null) {
+            String [] words = line.split(" ");
+            for( String x : words)
+            {
+                count++;        
+            }
+            line = reader.readLine();
+       }     
+       return count;    
+    }
+    private int countLines(Reader file) throws FileNotFoundException, IOException{
+        BufferedReader reader = new BufferedReader(file);
+        int lines = 0;
+        while (reader.readLine() != null) lines++;
+        reader.close();
+        return lines;
+    }
     @Override
     public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException
     {
+        OutputStreamWriter str_to_bytes = new OutputStreamWriter(output);
         if (args.length < 1 || args.length > 2){
+            throw new RuntimeException("wc: wrong number of arguments");
+        }
+        if (args[0] == "-m"){
+            if (args.length == 1){
+                str_to_bytes.write(countChar(new InputStreamReader(stdin))); 
+             }
+             else if (args.length == 2){
+                 str_to_bytes.write(countChar(new FileReader(args[1]))); 
+              }
+        }
+        else if(args[0] == "-w"){
+            if (args.length == 1){
+                str_to_bytes.write(countWord(new InputStreamReader(stdin))); 
+             }
+             else if (args.length == 2){
+                 str_to_bytes.write(countWord(new FileReader(args[1]))); 
+              }
+        }
+        else if(args[0] == "-l"){
+            if (args.length == 1){
+               str_to_bytes.write(countLines(new InputStreamReader(stdin))); 
+            }
+            else if (args.length == 2){
+                str_to_bytes.write(countLines(new FileReader(args[1]))); 
+             }
+        }
+        else{
             throw new RuntimeException("wc: wrong arguments");
         }
-        if (args.length == 1){
-            if (args[0] == "-m"){
-                //print the char count of stdin
-            }
-            else if(args[0] == "-w"){
-                //print the word (space) count of stdin
-            }
-            else if(args[0] == "-l"){
-                //print the line count of stdin
-            }
-            else{
-                throw new RuntimeException("wc: wrong arguments");
-            }
-        } 
-        else{
-            if (args[0] == "-m"){
-                //print the char count of args[1]
-            }
-            else if(args[0] == "-w"){
-                //print the word (space) count of args[1]
-            }
-            else if(args[0] == "-l"){
-                //print the line count of args[1]
-            }
-            else{
-                throw new RuntimeException("wc: wrong arguments");
-            }
-        }
+        str_to_bytes.close();
     }
 }
