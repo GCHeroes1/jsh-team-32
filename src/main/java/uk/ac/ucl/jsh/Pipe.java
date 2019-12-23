@@ -30,36 +30,28 @@ public class Pipe extends Jsh implements CommandInterface
 			{
 				//String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();
 				openingBackquoteIndex = input.indexOf(ch);
-                closingBackquoteIndex = input.indexOf(ch, splitIndex + 1);                    
-                ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+                closingBackquoteIndex = input.indexOf(ch, splitIndex + 1);
+                ByteArrayOutputStream sub_command_output = new ByteArrayOutputStream();
 				if (closingBackquoteIndex != -1)
 				{
 					splitIndex = closingBackquoteIndex;
-                    String subCommand = input.substring((openingBackquoteIndex+1), closingBackquoteIndex); // create a command of the 
-                    Sequence sequence = new Sequence();
-                    //subCommand = "\"" + subCommand + "\""; // bit hacky...
-//                    System.out.println("the sub command is " + subCommand); //its definitely getting the right argument for the next sequence call
-                    //THIS IS TO BE CHANGED - NEED TO USE BYTE ARRAY IDK - not necessary?
-                    // First call sequence, skip over the ` (doesnt actually seem to work but not sure), then call pipe with the contents of `...` as the argument 
-                    // In pipe, check for `, in this case, run sequence with the subset of commands that were within `
-                    //cmdoutput = "foo bar";
-                    // my logic is flawed, the result of the next sequence call is the thing that needs quotes around it 
-                    sequence.run(subCommand, byteArray);
-                    cmdoutput = (new String(byteArray.toByteArray()));
-                    while("\n\r".indexOf(cmdoutput.charAt(cmdoutput.length()-1)) != -1)  //check if there is a newline char
-                    {
-                        cmdoutput = cmdoutput.substring(0, cmdoutput.length()-2);
-                    }
-                    cmdoutput = "\"" + cmdoutput + "\" ";
-                    System.out.println("pre: " + input);
-                    input = input.substring(0, openingBackquoteIndex) + cmdoutput + input.substring(closingBackquoteIndex + 1);
-                    splitIndex = openingBackquoteIndex + cmdoutput.length() - 2;
-                    System.out.println("post: " + input);
+                    String subCommand = input.substring((openingBackquoteIndex+1), closingBackquoteIndex); // create a command of the
+                    (new Sequence()).run(subCommand, sub_command_output);
+                    cmdoutput = (new String(sub_command_output.toByteArray()));
+//                    while("\n\r".indexOf(cmdoutput.charAt(cmdoutput.length()-1)) != -1)  //removes trailing newlines
+//                    {
+//                        cmdoutput = cmdoutput.substring(0, cmdoutput.length()-2);
+//                    }
+                    cmdoutput = cmdoutput.replace("\n", "").replace("\r", "");
+                    // System.out.println("pre: " + input);
+                    input = input.substring(0, openingBackquoteIndex) + "\"" + cmdoutput + "\" " + input.substring(closingBackquoteIndex + 1);
+                    splitIndex = openingBackquoteIndex + cmdoutput.length() + 1; // +1 and not -2 because we added '"', '"' and ' '
+                    // System.out.println("post: " + input);
 
                 }
 			}
-            else if (ch == '\'' || ch == '\"')
-            {                                                                                   // if it finds a quote (' or ")
+            else if (ch == '\'' || ch == '\"') // if it finds a quote (' or ")
+            {
                 inside_quote = !inside_quote;
                 if(inside_quote)
                 {
