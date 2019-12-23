@@ -42,7 +42,7 @@ public class Pipe extends Jsh implements CommandInterface
 //                    {
 //                        cmdoutput = cmdoutput.substring(0, cmdoutput.length()-2);
 //                    }
-                    cmdoutput = cmdoutput.replace("\n", "").replace("\r", "");
+                    cmdoutput = cmdoutput.replace("\n", " ").replace("\r", "");
                     // System.out.println("pre: " + input);
                     input = input.substring(0, openingBackquoteIndex) + "\"" + cmdoutput + "\" " + input.substring(closingBackquoteIndex + 1);
                     splitIndex = openingBackquoteIndex + cmdoutput.length() + 1; // +1 and not -2 because we added '"', '"' and ' '
