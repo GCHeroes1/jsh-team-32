@@ -1,23 +1,21 @@
 package uk.ac.ucl.jsh;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import static org.junit.Assert.*;
-
 import java.io.*;
-import java.rmi.server.ExportException;
+
+import static org.junit.Assert.*;
 
 public class JshTest {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public JshTest(){
+    public JshTest() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
@@ -26,8 +24,7 @@ public class JshTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Before
-    public void setup_file_env() throws IOException
-    {
+    public void setup_file_env() throws IOException {
         workingDir = temporaryFolder.newFolder("testfolder");
         //System.out.println(workingDir.getCanonicalPath());
         FileUtils.copyDirectory(new File("src/test/test_template"), workingDir);
@@ -36,16 +33,11 @@ public class JshTest {
     }
 
 
-
-
     @Test
     public void test_echo() {
-        try
-        {
+        try {
             jsh.eval("echo hello world", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -56,12 +48,9 @@ public class JshTest {
 
     @Test
     public void test_ls() {
-        try
-        {
+        try {
             jsh.eval("ls", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -72,12 +61,9 @@ public class JshTest {
 
     @Test
     public void test_ls_dir() {
-        try
-        {
+        try {
             jsh.eval("ls dir1", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -88,12 +74,9 @@ public class JshTest {
 
     @Test
     public void test_ls_hidden() {
-        try
-        {
+        try {
             jsh.eval("ls dir2/subdir", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -103,12 +86,9 @@ public class JshTest {
 
     @Test
     public void test_pwd() throws IOException {
-        try
-        {
+        try {
             jsh.eval("pwd", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -118,12 +98,9 @@ public class JshTest {
 
     @Test
     public void test_cd_pwd() throws IOException {
-        try
-        {
+        try {
             jsh.eval("cd dir1; pwd", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -133,12 +110,9 @@ public class JshTest {
 
     @Test
     public void test_cat() {
-        try
-        {
+        try {
             jsh.eval("cat dir1/file1.txt dir1/file2.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -149,12 +123,9 @@ public class JshTest {
 
     @Test
     public void test_cat_stdin() {
-        try
-        {
+        try {
             jsh.eval("cat < dir1/file1.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -165,29 +136,23 @@ public class JshTest {
 
     @Test
     public void test_head() {
-        try
-        {
+        try {
             jsh.eval("head dir1/longfile.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
         // can be just \n, but added \r\n because a pleb is using windows...
         assertArrayEquals(new String[]{"1", "2", "3", "4", "5", "6",
-                                        "7", "8", "9", "10"}, output.split("\r\n|\n"));
+                "7", "8", "9", "10"}, output.split("\r\n|\n"));
     }
 
     @Test
     public void test_head_stdin() {
-        try
-        {
+        try {
             jsh.eval("head < dir1/longfile.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -197,12 +162,9 @@ public class JshTest {
 
     @Test
     public void test_head_n5() {
-        try
-        {
+        try {
             jsh.eval("head -n 5 dir1/longfile.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -212,12 +174,9 @@ public class JshTest {
 
     @Test
     public void test_head_n50() {
-        try
-        {
+        try {
             jsh.eval("head -n 50 dir1/longfile.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -229,12 +188,9 @@ public class JshTest {
 
     @Test
     public void test_head_n0() {
-        try
-        {
+        try {
             jsh.eval("head -n 0 dir1/longfile.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -244,12 +200,9 @@ public class JshTest {
 
     @Test
     public void test_tail() {
-        try
-        {
+        try {
             jsh.eval("tail dir1/longfile.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -260,12 +213,9 @@ public class JshTest {
 
     @Test
     public void test_tail_stdin() {
-        try
-        {
+        try {
             jsh.eval("tail < dir1/longfile.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -275,13 +225,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_tail_n5() throws Exception {
-        try
-        {
+    public void test_tail_n5()  {
+        try {
             jsh.eval("tail -n 5 dir1/longfile.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -291,15 +238,11 @@ public class JshTest {
     }
 
 
-
     @Test
-    public void test_tail_n50() throws Exception {
-        try
-        {
+    public void test_tail_n50()  {
+        try {
             jsh.eval("tail -n 50 dir1/longfile.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -310,13 +253,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_tail_n0() throws Exception {
-        try
-        {
+    public void test_tail_n0()  {
+        try {
             jsh.eval("tail -n 0 dir1/longfile.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -325,13 +265,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_grep() throws Exception {
-        try
-        {
+    public void test_grep()  {
+        try {
             jsh.eval("grep AAA dir1/file1.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -340,13 +277,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_grep_no_match() throws Exception {
-        try
-        {
+    public void test_grep_no_match()  {
+        try {
             jsh.eval("grep DDD dir1/file1.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -355,13 +289,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_grep_re() throws Exception {
-        try
-        {
+    public void test_grep_re()  {
+        try {
             jsh.eval("grep 'A..' dir1/file1.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -370,13 +301,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_grep_files() throws Exception {
-        try
-        {
+    public void test_grep_files()  {
+        try {
             jsh.eval("grep '...' dir1/file1.txt dir1/file2.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -386,13 +314,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_grep_stdin() throws Exception {
-        try
-        {
+    public void test_grep_stdin()  {
+        try {
             jsh.eval("cat dir1/file1.txt dir1/file2.txt | grep '...'", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -402,13 +327,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_sed() throws Exception {
-        try
-        {
+    public void test_sed()  {
+        try {
             jsh.eval("sed 's/A/D/' dir1/file1.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -417,13 +339,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_sed_stdin() throws Exception {
-        try
-        {
+    public void test_sed_stdin()  {
+        try {
             jsh.eval("sed 's/A/D/' < dir1/file1.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -432,13 +351,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_sed_separator() throws Exception {
-        try
-        {
+    public void test_sed_separator()  {
+        try {
             jsh.eval("sed 's|A|D|'  dir1/file1.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -447,13 +363,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_sed_g() throws Exception {
-        try
-        {
+    public void test_sed_g()  {
+        try {
             jsh.eval("sed 's/A/D/g'  dir1/file1.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -462,13 +375,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_sed_re() throws Exception {
-        try
-        {
+    public void test_sed_re()  {
+        try {
             jsh.eval("sed 's/../DD/g'  dir1/file1.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -477,13 +387,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_find() throws Exception {
-        try
-        {
+    public void test_find()  {
+        try {
             jsh.eval("find -name file.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -492,13 +399,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_find_pattern() throws Exception {
-        try
-        {
+    public void test_find_pattern()  {
+        try {
             jsh.eval("find -name '*.txt'", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -511,13 +415,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_find_dir() throws Exception {
-        try
-        {
+    public void test_find_dir()  {
+        try {
             jsh.eval("find dir1 -name '*.txt'", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -528,13 +429,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_wc() throws Exception {
-        try
-        {
+    public void test_wc()  {
+        try {
             jsh.eval("wc dir1/file1.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -543,13 +441,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_wc_stdin() throws Exception {
-        try
-        {
+    public void test_wc_stdin()  {
+        try {
             jsh.eval("wc < dir1/file1.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -558,13 +453,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_wc_m() throws Exception {
-        try
-        {
+    public void test_wc_m()  {
+        try {
             jsh.eval("wc -m < dir1/file1.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -573,13 +465,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_wc_w() throws Exception {
-        try
-        {
+    public void test_wc_w()  {
+        try {
             jsh.eval("wc -w < dir1/file1.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -588,13 +477,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_wc_l() throws Exception {
-        try
-        {
+    public void test_wc_l()  {
+        try {
             jsh.eval("wc -l < dir1/file1.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -603,13 +489,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_wc_files() throws Exception {
-        try
-        {
+    public void test_wc_files()  {
+        try {
             jsh.eval("wc -l  dir1/file1.txt dir1/file2.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -618,13 +501,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_input_redirection() throws Exception {
-        try
-        {
+    public void test_input_redirection()  {
+        try {
             jsh.eval("cat < dir1/file2.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -633,13 +513,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_input_redirection_in_front() throws Exception {
-        try
-        {
+    public void test_input_redirection_in_front()  {
+        try {
             jsh.eval("< dir1/file2.txt cat", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -648,13 +525,10 @@ public class JshTest {
     }
 
     @Test
-    public void test_input_redirection_no_space() throws Exception {
-        try
-        {
+    public void test_input_redirection_no_space()  {
+        try {
             jsh.eval("cat <dir1/file2.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
@@ -663,35 +537,26 @@ public class JshTest {
     }
 
     @Test
-    public void test_output_redirection() throws Exception {
-        try
-        {
+    public void test_output_redirection() throws IOException {
+        try {
             jsh.eval("echo foo > newfile.txt", out);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.toString());
         }
 
         StringBuilder filecontent = new StringBuilder();
-        try
-        {
+        try {
             File outputfile = new File("newfile.txt");
             BufferedReader bfr = new BufferedReader(new FileReader(outputfile));
             String line;
-            while((line = bfr.readLine()) != null)
-            {
+            while ((line = bfr.readLine()) != null) {
                 filecontent.append(line);
             }
-        }
-        catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             fail("File not created");
         }
         assertEquals("foo", filecontent.toString());
     }
-
-
 
 
 //    @After
