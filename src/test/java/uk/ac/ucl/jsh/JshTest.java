@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -556,6 +558,68 @@ public class JshTest {
             fail("File not created");
         }
         assertEquals("foo", filecontent.toString());
+    }
+
+    @Test
+    public void test_output_redirection_overwrite() throws IOException {
+        try {
+            jsh.eval("echo foo > test.txt", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+
+        StringBuilder filecontent = new StringBuilder();
+        try {
+            File outputfile = new File("test.txt");
+            BufferedReader bfr = new BufferedReader(new FileReader(outputfile));
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                filecontent.append(line);
+            }
+        } catch (FileNotFoundException e) {
+            fail("File not created");
+        }
+        assertEquals("foo", filecontent.toString());
+    }
+
+
+    @Test
+    public void test_globbing()  {
+        try {
+            jsh.eval("echo *", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String outputstr = new String(out.toByteArray());
+        outputstr = outputstr.strip();
+
+        String[] expected = new String[]{"dir1", "dir2", "test.txt"};
+        Arrays.sort(expected);
+
+        String[] output = outputstr.split("\\s");
+        Arrays.sort(output);
+
+        assertArrayEquals(expected, output);
+    }
+
+    @Test
+    public void test_globbing_dir()  {
+        try {
+            jsh.eval("echo dir1/*.txt", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String outputstr = new String(out.toByteArray());
+        outputstr = outputstr.strip();
+
+        String[] expected = new String[]{"dir1/file1.txt",
+                "dir1/file2.txt", "dir1/longfile.txt"};
+        Arrays.sort(expected);
+
+        String[] output = outputstr.split("\\s");
+        Arrays.sort(output);
+
+        assertArrayEquals(expected, output);
     }
 
 

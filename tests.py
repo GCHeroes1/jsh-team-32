@@ -305,27 +305,27 @@ class TestJSH(unittest.TestCase):
         result = stdout.strip()
         self.assertEqual(result, "CCC")
 
-    def test_output_redirection(self):
+    def test_output_redirection(self): #
         cmdline = "echo foo > newfile.txt"
         self.eval(cmdline)
         stdout = self.eval("cat newfile.txt", shell="/bin/bash")
         result = stdout.strip()
         self.assertEqual(result, "foo")
 
-    def test_output_redirection_overwrite(self):
+    def test_output_redirection_overwrite(self): #
         cmdline = "echo foo > test.txt"
         self.eval(cmdline)
         stdout = self.eval("cat test.txt", shell="/bin/bash")
         result = stdout.strip()
         self.assertEqual(result, "foo")
 
-    def test_globbing(self):
+    def test_globbing(self): #
         cmdline = "echo *"
         stdout = self.eval(cmdline)
         result = set(stdout.strip().split())
         self.assertEqual(result, {"test.txt", "dir1", "dir2"})
 
-    def test_globbing_dir(self):
+    def test_globbing_dir(self): #
         cmdline = "echo dir1/*.txt"
         stdout = self.eval(cmdline)
         result = set(stdout.strip().split())
