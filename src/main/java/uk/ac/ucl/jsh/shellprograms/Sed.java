@@ -37,7 +37,7 @@ public class Sed extends ShellProgram
         else
         {
             separator = regexstring.charAt(1);
-            String[] regex_split = regexstring.split(String.valueOf(separator));
+            String[] regex_split = regexstring.split(Pattern.quote(String.valueOf(separator)));
             if(regex_split.length == 3)
             {
                 target = regex_split[2];

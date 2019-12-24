@@ -15,12 +15,12 @@ public class Call extends Jsh implements CommandInterface
     @Override
     public void run(String command, InputStream input, OutputStream output) throws IOException
     {
+        command = cmd_sub(command);
+        command = extract_io_redirects(command);
         ArrayList<String> tokens = split_quotes(command);
 
-        String appName = tokens.get(0);                                                     // gets first token
-        ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));// creates a variable holding all the arguments for the program invoked
-        // Here is the mess - does all the running the commands stuff
-
+        String appName = tokens.get(0); // first token = program to run
+        ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));
         try
         {
             spFactory.getSP(appName).execute(appArgs.toArray(new String[0]), (ByteArrayInputStream) input, (ByteArrayOutputStream) output); //EHERERERERERE
@@ -34,6 +34,49 @@ public class Call extends Jsh implements CommandInterface
             e.printStackTrace();
         }
 
+    }
+
+
+
+    private String extract_io_redirects(String command)
+    {
+        return command;
+    }
+
+    private String cmd_sub(String command) throws IOException
+    {
+        int splitIndex, openingBackquoteIndex, closingBackquoteIndex;
+        InputStream input = new ByteArrayInputStream(new byte[0]);
+        String cmdoutput;
+        for (splitIndex = 0; splitIndex < command.length(); splitIndex++)
+        {                     // iterates through the command line characters
+            char ch = command.charAt(splitIndex);                                               // isolates each character of the command line input
+            if (ch == '`')
+            {
+                //String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();
+                openingBackquoteIndex = command.indexOf(ch);
+                closingBackquoteIndex = command.indexOf(ch, splitIndex + 1);
+                ByteArrayOutputStream sub_command_output = new ByteArrayOutputStream();
+                if (closingBackquoteIndex != -1)
+                {
+                    splitIndex = closingBackquoteIndex;
+                    String subCommand = command.substring((openingBackquoteIndex + 1), closingBackquoteIndex); // create a command of the
+                    (new Sequence()).run(subCommand, input, sub_command_output);
+                    cmdoutput = (new String(sub_command_output.toByteArray()));
+//                    while("\n\r".indexOf(cmdoutput.charAt(cmdoutput.length()-1)) != -1)  //removes trailing newlines
+//                    {
+//                        cmdoutput = cmdoutput.substring(0, cmdoutput.length()-2);
+//                    }
+                    cmdoutput = cmdoutput.replace("\n", " ").replace("\r", "").strip();
+                    // System.out.println("pre: " + input);
+                    command = command.substring(0, openingBackquoteIndex) + "\"" + cmdoutput + "\"" + command.substring(closingBackquoteIndex + 1);
+                    splitIndex = openingBackquoteIndex + cmdoutput.length(); // +1 and not -2 because we added '"', '"' and ' '
+                    // System.out.println("post: " + input);
+
+                }
+            }
+        }
+        return command;
     }
 
     private ArrayList<String> split_quotes(String command) throws IOException
