@@ -12,7 +12,7 @@ public class Ls extends ShellProgram
         if (args.length == 0) {
             currDir = new File(currentDirectory);                                       // if there is no argument to ls, it just puts the current directory as the directory to list 
         } else if (args.length == 1) {
-            currDir = new File(args[0]);                                         // if there is an argument, list the directory specified by the argument
+            currDir = new File(currentDirectory + File.separator + args[0]);                                         // if there is an argument, list the directory specified by the argument
         } else {
             throw new RuntimeException("ls: too many arguments");                       // otherwise throw an error 
         }

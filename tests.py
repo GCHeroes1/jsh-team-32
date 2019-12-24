@@ -167,73 +167,73 @@ class TestJSH(unittest.TestCase):
         result = stdout.strip()
         self.assertEqual(result, "")
 
-    def test_grep(self):
+    def test_grep(self): #
         cmdline = "grep AAA dir1/file1.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, ["AAA", "AAA"])
 
-    def test_grep_no_matches(self):
+    def test_grep_no_matches(self): #
         cmdline = "grep DDD dir1/file1.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "")
 
-    def test_grep_re(self):
+    def test_grep_re(self): #
         cmdline = "grep 'A..' dir1/file1.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, ["AAA", "AAA"])
 
-    def test_grep_files(self):
+    def test_grep_files(self): #
         cmdline = "grep '...' dir1/file1.txt dir1/file2.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, ["AAA", "BBB", "AAA", "CCC"])
 
-    def test_grep_stdin(self):
+    def test_grep_stdin(self): #
         cmdline = "cat dir1/file1.txt dir1/file2.txt | grep '...'"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, ["AAA", "BBB", "AAA", "CCC"])
 
-    def test_sed(self):
+    def test_sed(self): #
         cmdline = "sed 's/A/D/' dir1/file1.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, ["DAA", "BBB", "DAA"])
 
-    def test_sed_stdin(self):
+    def test_sed_stdin(self): #
         cmdline = "sed 's/A/D/' < dir1/file1.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, ["DAA", "BBB", "DAA"])
 
-    def test_sed_separator(self):
+    def test_sed_separator(self): #
         cmdline = "sed 's|A|D|' dir1/file1.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, ["DAA", "BBB", "DAA"])
 
-    def test_sed_g(self):
+    def test_sed_g(self): #
         cmdline = "sed 's/A/D/g' dir1/file1.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, ["DDD", "BBB", "DDD"])
 
-    def test_sed_re(self):
+    def test_sed_re(self): #
         cmdline = "sed 's/../DD/g' dir1/file1.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, ["DDA", "DDB", "DDA"])
 
-    def test_find(self):
+    def test_find(self): #
         cmdline = "find -name file.txt"
         stdout = self.eval(cmdline)
         result = set(re.split("\n|\t", stdout.strip()))
         self.assertEqual(result, {"./dir2/subdir/file.txt"})
 
-    def test_find_pattern(self):
+    def test_find_pattern(self): #
         cmdline = "find -name '*.txt'"
         stdout = self.eval(cmdline)
         result = set(re.split("\n|\t", stdout.strip()))
@@ -243,7 +243,7 @@ class TestJSH(unittest.TestCase):
                                   "./dir1/file2.txt",
                                   "./dir1/longfile.txt"})
 
-    def test_find_dir(self):
+    def test_find_dir(self): #
         cmdline = "find dir1 -name '*.txt'"
         stdout = self.eval(cmdline)
         result = set(re.split("\n|\t", stdout.strip()))
@@ -251,55 +251,55 @@ class TestJSH(unittest.TestCase):
                                   "dir1/file2.txt",
                                   "dir1/longfile.txt"})
 
-    def test_wc(self):
+    def test_wc(self): #
         cmdline = "wc dir1/file1.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split()
         self.assertEqual(result, ["3", "3", "12"])
 
-    def test_wc_stdin(self):
+    def test_wc_stdin(self): #
         cmdline = "wc < dir1/file1.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split()
         self.assertEqual(result, ["3", "3", "12"])
 
-    def test_wc_m(self):
+    def test_wc_m(self): #
         cmdline = "wc -m < dir1/file1.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "12")
 
-    def test_wc_w(self):
+    def test_wc_w(self): #
         cmdline = "wc -w < dir1/file1.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "3")
 
-    def test_wc_l(self):
+    def test_wc_l(self): #
         cmdline = "wc -l < dir1/file1.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "3")
 
-    def test_wc_files(self):
+    def test_wc_files(self): #
         cmdline = "wc -l dir1/file1.txt dir1/file2.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "4")
 
-    def test_input_redirection(self):
+    def test_input_redirection(self): #
         cmdline = "cat < dir1/file2.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "CCC")
 
-    def test_input_redirection_infront(self):
+    def test_input_redirection_infront(self): #
         cmdline = "< dir1/file2.txt cat"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "CCC")
 
-    def test_input_redirection_nospace(self):
+    def test_input_redirection_nospace(self): #
         cmdline = "cat <dir1/file2.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip()
