@@ -134,13 +134,22 @@ public class JshTest {
     public void test_head_n50() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         jsh.eval("head -n 50 dir1/longfile.txt", out);
-        jsh.eval("head -n 50 dir1/longfile.txt", System.out);
         String output = new String(out.toByteArray());
         output = output.strip();
         // can be just \n, but added \r\n because a pleb is using windows...
         assertArrayEquals(new String[]{"1", "2", "3", "4", "5",
                 "6", "7", "8", "9", "10", "11", "12", "13", "14",
                 "15", "16", "17", "18", "19", "20"}, output.split("\r\n|\n"));
+    }
+
+    @Test
+    public void test_head_n0() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        jsh.eval("head -n 0 dir1/longfile.txt", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        // can be just \n, but added \r\n because a pleb is using windows...
+        assertEquals("", output);
     }
 
 
