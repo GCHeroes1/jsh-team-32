@@ -131,37 +131,37 @@ class TestJSH(unittest.TestCase):
         result = stdout.strip().split("\n")
         self.assertEqual(result, [str(i) for i in range(1,21)])
 
-    def test_head_n0(self):
+    def test_head_n0(self): #
         cmdline = "head -n 0 dir1/longfile.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "")
 
-    def test_tail(self):
+    def test_tail(self): #
         cmdline = "tail dir1/longfile.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, [str(i) for i in range(11,21)])
 
-    def test_tail_stdin(self):
+    def test_tail_stdin(self): #
         cmdline = "tail < dir1/longfile.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, [str(i) for i in range(11,21)])
 
-    def test_tail_n5(self):
+    def test_tail_n5(self): #
         cmdline = "tail -n 5 dir1/longfile.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, [str(i) for i in range(16,21)])
 
-    def test_tail_n50(self):
+    def test_tail_n50(self): #
         cmdline = "tail -n 50 dir1/longfile.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, [str(i) for i in range(1,21)])
 
-    def test_tail_n0(self):
+    def test_tail_n0(self): #
         cmdline = "tail -n 0 dir1/longfile.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip()
