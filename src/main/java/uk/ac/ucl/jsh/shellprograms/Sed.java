@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Sed extends ShellProgram
@@ -92,15 +93,19 @@ public class Sed extends ShellProgram
     private void find_and_replace(OutputStreamWriter str_to_bytes, String regexstring, String target, boolean global, BufferedReader reader) throws IOException {
         String line;
         String result;
+
         while ((line = reader.readLine()) != null) {
-            result = line.replaceAll(regexstring, target);
+            if(global)
+            {
+                result = Pattern.compile(regexstring).matcher(line).replaceAll(target);
+            }
+            else
+            {
+                result = Pattern.compile(regexstring).matcher(line).replaceFirst(target);
+            }
             str_to_bytes.write(result);
             str_to_bytes.write(System.getProperty("line.separator"));
             str_to_bytes.flush();
-            if(!global)
-            {
-                break;
-            }
         }
     }
 

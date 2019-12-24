@@ -115,10 +115,6 @@ public class Pipe extends Jsh implements CommandInterface
         OutputStreamWriter osw = new OutputStreamWriter(output);
         osw.write(cmdoutput);
         osw.flush();
-        //osw.close();
-
-
-
     }
 
     private String merge_collated_quotes(String command)

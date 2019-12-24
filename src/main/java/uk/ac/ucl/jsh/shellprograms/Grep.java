@@ -38,33 +38,37 @@ public class Grep extends ShellProgram
             }
 
         }
-        int numOfFiles = args.length - 1;
-        Path filePath;
-        Path[] filePathArray = new Path[numOfFiles];
-        Path currentDir = Paths.get(currentDirectory);
-        for (int i = 0; i < numOfFiles; i++) {
-            filePath = currentDir.resolve(args[i + 1]);
-            if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
-                    !Files.exists(filePath) || !Files.isReadable(filePath)) {
-                throw new RuntimeException("grep: wrong file argument");
-            }
-            filePathArray[i] = filePath;
-        }
-        for (int j = 0; j < filePathArray.length; j++) {
-            Charset encoding = StandardCharsets.UTF_8;
-            try (BufferedReader reader = Files.newBufferedReader(filePathArray[j], encoding)) {
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    Matcher matcher = grepPattern.matcher(line);
-                    if (matcher.find()) {
-                        str_to_bytes.write(line);
-                        str_to_bytes.write(System.getProperty("line.separator"));
-                        str_to_bytes.flush();
-                    }
+        else
+        {
+            int numOfFiles = args.length - 1;
+            Path filePath;
+            Path[] filePathArray = new Path[numOfFiles];
+            Path currentDir = Paths.get(currentDirectory);
+            for (int i = 0; i < numOfFiles; i++) {
+                filePath = currentDir.resolve(args[i + 1]);
+                if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
+                        !Files.exists(filePath) || !Files.isReadable(filePath)) {
+                    throw new RuntimeException("grep: wrong file argument");
                 }
-            } catch (IOException e) {
-                throw new RuntimeException("grep: cannot open " + args[j + 1]);
+                filePathArray[i] = filePath;
+            }
+            for (int j = 0; j < filePathArray.length; j++) {
+                Charset encoding = StandardCharsets.UTF_8;
+                try (BufferedReader reader = Files.newBufferedReader(filePathArray[j], encoding)) {
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        Matcher matcher = grepPattern.matcher(line);
+                        if (matcher.find()) {
+                            str_to_bytes.write(line);
+                            str_to_bytes.write(System.getProperty("line.separator"));
+                            str_to_bytes.flush();
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException("grep: cannot open " + args[j + 1]);
+                }
             }
         }
+
     }
 }
