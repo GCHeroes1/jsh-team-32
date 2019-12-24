@@ -11,20 +11,17 @@ import java.util.ArrayList;
 public class Tail extends ShellProgram
 {
     @Override
-    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException
+    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream stdout) throws IOException
     {
-        OutputStreamWriter str_to_bytes = new OutputStreamWriter(output);
-        /*if (args.length == 0) {
-            throw new RuntimeException("tail: missing arguments");
-        }*/ 
-        // Correct me if I'm wrong but theoretically if there's 0 args it should print the last 10 lines of stdin?
-        if (args.length > 3) {  //args.length < 0 always false
+        OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
+
+        if (args.length > 3) {
             throw new RuntimeException("tail: wrong arguments");
         }
         if (args.length == 3 && !args[0].equals("-n")) {
             throw new RuntimeException("tail: wrong argument " + args[0]);
         }
-        int tailLines = 10;//default number of lines
+        int tailLines = 10; //default number of lines
         String tailArg;
         if (args.length == 3) {
             try {
@@ -54,7 +51,7 @@ public class Tail extends ShellProgram
             while ((line = reader.readLine()) != null) lines.add(line);
             reader.close();
             //this is very inefficient and I'm sorry
-            if(lines.size()>0)
+            if(lines.size() > 0)
             {
                 int index = Math.max(lines.size() - tailLines, 0);
                 for (; index < lines.size(); index++){

@@ -14,9 +14,9 @@ import java.util.regex.Pattern;
 public class Sed extends ShellProgram
 {
     @Override
-    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException
+    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream stdout) throws IOException
     {
-        OutputStreamWriter str_to_bytes = new OutputStreamWriter(output);
+        OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
         Pattern grepPattern = Pattern.compile(args[0]);
 
 

@@ -5,10 +5,9 @@ import java.io.*;
 public class Echo extends ShellProgram
 {
     @Override
-    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException
+    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream stdout) throws IOException
     {
-        OutputStreamWriter str_to_bytes = new OutputStreamWriter(output);
-//        for (String arg : args) {
+        OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
         for(int index = 0; index < args.length; index++)
         {
             str_to_bytes.write(args[index]);
@@ -22,6 +21,5 @@ public class Echo extends ShellProgram
             str_to_bytes.write(System.getProperty("line.separator"));
             str_to_bytes.flush();
         }
-        //output.close();
     }
 }

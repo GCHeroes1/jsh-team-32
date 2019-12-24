@@ -7,7 +7,7 @@ import java.util.Collections;
 public class Cd extends ShellProgram
 {
     @Override
-    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException
+    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream stdout) throws IOException
     {
         ArrayList<String> appArgs = new ArrayList<>();
         Collections.addAll(appArgs, args);

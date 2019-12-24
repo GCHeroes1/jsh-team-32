@@ -41,9 +41,9 @@ public class WC extends ShellProgram {
         return lines;
     }
     @Override
-    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException
+    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream stdout) throws IOException
     {
-        OutputStreamWriter str_to_bytes = new OutputStreamWriter(output);
+        OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
         if (args.length < 1 || args.length > 2){
             throw new RuntimeException("wc: wrong number of arguments");
         }

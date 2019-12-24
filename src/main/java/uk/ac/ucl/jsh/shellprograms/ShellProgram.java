@@ -7,13 +7,13 @@ public abstract class ShellProgram extends Jsh
 {
     OutputStreamWriter writer = new OutputStreamWriter(System.out);
 
-    abstract public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException;
+    abstract public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream stdout) throws IOException;
 
-    public void executeUnsafe(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output)
+    public void executeUnsafe(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream stdout)
     {
         try
         {
-            execute(args, stdin, output);
+            execute(args, stdin, stdout);
         }
         catch(Exception e)
         {

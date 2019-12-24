@@ -12,19 +12,13 @@ import java.util.regex.Pattern;
 public class Grep extends ShellProgram
 {
     @Override
-    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException
+    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream stdout) throws IOException
     {
-        OutputStreamWriter str_to_bytes = new OutputStreamWriter(output);
+        OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
         Pattern grepPattern = Pattern.compile(args[0]);
 
-        //int n = stdin.available();
-        //byte[] a = new byte[n];
-        //stdin.read(a, 0, n);
-        //System.out.println(new String(a));
         if (args.length == 1) {
-            //throw new RuntimeException("grep: wrong number of arguments");
-            //line above not valid anymore. 1 arg == use stdin
-            String line = null;
+            String line;
             BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
             while((line = bfr.readLine()) != null)
             {
@@ -38,7 +32,7 @@ public class Grep extends ShellProgram
             }
 
         }
-        else
+        else // read the file instead
         {
             int numOfFiles = args.length - 1;
             Path filePath;
@@ -55,7 +49,7 @@ public class Grep extends ShellProgram
             for (int j = 0; j < filePathArray.length; j++) {
                 Charset encoding = StandardCharsets.UTF_8;
                 try (BufferedReader reader = Files.newBufferedReader(filePathArray[j], encoding)) {
-                    String line = null;
+                    String line;
                     while ((line = reader.readLine()) != null) {
                         Matcher matcher = grepPattern.matcher(line);
                         if (matcher.find()) {

@@ -2,7 +2,9 @@ package uk.ac.ucl.jsh;
 
 import uk.ac.ucl.jsh.shellprograms.SPFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Scanner;
 
@@ -18,8 +20,9 @@ public class Jsh {
         // ArrayList<String> rawCommands = new ArrayList<>();                                      // assume will be used later for raw commands
 		// int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;
         // new Sequence().run(cmdline, output);
+        InputStream instream = new ByteArrayInputStream(new byte[0]);
         Sequence sequence = new Sequence();
-        sequence.run(cmdline, output);
+        sequence.run(cmdline, instream, output);
 		//this part splits into separate commands (seqs) if necessary;
         //ignores quotes altogether and sends it straight to the program
         

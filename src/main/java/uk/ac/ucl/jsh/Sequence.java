@@ -1,6 +1,7 @@
 package uk.ac.ucl.jsh;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 
 public class Sequence extends Jsh implements CommandInterface{
     @Override
-    public void run(String cmdline, OutputStream output) throws IOException {
+    public void run(String cmdline, InputStream input, OutputStream output) throws IOException {
         OutputStreamWriter writer = new OutputStreamWriter(output);
         ArrayList<String> rawCommands = new ArrayList<>();                                      // assume will be used later for raw commands
 		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;
@@ -39,7 +40,7 @@ public class Sequence extends Jsh implements CommandInterface{
 		}
         for (String rawCommand : rawCommands) {                                                 // iterating through the arraylist of raw commands
             //System.out.println("blehehehe");                                                  // sooooo... this Sout somehow made our code work? all hail the "blehehehe" (love, Alex)
-            new Pipe().run(rawCommand, output);
+            new Pipe().run(rawCommand, input, output);
         }        
 }
 

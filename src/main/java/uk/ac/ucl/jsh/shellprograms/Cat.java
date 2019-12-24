@@ -10,10 +10,10 @@ import java.nio.file.Paths;
 public class Cat extends ShellProgram
 {
     @Override
-    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException
+    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream stdout) throws IOException
     {
-        OutputStreamWriter str_to_bytes = new OutputStreamWriter(output);
-        if (args.length == 0) {                                                        // if there is no argument, cant cat nothing
+        OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
+        if (args.length == 0) {
             String line;
             BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
             while((line = bfr.readLine()) != null)

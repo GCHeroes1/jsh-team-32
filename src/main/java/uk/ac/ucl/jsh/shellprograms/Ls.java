@@ -5,7 +5,7 @@ import java.io.*;
 public class Ls extends ShellProgram
 {
     @Override
-    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream output) throws IOException
+    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream stdout) throws IOException
     {
         File currDir;
         if (args.length == 0) {
