@@ -73,9 +73,7 @@ public class JshTest {
     @Test
     public void test_cd_pwd() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        System.out.println(System.getProperty("user.dir"));
         jsh.eval("cd dir1; pwd", out);
-        System.out.println(System.getProperty("user.dir"));
         String output = new String(out.toByteArray());
         output = output.strip();
         assertEquals(System.getProperty("user.dir") + File.separator + "dir1", output);
@@ -125,12 +123,24 @@ public class JshTest {
     @Test
     public void test_head_n5() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        jsh.eval("head dir1/longfile.txt", System.out);
         jsh.eval("head -n 5 dir1/longfile.txt", out);
         String output = new String(out.toByteArray());
         output = output.strip();
         // can be just \n, but added \r\n because a pleb is using windows...
         assertArrayEquals(new String[]{"1", "2", "3", "4", "5"}, output.split("\r\n|\n"));
+    }
+
+    @Test
+    public void test_head_n50() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        jsh.eval("head -n 50 dir1/longfile.txt", out);
+        jsh.eval("head -n 50 dir1/longfile.txt", System.out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        // can be just \n, but added \r\n because a pleb is using windows...
+        assertArrayEquals(new String[]{"1", "2", "3", "4", "5",
+                "6", "7", "8", "9", "10", "11", "12", "13", "14",
+                "15", "16", "17", "18", "19", "20"}, output.split("\r\n|\n"));
     }
 
 
