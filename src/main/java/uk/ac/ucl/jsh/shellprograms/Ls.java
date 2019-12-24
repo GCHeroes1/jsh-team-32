@@ -7,6 +7,7 @@ public class Ls extends ShellProgram
     @Override
     public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream stdout) throws IOException
     {
+        OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
         File currDir;
         if (args.length == 0) {
             currDir = new File(currentDirectory);                                       // if there is no argument to ls, it just puts the current directory as the directory to list 
@@ -20,15 +21,15 @@ public class Ls extends ShellProgram
             boolean atLeastOnePrinted = false;                                          // avoids printing new line if no files are present
             for (File file : listOfFiles) {
                 if (!file.getName().startsWith(".")) {                                  // hides names that start with a .
-                    writer.write(file.getName());                                       // prints it to terminal 
-                    writer.write("\t");                                                 // line feed
-                    writer.flush();
+                    str_to_bytes.write(file.getName());                                       // prints it to terminal
+                    str_to_bytes.write("\t");                                                 // line feed
+                    str_to_bytes.flush();
                     atLeastOnePrinted = true;
                 }
             }
             if (atLeastOnePrinted) {                                                    // 
-                writer.write(System.getProperty("line.separator"));                     // prints a new line after its done printing 
-                writer.flush();
+                str_to_bytes.write(System.getProperty("line.separator"));                     // prints a new line after its done printing
+                str_to_bytes.flush();
             }
         } catch (NullPointerException e) {
             throw new RuntimeException("ls: no such directory");                        // if it cant find the directory 

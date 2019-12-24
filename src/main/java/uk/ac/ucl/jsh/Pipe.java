@@ -19,6 +19,7 @@ public class Pipe extends Jsh implements CommandInterface
         ByteArrayInputStream instream;
         for(String cmd : piped_commands) {
             instream = new ByteArrayInputStream(outstream.toByteArray());
+            outstream.reset();
 
             cmd = merge_collated_quotes(cmd);
 

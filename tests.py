@@ -59,61 +59,61 @@ class TestJSH(unittest.TestCase):
             print("error: failed to remove test volume")
             exit(1)
 
-    def test_echo(self):
+    def test_echo(self): #
         cmdline = "echo hello world"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "hello world")
 
-    def test_ls(self):
+    def test_ls(self): #
         cmdline = "ls"
         stdout = self.eval(cmdline)
         result = set(re.split("\n|\t", stdout.strip()))
         self.assertEqual(result, {"test.txt", "dir1", "dir2"})
 
-    def test_ls_dir(self):
+    def test_ls_dir(self): #
         cmdline = "ls dir1"
         stdout = self.eval(cmdline)
         result = set(re.split("\n|\t", stdout.strip()))
         self.assertEqual(result, {"file1.txt", "file2.txt", "longfile.txt"})
 
-    def test_ls_hidden(self):
+    def test_ls_hidden(self): #
         cmdline = "ls dir2/subdir"
         stdout = self.eval(cmdline)
         result = set(re.split("\n|\t", stdout.strip()))
         self.assertEqual(result, {"file.txt"})
 
-    def test_pwd(self):
+    def test_pwd(self): #
         cmdline = "pwd"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, self.TEST_DIR)
 
-    def test_cd_pwd(self):
+    def test_cd_pwd(self): #
         cmdline = "cd dir1; pwd"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, self.TEST_DIR + "/dir1")
 
-    def test_cat(self):
+    def test_cat(self): #
         cmdline = "cat dir1/file1.txt dir1/file2.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, ["AAA", "BBB", "AAA", "CCC"])
 
-    def test_cat_stdin(self):
+    def test_cat_stdin(self): #
         cmdline = "cat < dir1/file1.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, ["AAA", "BBB", "AAA"])
 
-    def test_head(self):
+    def test_head(self): #
         cmdline = "head dir1/longfile.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
         self.assertEqual(result, [str(i) for i in range(1,11)])
 
-    def test_head_stdin(self):
+    def test_head_stdin(self): #
         cmdline = "head < dir1/longfile.txt"
         stdout = self.eval(cmdline)
         result = stdout.strip().split("\n")
