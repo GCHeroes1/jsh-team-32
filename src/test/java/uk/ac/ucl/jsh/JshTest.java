@@ -17,7 +17,7 @@ public class JshTest {
 
     public JshTest()
     {
-        jsh = new Jsh();
+        jsh = new Jsh(System.getProperty("user.dir"));
     }
 
 
@@ -73,7 +73,9 @@ public class JshTest {
     @Test
     public void test_cd_pwd() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.out.println(System.getProperty("user.dir"));
         jsh.eval("cd dir1; pwd", out);
+        System.out.println(System.getProperty("user.dir"));
         String output = new String(out.toByteArray());
         output = output.strip();
         assertEquals(System.getProperty("user.dir") + File.separator + "dir1", output);
@@ -123,7 +125,7 @@ public class JshTest {
     @Test
     public void test_head_n5() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        jsh.eval("ls dir1", System.out);
+        jsh.eval("head dir1/longfile.txt", System.out);
         jsh.eval("head -n 5 dir1/longfile.txt", out);
         String output = new String(out.toByteArray());
         output = output.strip();

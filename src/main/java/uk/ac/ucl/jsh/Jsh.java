@@ -14,6 +14,15 @@ public class Jsh {
     protected static String currentDirectory = System.getProperty("user.dir");
     static SPFactory spFactory = new SPFactory();
 
+    public Jsh(String pwd)
+    {
+        currentDirectory = pwd;
+    }
+
+    public Jsh()
+    {
+    }
+
     // main interpretation function for the shell (what handles executing commands)
     void eval(String cmdline, OutputStream output) throws IOException {
         // OutputStreamWriter writer = new OutputStreamWriter(output);
