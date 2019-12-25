@@ -30,7 +30,6 @@ public class Call extends Jsh implements CommandInterface
                 switch (token.charAt(0))
                 {
                     case '>':
-                        System.out.println("hello");
                         redirection_target = get_redirection_target(tokens, i, token);
 
                         try
@@ -45,7 +44,6 @@ public class Call extends Jsh implements CommandInterface
 
 
                     case '<':
-                        System.out.println("there");
                         redirection_target = get_redirection_target(tokens, i, token);
 
                         try
