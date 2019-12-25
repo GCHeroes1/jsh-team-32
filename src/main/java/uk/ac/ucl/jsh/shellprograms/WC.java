@@ -11,23 +11,28 @@ import java.nio.file.Paths;
 public class WC extends ShellProgram {
     private int countChar(Reader file) throws IOException {
         BufferedReader reader = new BufferedReader(file);
-        int charCount = reader.readLine().length();
+        int charCount = 0;
+        String line;
+        while((line = reader.readLine()) != null){
+            if(!(line.equals(""))){
+                charCount += line.length();
+            }
+        }
       return charCount;
     }
     private int countWord(Reader file) throws IOException {
-        BufferedReader reader = new BufferedReader(file);     
-        String line = reader.readLine();
-        int count = 0;
-        while (line != null) {
-            String [] words = line.split(" ");
-            for( String x : words)
-            {
-                count++;
+        BufferedReader reader = new BufferedReader(file);   
+        int count = 0;  
+        String line;
+        while((line = reader.readLine()) != null){
+            if(!(line.equals(""))){
+                String[] wordList = line.split(" "); 
+                count += wordList.length; 
             }
-            line = reader.readLine();
-       }     
+        }
        return count;    
     }
+
     private int countLines(Reader file) throws FileNotFoundException, IOException{
         BufferedReader reader = new BufferedReader(file);
         int lines = 0;
@@ -42,22 +47,24 @@ public class WC extends ShellProgram {
         int fileArgument = 1;
         OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
         Path filePath;
-        //Path currentDir = Paths.get(currentDirectory);
+        String wcArg = "";
         Charset encoding = StandardCharsets.UTF_8;
+        if (args.length == 1){
+            wcArg = "stdin";
+        }
         if (args.length > 1 && (!args[0].equals("-m") && !args[0].equals("-w") && !args[0].equals("-l") && !args[1].equals("<"))){
-            System.out.println("i threw up");
+            // System.out.println("i threw up");
             throw new RuntimeException("wc: wrong argument " + args[0]);
         }
         if (args[1].equals("<")){
             // IO redirection?? can just skip it and process because it comes after the option 
-            System.out.println("i redirected");
+            // System.out.println("i redirected");
             fileArgument++;
-            //args[2] = args[1]; //IDK IF THIS WILL WORK 
         }
         if (args[0].equals("-m")){
-            System.out.println("i recognised -m");
+            // System.out.println("i recognised -m");
             if (args.length > 1){
-                System.out.println("there are more than 2 arguments with -m");
+                // System.out.println("there are more than 2 arguments with -m");
                 filePath = Paths.get((String) currentDirectory + File.separator + args[fileArgument]);
                 if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
                     !Files.exists(filePath) || !Files.isReadable(filePath)) {
@@ -65,15 +72,14 @@ public class WC extends ShellProgram {
                 }
                 BufferedReader reader = Files.newBufferedReader(filePath, encoding);
                 int char_ = countChar(reader);
-                //int char_ = countChar(new InputStreamReader(stdin));
                 String char_count = String.valueOf(char_);
                 str_to_bytes.write(char_count); 
              }
         }
         else if(args[0].equals("-w")){
-            System.out.println("i recognised -w");
+            // System.out.println("i recognised -w");
             if (args.length > 1){
-                System.out.println("there are more than 2 arguments with -w");
+                // System.out.println("there are more than 2 arguments with -w");
                 filePath = Paths.get((String) currentDirectory + File.separator + args[fileArgument]);
                 if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
                     !Files.exists(filePath) || !Files.isReadable(filePath)) {
@@ -84,14 +90,11 @@ public class WC extends ShellProgram {
                 String word_count = String.valueOf(word_);
                 str_to_bytes.write(word_count);
              }
-            //  else if (args.length == 2){
-            //     str_to_bytes.write(countWord(new FileReader(args[1]))); 
-            //   }
         }
         else if(args[0].equals("-l")){
-            System.out.println("i recognised -l");
+            // System.out.println("i recognised -l");
             if (args.length > 1){
-                System.out.println("there are more than 2 arguemnts with -l");
+                // System.out.println("there are more than 2 arguemnts with -l");
                 filePath = Paths.get((String) currentDirectory + File.separator + args[fileArgument]);
                 if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
                     !Files.exists(filePath) || !Files.isReadable(filePath)) {
@@ -102,23 +105,19 @@ public class WC extends ShellProgram {
                 String lines_count = String.valueOf(lines);
                 str_to_bytes.write(lines_count); 
             }
-            // else if (args.length == 2){
-            //     str_to_bytes.write(countLines(new FileReader(args[1]))); 
-            //  }
         }
-        // else if (args[0].charAt(0) == '-'){
-        //     System.out.println("i caught the wrong argument");
-        //     throw new RuntimeException("wc: wrong arguments");
-        // }
-        else{
-            System.out.println("i recognsied that there was no option selected");
 
-            filePath = Paths.get((String) currentDirectory + File.separator + args[0]);
-            if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
-                !Files.exists(filePath) || !Files.isReadable(filePath)) {
-                throw new RuntimeException("sed: wrong file argument");
-            }
-            BufferedReader reader = Files.newBufferedReader(filePath, encoding);
+        // it never gets to here?! 
+        // else{
+        if (wcArg.equals("stdin")){
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
+            // System.out.println("i recognsied that there was no option selected"); // DOESNT GET TO THIS 
+            // filePath = Paths.get((String) currentDirectory + File.separator + args[0]);
+            // if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
+                // !Files.exists(filePath) || !Files.isReadable(filePath)) {
+                // throw new RuntimeException("sed: wrong file argument");
+            // }
+            // BufferedReader reader = Files.newBufferedReader(filePath, encoding);
             String char_count = String.valueOf(countChar(reader));
             String word_count = String.valueOf(countWord(reader));
             String lines_count = String.valueOf(countLines(reader));
@@ -129,6 +128,6 @@ public class WC extends ShellProgram {
         }
         str_to_bytes.write(System.getProperty("line.separator"));
         str_to_bytes.flush();
-        System.out.println("i skipped everything??");
+        // System.out.println("i skipped everything??"); 
     }
 }
