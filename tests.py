@@ -331,62 +331,62 @@ class TestJSH(unittest.TestCase):
         result = set(stdout.strip().split())
         self.assertEqual(result, {"dir1/file1.txt", "dir1/file2.txt", "dir1/longfile.txt"})
 
-    def test_semicolon(self):
+    def test_semicolon(self): #
         cmdline = "echo AAA; echo BBB"
         stdout = self.eval(cmdline)
         result = set(stdout.strip().split())
         self.assertEqual(result, {"AAA", "BBB"})
 
-    def test_semicolon_chain(self):
+    def test_semicolon_chain(self): #
         cmdline = "echo AAA; echo BBB; echo CCC"
         stdout = self.eval(cmdline)
         result = set(stdout.strip().split())
         self.assertEqual(result, {"AAA", "BBB", "CCC"})
 
-    def test_semicolon_exception(self):
+    def test_semicolon_exception(self): #
         cmdline = "ls dir3; echo BBB"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "")
 
-    def test_unsafe_ls(self):
+    def test_unsafe_ls(self): #
         cmdline = "_ls dir3; echo AAA > newfile.txt"
         self.eval(cmdline)
         stdout = self.eval("cat newfile.txt", shell="/bin/bash")
         result = stdout.strip()
         self.assertEqual(result, "AAA")
 
-    def test_pipe(self):
+    def test_pipe(self): #
         cmdline = "echo AAA | sed 's/A/B/'"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "BAA")
 
-    def test_pipe_chain(self):
+    def test_pipe_chain(self): #
         cmdline = "echo AAA | sed 's/A/C/' | sed 's/A/B/'"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "CBA")
 
-    def test_pipe_exception(self):
+    def test_pipe_exception(self): #
         cmdline = "ls dir3 | echo foo"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "")
 
-    def test_substitution(self):
+    def test_substitution(self): #
         cmdline = "echo `echo foo`"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "foo")
 
-    def test_substitution_insidearg(self):
+    def test_substitution_insidearg(self): #
         cmdline = "echo a`echo a`a"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "aaa")
 
-    def test_substitution_splitting(self):
+    def test_substitution_splitting(self): #
         cmdline = "echo `echo foo  bar`"
         stdout = self.eval(cmdline)
         result = stdout.strip()

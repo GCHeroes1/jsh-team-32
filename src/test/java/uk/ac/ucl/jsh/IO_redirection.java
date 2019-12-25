@@ -103,14 +103,17 @@ public class IO_redirection {
         }
 
         StringBuilder filecontent = new StringBuilder();
-        try {
+        try
+        {
             File outputfile = new File("test.txt");
             BufferedReader bfr = new BufferedReader(new FileReader(outputfile));
             String line;
             while ((line = bfr.readLine()) != null) {
                 filecontent.append(line);
             }
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e)
+        {
             fail("File not created");
         }
         assertEquals("foo", filecontent.toString());

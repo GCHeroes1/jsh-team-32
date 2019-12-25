@@ -36,12 +36,8 @@ public class JshTest {
 
 
     @Test
-    public void test_echo() {
-        try {
-            jsh.eval("echo hello world", out);
-        } catch (Exception e) {
-            fail(e.toString());
-        }
+    public void test_echo() throws IOException {
+        jsh.eval("echo hello world", out);
         String output = new String(out.toByteArray());
         output = output.strip();
         //Scanner scn = new Scanner(in);

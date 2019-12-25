@@ -5,19 +5,20 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.rules.ExpectedException;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-public class Ls {
+public class Semicolon {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public Ls() {
+    public Semicolon() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
@@ -34,64 +35,46 @@ public class Ls {
         jsh = new Jsh(workingDir.getCanonicalPath());
     }
 
+
     @Test
-    public void test_ls() {
+    public void test_semicolon() {
         try {
-            jsh.eval("ls", out);
+            jsh.eval("echo AAA; echo BBB", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
         //Scanner scn = new Scanner(in);
-        assertArrayEquals(new String[]{"dir1", "dir2", "test.txt"}, output.split("[\n\t]"));
+        assertArrayEquals(new String[]{"AAA", "BBB"}, output.split("\r\n|\n"));
     }
 
     @Test
-    public void test_ls_dir() {
+    public void test_semicolon_chain() {
         try {
-            jsh.eval("ls dir1", out);
+            jsh.eval("echo AAA; echo BBB; echo CCC", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
         //Scanner scn = new Scanner(in);
-        assertArrayEquals(new String[]{"file1.txt", "file2.txt", "longfile.txt"}, output.split("[\n\t]"));
+        assertArrayEquals(new String[]{"AAA", "BBB", "CCC"}, output.split("\r\n|\n"));
     }
 
+    @Rule
+    public ExpectedException thrown= ExpectedException.none();
+
     @Test
-    public void test_ls_hidden() {
-        try {
-            jsh.eval("ls dir2/subdir", out);
-        } catch (Exception e) {
-            fail(e.toString());
-        }
+    public void test_semicolon_exception() throws IOException{
+        thrown.expect(RuntimeException.class);
+        jsh.eval("ls dir3; echo BBB", out);
         String output = new String(out.toByteArray());
         output = output.strip();
-        assertArrayEquals(new String[]{"file.txt"}, output.split("[\n\t]"));
+        //Scanner scn = new Scanner(in);
+        assertEquals("", output);
     }
 
-    @Test
-    public void test_unsafe_ls() throws IOException {
-        jsh.eval("_ls dir3; echo AAA > newfile.txt", out);
 
-        StringBuilder filecontent = new StringBuilder();
-        try
-        {
-            File outputfile = new File("newfile.txt");
-            BufferedReader bfr = new BufferedReader(new FileReader(outputfile));
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                filecontent.append(line);
-            }
-        }
-        catch (FileNotFoundException e)
-        {
-            fail("File not created");
-        }
-
-        assertEquals("AAA", filecontent.toString());
-    }
 
 }

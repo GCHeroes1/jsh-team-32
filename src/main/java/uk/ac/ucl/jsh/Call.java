@@ -17,6 +17,7 @@ public class Call extends Jsh implements CommandInterface
     {
         command = cmd_sub(command);
         command = extract_io_redirects(command);
+        command = merge_collated_quotes(command);
 
         ArrayList<String> tokens = split_quotes(command);
 
@@ -64,7 +65,14 @@ public class Call extends Jsh implements CommandInterface
         ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));
         try
         {
-            spFactory.getSP(appName).execute(appArgs.toArray(new String[0]), input, output); //EHERERERERERE
+            if(appName.charAt(0) == '_')
+            {
+                spFactory.getSP(appName.substring(1)).executeUnsafe(appArgs.toArray(new String[0]), input, output); //EHERERERERERE
+            }
+            else
+            {
+                spFactory.getSP(appName).execute(appArgs.toArray(new String[0]), input, output); //EHERERERERERE
+            }
         }
         catch (NullPointerException e)
         {
@@ -106,6 +114,26 @@ public class Call extends Jsh implements CommandInterface
         return command;
     }
 
+    private String merge_collated_quotes(String command)
+    {
+        String collated_quotes_regex = "([^\\s\"]*(\"[^\"]*\")*[^\\s\"]*)|([^\\s\']*(\'[^\']*\')*[^\\s\']*)";
+        Pattern regex_pattern = Pattern.compile(collated_quotes_regex);
+        Matcher regex_matcher = regex_pattern.matcher(command);
+        ArrayList<String> pieces = new ArrayList<>();
+        String match;
+        while (regex_matcher.find())
+        {
+            match = regex_matcher.group();
+            if(match.indexOf('"') != -1)  // only put quotes around if the part contains quotes
+            {
+                match = match.replace("\"", "");
+                match = "\"" + match + "\"";
+            }
+            pieces.add(match);
+        }
+        return String.join(" ", pieces);
+    }
+
     private String cmd_sub(String command) throws IOException
     {
         int splitIndex, openingBackquoteIndex, closingBackquoteIndex;
@@ -126,15 +154,9 @@ public class Call extends Jsh implements CommandInterface
                     String subCommand = command.substring((openingBackquoteIndex + 1), closingBackquoteIndex); // create a command of the
                     (new Sequence()).run(subCommand, input, sub_command_output);
                     cmdoutput = (new String(sub_command_output.toByteArray()));
-//                    while("\n\r".indexOf(cmdoutput.charAt(cmdoutput.length()-1)) != -1)  //removes trailing newlines
-//                    {
-//                        cmdoutput = cmdoutput.substring(0, cmdoutput.length()-2);
-//                    }
                     cmdoutput = cmdoutput.replace("\n", " ").replace("\r", "").strip();
-                    // System.out.println("pre: " + input);
                     command = command.substring(0, openingBackquoteIndex) + "\"" + cmdoutput + "\"" + command.substring(closingBackquoteIndex + 1);
-                    splitIndex = openingBackquoteIndex + cmdoutput.length(); // +1 and not -2 because we added '"', '"' and ' '
-                    // System.out.println("post: " + input);
+                    splitIndex = openingBackquoteIndex + cmdoutput.length();
 
                 }
             }

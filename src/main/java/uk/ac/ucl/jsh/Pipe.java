@@ -21,7 +21,7 @@ public class Pipe extends Jsh implements CommandInterface
             instream = new ByteArrayInputStream(outstream.toByteArray());
             outstream.reset();
 
-            cmd = merge_collated_quotes(cmd);
+            //cmd = merge_collated_quotes(cmd);
 
             (new Call()).run(cmd, instream, outstream);
         }
@@ -54,27 +54,6 @@ public class Pipe extends Jsh implements CommandInterface
         }
         commands.add(command.substring(last_pipe, splitIndex));
         return commands;
-    }
-
-
-    private String merge_collated_quotes(String command)
-    {
-        String collated_quotes_regex = "([^\\s\"]*(\"[^\"]*\")*[^\\s\"]*)|([^\\s\']*(\'[^\']*\')*[^\\s\']*)";
-        Pattern regex_pattern = Pattern.compile(collated_quotes_regex);
-        Matcher regex_matcher = regex_pattern.matcher(command);
-        ArrayList<String> pieces = new ArrayList<>();
-        String match;
-        while (regex_matcher.find())
-        {
-            match = regex_matcher.group();
-            if(match.indexOf('"') != -1)  // only put quotes around if the part contains quotes
-            {
-                match = match.replace("\"", "");
-                match = "\"" + match + "\"";
-            }
-            pieces.add(match);
-        }
-        return String.join(" ", pieces);
     }
 
 
