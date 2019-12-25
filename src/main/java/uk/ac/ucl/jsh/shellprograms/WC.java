@@ -29,7 +29,6 @@ public class WC extends ShellProgram {
             for( String x : words)
             {
                 count++;
-                System.out.println(x);        
             }
             line = reader.readLine();
        }     
@@ -47,21 +46,14 @@ public class WC extends ShellProgram {
     {
         OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
         if (args.length < 1 || args.length > 2){
-            // System.out.println("i got here \n");
             throw new RuntimeException("wc: wrong number of arguments");
         }
-        //System.out.println(args[0]);
-        //System.out.println(args[1]);
         if (args[0].equals("-m")){
-            System.out.println("i got here 1 \n");
-            if (args.length == 2){
-                System.out.println("i got here 2 \n");
+            if (args.length > 1){
                 int char_ = countChar(new FileReader(args[1]));
                 //int char_ = countChar(new InputStreamReader(stdin));
                 String char_count = String.valueOf(char_);
                 str_to_bytes.write(char_count); 
-                str_to_bytes.write(System.getProperty("line.separator"));
-                str_to_bytes.flush();
              }
             //  else if (args.length == 2){
             //     System.out.println("i got here 3 \n");
@@ -69,24 +61,20 @@ public class WC extends ShellProgram {
             //   }
         }
         else if(args[0].equals("-w")){
-            if (args.length == 2){
-                int word_ = countWord(new FileReader(args[1])));
+            if (args.length > 1){
+                int word_ = countWord(new FileReader(args[1]));
                 String word_count = String.valueOf(word_);
                 str_to_bytes.write(word_count);
-                str_to_bytes.write(System.getProperty("line.separator"));
-                str_to_bytes.flush(); 
              }
             //  else if (args.length == 2){
             //     str_to_bytes.write(countWord(new FileReader(args[1]))); 
             //   }
         }
         else if(args[0].equals("-l")){
-            if (args.length == 2){
+            if (args.length > 1){
                 int lines = countLines(new FileReader(args[1]));
                 String lines_count = String.valueOf(lines);
                 str_to_bytes.write(lines_count); 
-                str_to_bytes.write(System.getProperty("line.separator"));
-                str_to_bytes.flush();
             }
             // else if (args.length == 2){
             //     str_to_bytes.write(countLines(new FileReader(args[1]))); 
@@ -95,8 +83,8 @@ public class WC extends ShellProgram {
         else{
             throw new RuntimeException("wc: wrong arguments");
         }
-        // str_to_bytes.write(System.getProperty("line.separator"));
-        // str_to_bytes.flush();
+        str_to_bytes.write(System.getProperty("line.separator"));
+        str_to_bytes.flush();
         //str_to_bytes.close();
     }
 }
