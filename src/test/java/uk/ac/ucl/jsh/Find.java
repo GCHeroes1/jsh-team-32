@@ -6,18 +6,19 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.fail;
 
-public class JshTest {
+public class Find {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public JshTest() {
+    public Find() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
@@ -35,58 +36,47 @@ public class JshTest {
     }
 
 
+
     @Test
-    public void test_echo() {
+    public void test_find()  {
         try {
-            jsh.eval("echo hello world", out);
+            jsh.eval("find -name file.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        //Scanner scn = new Scanner(in);
-        assertEquals("hello world", output);
-    }
-
-
-    @Test
-    public void test_globbing()  {
-        try {
-            jsh.eval("echo *", out);
-        } catch (Exception e) {
-            fail(e.toString());
-        }
-        String outputstr = new String(out.toByteArray());
-        outputstr = outputstr.strip();
-
-        String[] expected = new String[]{"dir1", "dir2", "test.txt"};
-        Arrays.sort(expected);
-
-        String[] output = outputstr.split("\\s");
-        Arrays.sort(output);
-
-        assertArrayEquals(expected, output);
+        assertArrayEquals(new String[]{"./dir2/subdir/file.txt"}, output.split("\r\n|\n|\t"));
     }
 
     @Test
-    public void test_globbing_dir()  {
+    public void test_find_pattern()  {
         try {
-            jsh.eval("echo dir1/*.txt", out);
+            jsh.eval("find -name '*.txt'", out);
         } catch (Exception e) {
             fail(e.toString());
         }
-        String outputstr = new String(out.toByteArray());
-        outputstr = outputstr.strip();
-
-        String[] expected = new String[]{"dir1/file1.txt",
-                "dir1/file2.txt", "dir1/longfile.txt"};
-        Arrays.sort(expected);
-
-        String[] output = outputstr.split("\\s");
-        Arrays.sort(output);
-
-        assertArrayEquals(expected, output);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"./dir2/subdir/file.txt",
+                "./test.txt",
+                "./dir1/file1.txt",
+                "./dir1/file2.txt",
+                "./dir1/longfile.txt"}, output.split("\r\n|\n|\t"));
     }
 
-
+    @Test
+    public void test_find_dir()
+    {
+        try {
+            jsh.eval("find dir1 -name '*.txt'", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"./dir1/file1.txt",
+                "./dir1/file2.txt",
+                "./dir1/longfile.txt"}, output.split("\r\n|\n|\t"));
+    }
 }

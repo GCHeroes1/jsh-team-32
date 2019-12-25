@@ -12,12 +12,12 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-public class JshTest {
+public class Pwd {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public JshTest() {
+    public Pwd() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
@@ -36,57 +36,26 @@ public class JshTest {
 
 
     @Test
-    public void test_echo() {
+    public void test_pwd() throws IOException {
         try {
-            jsh.eval("echo hello world", out);
+            jsh.eval("pwd", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        //Scanner scn = new Scanner(in);
-        assertEquals("hello world", output);
-    }
-
-
-    @Test
-    public void test_globbing()  {
-        try {
-            jsh.eval("echo *", out);
-        } catch (Exception e) {
-            fail(e.toString());
-        }
-        String outputstr = new String(out.toByteArray());
-        outputstr = outputstr.strip();
-
-        String[] expected = new String[]{"dir1", "dir2", "test.txt"};
-        Arrays.sort(expected);
-
-        String[] output = outputstr.split("\\s");
-        Arrays.sort(output);
-
-        assertArrayEquals(expected, output);
+        assertEquals(workingDir.getCanonicalPath(), output);
     }
 
     @Test
-    public void test_globbing_dir()  {
+    public void test_cd_pwd() throws IOException {
         try {
-            jsh.eval("echo dir1/*.txt", out);
+            jsh.eval("cd dir1; pwd", out);
         } catch (Exception e) {
             fail(e.toString());
         }
-        String outputstr = new String(out.toByteArray());
-        outputstr = outputstr.strip();
-
-        String[] expected = new String[]{"dir1/file1.txt",
-                "dir1/file2.txt", "dir1/longfile.txt"};
-        Arrays.sort(expected);
-
-        String[] output = outputstr.split("\\s");
-        Arrays.sort(output);
-
-        assertArrayEquals(expected, output);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals(workingDir.getCanonicalPath() + File.separator + "dir1", output);
     }
-
-
 }

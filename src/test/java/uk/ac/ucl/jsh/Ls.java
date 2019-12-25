@@ -12,12 +12,12 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-public class JshTest {
+public class Ls {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public JshTest() {
+    public Ls() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
@@ -34,59 +34,42 @@ public class JshTest {
         jsh = new Jsh(workingDir.getCanonicalPath());
     }
 
-
     @Test
-    public void test_echo() {
+    public void test_ls() {
         try {
-            jsh.eval("echo hello world", out);
+            jsh.eval("ls", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
         //Scanner scn = new Scanner(in);
-        assertEquals("hello world", output);
-    }
-
-
-    @Test
-    public void test_globbing()  {
-        try {
-            jsh.eval("echo *", out);
-        } catch (Exception e) {
-            fail(e.toString());
-        }
-        String outputstr = new String(out.toByteArray());
-        outputstr = outputstr.strip();
-
-        String[] expected = new String[]{"dir1", "dir2", "test.txt"};
-        Arrays.sort(expected);
-
-        String[] output = outputstr.split("\\s");
-        Arrays.sort(output);
-
-        assertArrayEquals(expected, output);
+        assertArrayEquals(new String[]{"dir1", "dir2", "test.txt"}, output.split("[\n\t]"));
     }
 
     @Test
-    public void test_globbing_dir()  {
+    public void test_ls_dir() {
         try {
-            jsh.eval("echo dir1/*.txt", out);
+            jsh.eval("ls dir1", out);
         } catch (Exception e) {
             fail(e.toString());
         }
-        String outputstr = new String(out.toByteArray());
-        outputstr = outputstr.strip();
-
-        String[] expected = new String[]{"dir1/file1.txt",
-                "dir1/file2.txt", "dir1/longfile.txt"};
-        Arrays.sort(expected);
-
-        String[] output = outputstr.split("\\s");
-        Arrays.sort(output);
-
-        assertArrayEquals(expected, output);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        //Scanner scn = new Scanner(in);
+        assertArrayEquals(new String[]{"file1.txt", "file2.txt", "longfile.txt"}, output.split("[\n\t]"));
     }
 
+    @Test
+    public void test_ls_hidden() {
+        try {
+            jsh.eval("ls dir2/subdir", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"file.txt"}, output.split("[\n\t]"));
+    }
 
 }
