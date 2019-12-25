@@ -392,49 +392,49 @@ class TestJSH(unittest.TestCase):
         result = stdout.strip()
         self.assertEqual(result, "foo bar")
 
-    def test_substitution_wc_find(self):
+    def test_substitution_wc_find(self): #
         cmdline = "wc -l `find -name '*.txt'`"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "26")
 
-    def test_substitution_semicolon(self):
+    def test_substitution_semicolon(self): #
         cmdline = "echo `echo foo; echo bar`"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "foo bar")
 
-    def test_substitution_keywords(self):
+    def test_substitution_keywords(self): #
         cmdline = "echo `cat test.txt`"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "''")
 
-    def test_substitution_app(self):
+    def test_substitution_app(self): #
         cmdline = "`echo echo` foo"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "foo")
 
-    def test_singlequotes(self):
+    def test_singlequotes(self): #
         cmdline = "echo 'a  b'"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "a  b")
 
-    def test_quote_keyword(self):
+    def test_quote_keyword(self): #
         cmdline = "echo ';'"
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, ";")
 
-    def test_doublequotes(self):
+    def test_doublequotes(self): #
         cmdline = "echo \"a  b\""
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, "a  b")
 
-    def test_substitution_doublequotes(self):
+    def test_substitution_doublequotes(self): #
         cmdline = "echo \"`echo foo`\""
         stdout = self.eval(cmdline)
         result = stdout.strip()

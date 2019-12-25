@@ -34,20 +34,6 @@ public class Cat {
         jsh = new Jsh(workingDir.getCanonicalPath());
     }
 
-
-    @Test
-    public void test_echo() {
-        try {
-            jsh.eval("echo hello world", out);
-        } catch (Exception e) {
-            fail(e.toString());
-        }
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        //Scanner scn = new Scanner(in);
-        assertEquals("hello world", output);
-    }
-
     @Test
     public void test_cat() {
         try {
