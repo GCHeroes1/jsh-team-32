@@ -5,7 +5,7 @@ import java.io.*;
 public class Echo extends ShellProgram
 {
     @Override
-    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream stdout) throws IOException
+    public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
     {
         OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
         for(int index = 0; index < args.length; index++)

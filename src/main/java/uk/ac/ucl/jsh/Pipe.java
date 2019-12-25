@@ -14,10 +14,10 @@ public class Pipe extends Jsh implements CommandInterface
     {
         ArrayList<String> piped_commands = split_piped_commands(command);
 
-
         ByteArrayOutputStream outstream = new ByteArrayOutputStream();
         ByteArrayInputStream instream;
         for(String cmd : piped_commands) {
+            // get the output of previous command as input stream for next command.
             instream = new ByteArrayInputStream(outstream.toByteArray());
             outstream.reset();
 

@@ -159,7 +159,7 @@ public class JshTest {
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        assertArrayEquals(new String[]{"AAA", "BBB", "AAA"}, output.split("\r\n|\n"));
+        assertArrayEquals(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}, output.split("\r\n|\n"));
     }
 
     @Test

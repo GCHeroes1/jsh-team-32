@@ -17,13 +17,56 @@ public class Call extends Jsh implements CommandInterface
     {
         command = cmd_sub(command);
         command = extract_io_redirects(command);
+
         ArrayList<String> tokens = split_quotes(command);
+
+        {    // do command redirection here and let the IDE decide what best to do to replace input and output streams.
+            //for (String token : tokens)
+            for(int i = 0; i < tokens.size(); i++)
+            {
+                String token = tokens.get(i);
+                String redirection_target;
+                //System.out.println(token);
+                switch (token.charAt(0))
+                {
+                    case '>':
+                        System.out.println("hello");
+                        redirection_target = get_redirection_target(tokens, i, token);
+
+                        try
+                        {
+                            output = new FileOutputStream(new File(redirection_target));
+                        }
+                        catch (IOException e)
+                        {
+                            throw new RuntimeException("[redirection] Unable to open output file for writing");
+                        }
+                        break;
+
+
+                    case '<':
+                        System.out.println("there");
+                        redirection_target = get_redirection_target(tokens, i, token);
+
+                        try
+                        {
+                            input = new FileInputStream(new File(redirection_target));
+                        }
+                        catch (IOException e)
+                        {
+                            throw new RuntimeException("[redirection] Unable to open input file for reading");
+                        }
+                        break;
+                    default:
+                }
+            }
+        }
 
         String appName = tokens.get(0); // first token = program to run
         ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));
         try
         {
-            spFactory.getSP(appName).execute(appArgs.toArray(new String[0]), (ByteArrayInputStream) input, (ByteArrayOutputStream) output); //EHERERERERERE
+            spFactory.getSP(appName).execute(appArgs.toArray(new String[0]), input, output); //EHERERERERERE
         }
         catch (NullPointerException e)
         {
@@ -36,6 +79,28 @@ public class Call extends Jsh implements CommandInterface
 
     }
 
+    private String get_redirection_target(ArrayList<String> tokens, int i, String token) {
+        String redirection_target;
+        if(token.length() == 1)
+        {
+            try
+            {
+                redirection_target = tokens.get(i + 1);
+                tokens.remove(i + 1);
+                tokens.remove(i);
+            }
+            catch (IndexOutOfBoundsException e)
+            {
+                throw new RuntimeException("[redirection] No redirection target provided");
+            }
+        }
+        else
+        {
+            redirection_target = token.substring(1);
+            tokens.remove(token);
+        }
+        return redirection_target;
+    }
 
 
     private String extract_io_redirects(String command)

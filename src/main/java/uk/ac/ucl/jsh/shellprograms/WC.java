@@ -42,7 +42,7 @@ public class WC extends ShellProgram {
     }
 
     @Override
-    public void execute(String[] args, ByteArrayInputStream stdin, ByteArrayOutputStream stdout) throws IOException
+    public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
     {
         int fileArgument = 1;
         OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
