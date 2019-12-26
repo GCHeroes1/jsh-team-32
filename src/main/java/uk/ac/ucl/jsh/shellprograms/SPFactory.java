@@ -10,6 +10,7 @@ public class SPFactory
         programs.put("cat", new Cat());
         programs.put("cd", new Cd());
         programs.put("echo", new Echo());
+        programs.put("find", new Find());
         programs.put("grep", new Grep());
         programs.put("head", new Head());
         programs.put("ls", new Ls());

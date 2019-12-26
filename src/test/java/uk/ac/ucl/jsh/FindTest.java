@@ -9,16 +9,20 @@ import org.junit.rules.TemporaryFolder;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.fail;
 
-public class Find {
+public class FindTest {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
+    private String file_sep = File.separator;
 
-    public Find() {
+
+    public FindTest() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
@@ -33,6 +37,7 @@ public class Find {
         FileUtils.copyDirectory(new File("src/test/test_template"), workingDir);
 
         jsh = new Jsh(workingDir.getCanonicalPath());
+
     }
 
 
@@ -46,7 +51,8 @@ public class Find {
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        assertArrayEquals(new String[]{"./dir2/subdir/file.txt"}, output.split("\r\n|\n|\t"));
+        assertArrayEquals(new String[]{"." + file_sep + "dir2"
+                + file_sep + "subdir" + file_sep + "file.txt"}, output.split("\r\n|\n|\t"));
     }
 
     @Test
@@ -56,13 +62,21 @@ public class Find {
         } catch (Exception e) {
             fail(e.toString());
         }
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        assertArrayEquals(new String[]{"./dir2/subdir/file.txt",
-                "./test.txt",
-                "./dir1/file1.txt",
-                "./dir1/file2.txt",
-                "./dir1/longfile.txt"}, output.split("\r\n|\n|\t"));
+        String outputstr = new String(out.toByteArray());
+        outputstr = outputstr.strip();
+
+        String[] expected = new String[]{
+                "." + file_sep + "dir2" + file_sep + "subdir" + file_sep + "file.txt",
+                "." + file_sep + "test.txt",
+                "." + file_sep + "dir1" + file_sep + "file1.txt",
+                "." + file_sep + "dir1" + file_sep + "file2.txt",
+                "." + file_sep + "dir1" + file_sep + "longfile.txt"};
+        Arrays.sort(expected);
+
+        String[] output = outputstr.split("\r\n|\n|\t");
+        Arrays.sort(output);
+
+        assertArrayEquals(expected, output);
     }
 
     @Test
@@ -75,8 +89,9 @@ public class Find {
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        assertArrayEquals(new String[]{"./dir1/file1.txt",
-                "./dir1/file2.txt",
-                "./dir1/longfile.txt"}, output.split("\r\n|\n|\t"));
+        assertArrayEquals(new String[]{
+                "." + file_sep + "dir1" + file_sep + "file1.txt",
+                "." + file_sep + "dir1" + file_sep + "file2.txt",
+                "." + file_sep + "dir1" + file_sep + "longfile.txt"}, output.split("\r\n|\n|\t"));
     }
 }

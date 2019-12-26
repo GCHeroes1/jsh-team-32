@@ -17,7 +17,11 @@ public class Cd extends ShellProgram
             throw new RuntimeException("cd: too many arguments");
         }
         String dirString = appArgs.get(0);                                              // gets the string representation of the path to switch to
-        File dir = new File(currentDirectory, dirString);                               // gets a file system node
+        File dir = new File(dirString);
+        if(!dir.isAbsolute())
+        {
+            dir = new File(currentDirectory, dirString);
+        }
         if (!dir.exists() || !dir.isDirectory()) {                                      // checks if the file exists and is a directory
             throw new RuntimeException("cd: " + dirString + " is not an existing directory"); // throw exception if it cant find the path
         }
