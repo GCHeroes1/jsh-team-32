@@ -74,8 +74,10 @@ public class JshTest {
         String outputstr = new String(out.toByteArray());
         outputstr = outputstr.strip();
 
-        String[] expected = new String[]{"dir1/file1.txt",
-                "dir1/file2.txt", "dir1/longfile.txt"};
+        String[] expected = new String[]{
+                "dir1" + File.separator + "file1.txt",
+                "dir1" + File.separator + "file2.txt",
+                "dir1" + File.separator + "longfile.txt"};
         Arrays.sort(expected);
 
         String[] output = outputstr.split("\\s");

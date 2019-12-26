@@ -180,11 +180,24 @@ public class Call extends Jsh implements CommandInterface
             } else {
                 nonQuote = regexMatcher.group().trim();                                     // trims the entire regex
                 ArrayList<String> globbingResult = new ArrayList<>();
+                File glob = new File(currentDirectory + File.separator + nonQuote);
                 Path dir = Paths.get(currentDirectory);                                     // path object, represents operating system level directory
+                if(glob.getParentFile().isDirectory())
+                {
+                    dir = glob.getParentFile().toPath();
+                }
                 DirectoryStream<Path> stream = null;     // using the OS to do globbing for him
-                stream = Files.newDirectoryStream(dir, nonQuote);
+                stream = Files.newDirectoryStream(dir, glob.getName());
+                String rel_path = Paths.get(currentDirectory).relativize(dir).toString();
                 for (Path entry : stream) {
-                    globbingResult.add(entry.getFileName().toString());                     // putting results back into the variable
+                    if(rel_path.equals(""))
+                    {
+                        globbingResult.add(entry.getFileName().toString());                     // putting results back into the variable
+                    }
+                    else
+                    {
+                        globbingResult.add(rel_path + File.separator + entry.getFileName().toString());
+                    }
                 }
                 if (globbingResult.isEmpty()) {
                     globbingResult.add(nonQuote);
