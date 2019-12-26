@@ -68,7 +68,7 @@ public class WC extends ShellProgram {
                 filePath = Paths.get((String) currentDirectory + File.separator + args[fileArgument]);
                 if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
                     !Files.exists(filePath) || !Files.isReadable(filePath)) {
-                    throw new RuntimeException("sed: wrong file argument");
+                    throw new RuntimeException("wc: wrong file argument");
                 }
                 BufferedReader reader = Files.newBufferedReader(filePath, encoding);
                 int char_ = countChar(reader);
@@ -83,7 +83,7 @@ public class WC extends ShellProgram {
                 filePath = Paths.get((String) currentDirectory + File.separator + args[fileArgument]);
                 if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
                     !Files.exists(filePath) || !Files.isReadable(filePath)) {
-                    throw new RuntimeException("sed: wrong file argument");
+                    throw new RuntimeException("wc: wrong file argument");
                 }
                 BufferedReader reader = Files.newBufferedReader(filePath, encoding);
                 int word_ = countWord(reader);
@@ -98,7 +98,7 @@ public class WC extends ShellProgram {
                 filePath = Paths.get((String) currentDirectory + File.separator + args[fileArgument]);
                 if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
                     !Files.exists(filePath) || !Files.isReadable(filePath)) {
-                    throw new RuntimeException("sed: wrong file argument");
+                    throw new RuntimeException("wc: wrong file argument");
                 }
                 BufferedReader reader = Files.newBufferedReader(filePath, encoding);
                 int lines = countLines(reader);
