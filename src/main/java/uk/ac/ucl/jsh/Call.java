@@ -116,7 +116,7 @@ public class Call extends Jsh implements CommandInterface
 
     private String merge_collated_quotes(String command)
     {
-        String collated_quotes_regex = "([^\\s\"]*(\"[^\"]*\")*[^\\s\"]*)|([^\\s']*('[^']*')*[^\\s']*)";
+        String collated_quotes_regex = "([^\\s']*'.*'[^\\s']*)|([^\\s\"]*(\"[^\"]*\")*[^\\s\"]*)";
         Pattern regex_pattern = Pattern.compile(collated_quotes_regex);
         //command = command.replace("\'", "\"");
         Matcher regex_matcher = regex_pattern.matcher(command);

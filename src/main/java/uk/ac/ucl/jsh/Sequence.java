@@ -15,7 +15,7 @@ public class Sequence extends Jsh implements CommandInterface{
 		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;
         //Here is the code that separates by semicolons
         //this has just been copy/pasted in and will probz not work lolz
-		cmdline = cmdline.replace("\'", "\"");
+		//cmdline = cmdline.replace("\'", "\"");
 		for (splitIndex = 0; splitIndex < cmdline.length(); splitIndex++) {                     // iterates through the command line characters  
 			char ch = cmdline.charAt(splitIndex);                                               // isolates each character of the command line input  
 			if (ch == ';')
