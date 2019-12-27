@@ -117,8 +117,8 @@ public class Call extends Jsh implements CommandInterface
     private String merge_collated_quotes(String command)
     {
         String collated_quotes_regex = "([^\\s']*'.*'[^\\s']*)|([^\\s\"]*(\"[^\"]*\")*[^\\s\"]*)";
+        // Ideally I want to use the regex ([^\s']*'[^']*'*[^\s']*)|([^\s"]*"[^"]*"*[^\s"]*) but its not having it
         Pattern regex_pattern = Pattern.compile(collated_quotes_regex);
-        //command = command.replace("\'", "\"");
         Matcher regex_matcher = regex_pattern.matcher(command);
         ArrayList<String> pieces = new ArrayList<>();
         String match;
@@ -174,7 +174,7 @@ public class Call extends Jsh implements CommandInterface
 
     private ArrayList<String> split_quotes(String command) throws IOException
     {
-        String spaceRegex = "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'";
+            String spaceRegex = "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'";
         //String spaceRegex = "[^\\s\"'|]+([\\s]*\\|[\\s]*[^\\s\"'|]+)*|\"([^\"]*)\"|'([^']*)'";
         // regex above separates input into tokens by space and lonely single or double quotes, and keeps pipe characters in between words if surrounded by spaces or not. The pipe has to be between words.
         ArrayList<String> tokens = new ArrayList<>();                                       // know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
