@@ -47,12 +47,12 @@ public class Pipe extends Jsh implements CommandInterface
             {
                 if(!inside_quote)
                 {
-                    commands.add(command.substring(last_pipe, splitIndex));
+                    commands.add(command.substring(last_pipe, splitIndex).trim());
                     last_pipe = splitIndex + 1;
                 }
             }
         }
-        commands.add(command.substring(last_pipe, splitIndex));
+        commands.add(command.substring(last_pipe, splitIndex).trim());
         return commands;
     }
 

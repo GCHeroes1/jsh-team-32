@@ -109,7 +109,7 @@ public class QuotingTest {
         String output = new String(out.toByteArray());
         output = output.strip();
         //Scanner scn = new Scanner(in);
-        assertEquals("a b", output);
+        assertEquals("\"\"", output);
     }
 
     @Test
