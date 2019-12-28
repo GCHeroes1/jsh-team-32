@@ -9,11 +9,12 @@ public class Call extends Jsh implements CommandInterface
     @Override
     public void run(String command, InputStream input, OutputStream output) throws IOException
     {
-        //command = cmd_sub(command);
+        //command = cmd_sub(command);  //moved this down below the redirection to fix command substitution (line 61)
         command = extract_io_redirects(command);
         command = merge_collated_quotes(command);
 
         ArrayList<String> tokens = split_quotes(command);
+
 
         {
             for(int i = 0; i < tokens.size(); i++)
