@@ -1,4 +1,3 @@
-
 package uk.ac.ucl.jsh.shellprograms;
 
 import java.io.*;
@@ -9,17 +8,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class WC extends ShellProgram {
-    private int countChar(Reader file) throws IOException { //THIS IS RLY BROKEN COZ IT DOESNT COUNT NEW LINE CHARACTERS
+    private int countChar(Reader file) throws IOException { 
         BufferedReader reader = new BufferedReader(file);
-        reader.ready();
         int charCount = 0;
         String line;
         while((line = reader.readLine()) != null){
             charCount += line.length() + 1;
-            int pos = 0;//this section might work to count newline characters?
-            while ((pos = line.indexOf("\n", pos) + 1) != 0) {
-                charCount++;
-            }
         }
       return charCount;
     }
@@ -42,15 +36,6 @@ public class WC extends ShellProgram {
         while (reader.readLine() != null) lines++;
         reader.close();
         return lines;
-    }
-
-    private static byte[][] convertToBytes(String[] strings) {//what is this and where is it used?
-        byte[][] data = new byte[strings.length][];
-        for (int i = 0; i < strings.length; i++) {
-            String string = strings[i];
-            data[i] = string.getBytes(StandardCharsets.UTF_8); // you can chose charset
-        }
-        return data;
     }
 
     @Override
