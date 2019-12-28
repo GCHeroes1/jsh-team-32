@@ -12,12 +12,12 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-public class IO_redirection {
+public class IO_redirection_test {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public IO_redirection() {
+    public IO_redirection_test() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }

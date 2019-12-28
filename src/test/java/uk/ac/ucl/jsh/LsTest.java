@@ -12,12 +12,12 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-public class Ls {
+public class LsTest {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public Ls() {
+    public LsTest() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }

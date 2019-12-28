@@ -12,12 +12,12 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-public class Pwd {
+public class CatTest {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public Pwd() {
+    public CatTest() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
@@ -34,28 +34,29 @@ public class Pwd {
         jsh = new Jsh(workingDir.getCanonicalPath());
     }
 
-
     @Test
-    public void test_pwd() throws IOException {
+    public void test_cat() {
         try {
-            jsh.eval("pwd", out);
+            jsh.eval("cat dir1/file1.txt dir1/file2.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        assertEquals(workingDir.getCanonicalPath(), output);
+        // can be just \n, but added \r\n because a pleb is using windows...
+        assertArrayEquals(new String[]{"AAA", "BBB", "AAA", "CCC"}, output.split("\r\n|\n"));
     }
 
     @Test
-    public void test_cd_pwd() throws IOException {
+    public void test_cat_stdin() {
         try {
-            jsh.eval("cd dir1; pwd", out);
+            jsh.eval("cat < dir1/file1.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        assertEquals(workingDir.getCanonicalPath() + File.separator + "dir1", output);
+        // can be just \n, but added \r\n because a pleb is using windows...
+        assertArrayEquals(new String[]{"AAA", "BBB", "AAA"}, output.split("\r\n|\n"));
     }
 }
