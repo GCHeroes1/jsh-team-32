@@ -46,13 +46,14 @@ public class WC extends ShellProgram {
             fileArgument = 1;
         }
         int[] countArray = new int[]{0, 0, 0};
+        BufferedReader reader;
         for (int i = fileArgument; i < (args.length); i++){
-            filePath = Paths.get((String) currentDirectory + File.separator + args[fileArgument]);
+            filePath = Paths.get((String) currentDirectory + File.separator + args[i]);
             if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
                     !Files.exists(filePath) || !Files.isReadable(filePath)) {
                 throw new RuntimeException("wc: wrong file argument");
             }
-            BufferedReader reader = Files.newBufferedReader(filePath, encoding);
+            reader = Files.newBufferedReader(filePath, encoding);
             int[] currentCounting = counting(reader);
             for (int j = 0; j < 3; j++) {
                 countArray[j] += currentCounting[j];
@@ -60,22 +61,16 @@ public class WC extends ShellProgram {
         }
         switch (args[0]) {
             case "-m":
-                if (args.length > 1) {
-                    String char_count = String.valueOf(countArray[0]);
-                    str_to_bytes.write(char_count);
-                }
+                String char_count = String.valueOf(countArray[0]);
+                str_to_bytes.write(char_count);
                 break;
             case "-w":
-                if (args.length > 1) {
-                    String word_count = String.valueOf(countArray[1]);
-                    str_to_bytes.write(word_count);
-                }
+                String word_count = String.valueOf(countArray[1]);
+                str_to_bytes.write(word_count);
                 break;
             case "-l":
-                if (args.length > 1) {
-                    String lines_count = String.valueOf(countArray[2]);
-                    str_to_bytes.write(lines_count);
-                }
+                String lines_count = String.valueOf(countArray[2]);
+                str_to_bytes.write(lines_count);
                 break;
         }
         // else{
