@@ -111,28 +111,24 @@ public class WC extends ShellProgram {
                 str_to_bytes.write(lines_count); 
             }
         }
-
-        // it never gets to here?! -- @ alex this was a bug i couldnt fix... good luck... i didnt have the help of intelliJ at the time though
         // else{
         if (wcArg.equals("stdin")){
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
-            // System.out.println("i recognsied that there was no option selected"); // DOESNT GET TO THIS 
-            // filePath = Paths.get((String) currentDirectory + File.separator + args[0]);
-            // if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
-                // !Files.exists(filePath) || !Files.isReadable(filePath)) {
-                // throw new RuntimeException("sed: wrong file argument");
-            // }
-            // BufferedReader reader = Files.newBufferedReader(filePath, encoding);
+             filePath = Paths.get((String) currentDirectory + File.separator + args[0]);
+            if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
+                !Files.exists(filePath) || !Files.isReadable(filePath)) {
+                throw new RuntimeException("sed: wrong file argument");
+            }
+            BufferedReader reader = Files.newBufferedReader(filePath, encoding);
+            // need to put this stuff in an array and then turn it into a byte array and then put it in the byte stream somehow 
             String char_count = String.valueOf(countChar(reader));
             String word_count = String.valueOf(countWord(reader));
             String lines_count = String.valueOf(countLines(reader));
             str_to_bytes.write(char_count);
             str_to_bytes.write(word_count);
             str_to_bytes.write(lines_count);
-            // there was no option, just print everything 
+            // there was no option, just print everything
         }
         str_to_bytes.write(System.getProperty("line.separator"));
         str_to_bytes.flush();
-        // System.out.println("i skipped everything??"); 
     }
 }
