@@ -22,40 +22,11 @@ public class WC extends ShellProgram {
             }
             lineCount++;
         }
-        System.out.println(charCount);
-        System.out.println(wordCount);
-        System.out.println(lineCount);
+//        System.out.println(charCount);
+//        System.out.println(wordCount);
+//        System.out.println(lineCount);
         return new int[]{charCount, wordCount, lineCount};
         }
-
-    private int countChar(Reader file) throws IOException {
-        BufferedReader reader = new BufferedReader(file);
-        int charCount = 0;
-        String line;
-        while((line = reader.readLine()) != null){
-            charCount += line.length() + 1;
-        }
-      return charCount;
-    }
-    private int countWord(Reader file) throws IOException { // works fine, dont need to touch it (i dont think so anyway)
-        BufferedReader reader = new BufferedReader(file);
-        int count = 0;
-        String line;
-        while((line = reader.readLine()) != null){
-            if(!(line.equals(""))){
-                String[] wordList = line.split(" ");
-                count += wordList.length;
-            }
-        }
-       return count;
-    }
-    private int countLines(Reader file) throws FileNotFoundException, IOException{ // works fine
-        BufferedReader reader = new BufferedReader(file);
-        int lines = 0;
-        while (reader.readLine() != null) lines++;
-        reader.close();
-        return lines;
-    }
 
     @Override
     public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
@@ -109,11 +80,11 @@ public class WC extends ShellProgram {
         }
         // else{
         if (wcArg.equals("stdin")){
-            str_to_bytes.write(countArray[2]);
+            str_to_bytes.write(String.valueOf(countArray[2]));
             str_to_bytes.write("\t");
-            str_to_bytes.write(countArray[1]);
+            str_to_bytes.write(String.valueOf(countArray[1]));
             str_to_bytes.write("\t");
-            str_to_bytes.write(countArray[0]);
+            str_to_bytes.write(String.valueOf(countArray[0]));
         }
         str_to_bytes.write(System.getProperty("line.separator"));
         str_to_bytes.flush();
