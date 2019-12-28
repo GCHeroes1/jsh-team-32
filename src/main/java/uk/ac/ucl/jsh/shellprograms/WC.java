@@ -16,6 +16,10 @@ public class WC extends ShellProgram {
         String line;
         while((line = reader.readLine()) != null){
             charCount += line.length() + 1;
+            int pos = 0;//this section might work to count newline characters?
+            while ((pos = line.indexOf("\n", pos) + 1) != 0) {
+                charCount++;
+            }
         }
       return charCount;
     }
@@ -40,7 +44,7 @@ public class WC extends ShellProgram {
         return lines;
     }
 
-    private static byte[][] convertToBytes(String[] strings) {
+    private static byte[][] convertToBytes(String[] strings) {//what is this and where is it used?
         byte[][] data = new byte[strings.length][];
         for (int i = 0; i < strings.length; i++) {
             String string = strings[i];
@@ -112,7 +116,7 @@ public class WC extends ShellProgram {
              filePath = Paths.get((String) currentDirectory + File.separator + args[0]);
             if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
                 !Files.exists(filePath) || !Files.isReadable(filePath)) {
-                throw new RuntimeException("wc: wrong file argument");
+                throw new RuntimeException("wc: wrong file argument: stdin");
             }
             BufferedReader reader;
             // should be lines, then words, then bytes
