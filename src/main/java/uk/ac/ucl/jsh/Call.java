@@ -1,13 +1,7 @@
 package uk.ac.ucl.jsh;
 
 import java.io.*;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Call extends Jsh implements CommandInterface
 {
@@ -126,7 +120,7 @@ public class Call extends Jsh implements CommandInterface
         return command;
     }
 
-    private boolean is_quote_not_disabled(String command, int index_of_quote) //todo: fix this
+    private boolean is_quote_not_disabled(String command, int index_of_quote)
     {
         char chr = command.charAt(index_of_quote);
         int quote_start, quote_end;
@@ -179,78 +173,33 @@ public class Call extends Jsh implements CommandInterface
         for(q_index = 0; q_index < command.length(); q_index++)
         {
             char chr = command.charAt(q_index);
-            if(chr == '"' && is_quote_not_disabled(command, q_index))
+            if(chr == '"' || chr == '\'')
             {
-                if(q_index > 0)
-                {
-                    if(q_index == command.length() - 1)
-                    {
-                        continue;
-                    }
-                    else if(command.charAt(q_index + 1) == ' ')
-                    {
-                        continue;
-                    }
-
-                    if(command.charAt(q_index - 1) != ' ' && space_end > q_end)
-                    {
-                        command = command.substring(0, space_end + 1) + "\"" +
-                                command.substring(space_end + 1, q_index) +
-                                command.substring(q_index + 1);
-                        q_end = space_end;
-                    }
-                    else if(space_end == q_end)
-                    {
-                        q_end = q_index;
-                    }
-                    else if(q_end > space_end)
-                    {
-                        if(command.charAt(q_end) == chr) // check if they're the same kind of quotes, otherwise ignore
-
-                        {
-                            command = command.substring(0, q_end) +
-                                    command.substring(q_end + 1, q_index) +
-                                    command.substring(q_index + 1);
-                            q_index = q_index - 2;
-                            q_end = space_end;
+                if(is_quote_not_disabled(command, q_index)) {
+                    if (q_index > 0) {
+                        if (q_index == command.length() - 1) {
+                            continue;
+                        } else if (command.charAt(q_index + 1) == ' ') {
+                            continue;
                         }
-                    }
-                }
-            }
-            else if(chr == '\'' && is_quote_not_disabled(command, q_index))
-            {
-                if(q_index > 0)
-                {
-                    if(q_index == command.length() - 1)
-                    {
-                        continue;
-                    }
-                    else if(command.charAt(q_index + 1) == ' ')
-                    {
-                        continue;
-                    }
 
-
-                    if(command.charAt(q_index - 1) != ' ' && space_end > q_end)
-                    {
-                        command = command.substring(0, space_end + 1) + "\'" +
-                                command.substring(space_end + 1, q_index) +
-                                command.substring(q_index + 1);
-                        q_end = space_end;
-                    }
-                    else if(space_end == q_end)
-                    {
-                        q_end = q_index;
-                    }
-                    else if(q_end > space_end)
-                    {
-                        if(command.charAt(q_end) == chr) // check if they're the same kind of quotes, otherwise ignore
-                        {
-                            command = command.substring(0, q_end) +
-                                    command.substring(q_end + 1, q_index) +
+                        if (command.charAt(q_index - 1) != ' ' && space_end > q_end) {
+                            command = command.substring(0, space_end + 1) + chr +
+                                    command.substring(space_end + 1, q_index) +
                                     command.substring(q_index + 1);
-                            q_index = q_index - 2;
                             q_end = space_end;
+                        } else if (space_end == q_end) {
+                            q_end = q_index;
+                        } else if (q_end > space_end) {
+                            if (command.charAt(q_end) == chr) // check if they're the same kind of quotes, otherwise ignore
+
+                            {
+                                command = command.substring(0, q_end) +
+                                        command.substring(q_end + 1, q_index) +
+                                        command.substring(q_index + 1);
+                                q_index = q_index - 2;
+                                q_end = space_end;
+                            }
                         }
                     }
                 }
@@ -317,7 +266,6 @@ public class Call extends Jsh implements CommandInterface
                 if (closingBackquoteIndex != -1) // check if quote is closed
                 {
                     ByteArrayOutputStream sub_command_output = new ByteArrayOutputStream();
-                    splitIndex = closingBackquoteIndex;
                     String subCommand = command.substring((openingBackquoteIndex + 1), closingBackquoteIndex); // create a command of the
                     (new Sequence()).run(subCommand, input, sub_command_output);
                     cmdoutput = (new String(sub_command_output.toByteArray()));
@@ -331,13 +279,12 @@ public class Call extends Jsh implements CommandInterface
         return command;
     }
 
-    private ArrayList<String> split_quotes(String command) throws IOException  //TODO: split quote splitting and globbing
+    private ArrayList<String> split_quotes(String command)
     {
         ArrayList<String> tokens = new ArrayList<>();                                       // know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
 
 
         int quote_start, quote_end = 0;
-        boolean found_matching = false;
         for (int quote_scanning_index = 0; quote_scanning_index < command.length(); quote_scanning_index++)
         {
 
