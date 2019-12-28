@@ -10,14 +10,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.fail;
 
-public class Tail {
+public class SedTest {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public Tail() {
+    public SedTest() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
@@ -34,69 +35,65 @@ public class Tail {
         jsh = new Jsh(workingDir.getCanonicalPath());
     }
 
+
+
     @Test
-    public void test_tail() {
+    public void test_sed()  {
         try {
-            jsh.eval("tail dir1/longfile.txt", out);
+            jsh.eval("sed 's/A/D/' dir1/file1.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        assertArrayEquals(new String[]{"11", "12", "13", "14", "15", "16",
-                "17", "18", "19", "20"}, output.split("\r\n|\n"));
+        assertArrayEquals(new String[]{"DAA", "BBB", "DAA"}, output.split("\r\n|\n"));
     }
 
     @Test
-    public void test_tail_stdin() {
+    public void test_sed_stdin()  {
         try {
-            jsh.eval("tail < dir1/longfile.txt", out);
+            jsh.eval("sed 's/A/D/' < dir1/file1.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        assertArrayEquals(new String[]{"11", "12", "13", "14", "15", "16",
-                "17", "18", "19", "20"}, output.split("\r\n|\n"));
+        assertArrayEquals(new String[]{"DAA", "BBB", "DAA"}, output.split("\r\n|\n"));
     }
 
     @Test
-    public void test_tail_n5()  {
+    public void test_sed_separator()  {
         try {
-            jsh.eval("tail -n 5 dir1/longfile.txt", out);
+            jsh.eval("sed 's|A|D|'  dir1/file1.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        assertArrayEquals(new String[]{"16", "17",
-                "18", "19", "20"}, output.split("\r\n|\n"));
-    }
-
-
-    @Test
-    public void test_tail_n50()  {
-        try {
-            jsh.eval("tail -n 50 dir1/longfile.txt", out);
-        } catch (Exception e) {
-            fail(e.toString());
-        }
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        assertArrayEquals(new String[]{"1", "2", "3", "4", "5",
-                "6", "7", "8", "9", "10", "11", "12", "13", "14",
-                "15", "16", "17", "18", "19", "20"}, output.split("\r\n|\n"));
+        assertArrayEquals(new String[]{"DAA", "BBB", "DAA"}, output.split("\r\n|\n"));
     }
 
     @Test
-    public void test_tail_n0()  {
+    public void test_sed_g()  {
         try {
-            jsh.eval("tail -n 0 dir1/longfile.txt", out);
+            jsh.eval("sed 's/A/D/g'  dir1/file1.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        assertEquals("", output);
+        assertArrayEquals(new String[]{"DDD", "BBB", "DDD"}, output.split("\r\n|\n"));
+    }
+
+    @Test
+    public void test_sed_re()  {
+        try {
+            jsh.eval("sed 's/../DD/g'  dir1/file1.txt", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"DDA", "DDB", "DDA"}, output.split("\r\n|\n"));
     }
 }

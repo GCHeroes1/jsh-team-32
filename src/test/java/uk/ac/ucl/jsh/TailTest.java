@@ -12,12 +12,12 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-public class Grep {
+public class TailTest {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public Grep() {
+    public TailTest() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
@@ -33,65 +33,70 @@ public class Grep {
 
         jsh = new Jsh(workingDir.getCanonicalPath());
     }
+
     @Test
-    public void test_grep()  {
+    public void test_tail() {
         try {
-            jsh.eval("grep AAA dir1/file1.txt", out);
+            jsh.eval("tail dir1/longfile.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        assertArrayEquals(new String[]{"AAA", "AAA"}, output.split("\r\n|\n"));
+        assertArrayEquals(new String[]{"11", "12", "13", "14", "15", "16",
+                "17", "18", "19", "20"}, output.split("\r\n|\n"));
     }
 
     @Test
-    public void test_grep_no_match()  {
+    public void test_tail_stdin() {
         try {
-            jsh.eval("grep DDD dir1/file1.txt", out);
+            jsh.eval("tail < dir1/longfile.txt", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"11", "12", "13", "14", "15", "16",
+                "17", "18", "19", "20"}, output.split("\r\n|\n"));
+    }
+
+    @Test
+    public void test_tail_n5()  {
+        try {
+            jsh.eval("tail -n 5 dir1/longfile.txt", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"16", "17",
+                "18", "19", "20"}, output.split("\r\n|\n"));
+    }
+
+
+    @Test
+    public void test_tail_n50()  {
+        try {
+            jsh.eval("tail -n 50 dir1/longfile.txt", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"1", "2", "3", "4", "5",
+                "6", "7", "8", "9", "10", "11", "12", "13", "14",
+                "15", "16", "17", "18", "19", "20"}, output.split("\r\n|\n"));
+    }
+
+    @Test
+    public void test_tail_n0()  {
+        try {
+            jsh.eval("tail -n 0 dir1/longfile.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
         assertEquals("", output);
-    }
-
-    @Test
-    public void test_grep_re()  {
-        try {
-            jsh.eval("grep 'A..' dir1/file1.txt", out);
-        } catch (Exception e) {
-            fail(e.toString());
-        }
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        assertArrayEquals(new String[]{"AAA", "AAA"}, output.split("\r\n|\n"));
-    }
-
-    @Test
-    public void test_grep_files()  {
-        try {
-            jsh.eval("grep '...' dir1/file1.txt dir1/file2.txt", out);
-        } catch (Exception e) {
-            fail(e.toString());
-        }
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        assertArrayEquals(new String[]{"AAA", "BBB",
-                "AAA", "CCC"}, output.split("\r\n|\n"));
-    }
-
-    @Test
-    public void test_grep_stdin()  {
-        try {
-            jsh.eval("cat dir1/file1.txt dir1/file2.txt | grep '...'", out);
-        } catch (Exception e) {
-            fail(e.toString());
-        }
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        assertArrayEquals(new String[]{"AAA", "BBB",
-                "AAA", "CCC"}, output.split("\r\n|\n"));
     }
 }

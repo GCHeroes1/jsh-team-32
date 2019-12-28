@@ -22,24 +22,32 @@ public class Cat extends ShellProgram
                 str_to_bytes.write(System.getProperty("line.separator"));
                 str_to_bytes.flush();
             }
-        } else {
-            for (String arg : args) {                                                // for each file specified in the arguments 
-                Charset encoding = StandardCharsets.UTF_8;                              // print it using UTF 8 
-                File currFile = new File(currentDirectory + File.separator + arg);      // gets the absolute path of the file
-                if (currFile.exists()) {                                                // checks if it exists 
-                    Path filePath = Paths.get(currentDirectory + File.separator + arg); // gets a path object from the filepath 
-                    try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) { // tries offering a buffered reader on the file 
-                        String line = null;                                             // initialises the line variable 
-                        while ((line = reader.readLine()) != null) {                    // for each line that isnt empty in the file 
-                            str_to_bytes.write(String.valueOf(line));                         // print the contents
-                            str_to_bytes.write(System.getProperty("line.separator"));         // necessary
+        }
+        else
+        {
+            for (String arg : args)
+            {
+                Charset encoding = StandardCharsets.UTF_8;
+                File currFile = new File(currentDirectory + File.separator + arg);
+                if (currFile.exists())
+                {
+                    Path filePath = Paths.get(currentDirectory + File.separator + arg);
+                    try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            str_to_bytes.write(line);
+                            str_to_bytes.write(System.getProperty("line.separator"));
                             str_to_bytes.flush();
                         }
-                    } catch (IOException e) {                                           //
-                        throw new RuntimeException("cat: cannot open " + arg);          //
                     }
-                } else {
-                    throw new RuntimeException("cat: file does not exist");             //
+                    catch (IOException e)
+                    {
+                        throw new RuntimeException("cat: cannot open " + arg);
+                    }
+                }
+                else
+                {
+                    throw new RuntimeException("cat: file does not exist");
                 }
             }
         }

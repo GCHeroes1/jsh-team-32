@@ -12,12 +12,12 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-public class Head {
+public class GrepTest {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public Head() {
+    public GrepTest() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
@@ -33,68 +33,65 @@ public class Head {
 
         jsh = new Jsh(workingDir.getCanonicalPath());
     }
-
     @Test
-    public void test_head() {
+    public void test_grep()  {
         try {
-            jsh.eval("head dir1/longfile.txt", out);
+            jsh.eval("grep AAA dir1/file1.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        // can be just \n, but added \r\n because a pleb is using windows...
-        assertArrayEquals(new String[]{"1", "2", "3", "4", "5", "6",
-                "7", "8", "9", "10"}, output.split("\r\n|\n"));
+        assertArrayEquals(new String[]{"AAA", "AAA"}, output.split("\r\n|\n"));
     }
 
     @Test
-    public void test_head_stdin() {
+    public void test_grep_no_match()  {
         try {
-            jsh.eval("head < dir1/longfile.txt", out);
-        } catch (Exception e) {
-            fail(e.toString());
-        }
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        assertArrayEquals(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}, output.split("\r\n|\n"));
-    }
-
-    @Test
-    public void test_head_n5() {
-        try {
-            jsh.eval("head -n 5 dir1/longfile.txt", out);
-        } catch (Exception e) {
-            fail(e.toString());
-        }
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        assertArrayEquals(new String[]{"1", "2", "3", "4", "5"}, output.split("\r\n|\n"));
-    }
-
-    @Test
-    public void test_head_n50() {
-        try {
-            jsh.eval("head -n 50 dir1/longfile.txt", out);
-        } catch (Exception e) {
-            fail(e.toString());
-        }
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        assertArrayEquals(new String[]{"1", "2", "3", "4", "5",
-                "6", "7", "8", "9", "10", "11", "12", "13", "14",
-                "15", "16", "17", "18", "19", "20"}, output.split("\r\n|\n"));
-    }
-
-    @Test
-    public void test_head_n0() {
-        try {
-            jsh.eval("head -n 0 dir1/longfile.txt", out);
+            jsh.eval("grep DDD dir1/file1.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
         assertEquals("", output);
+    }
+
+    @Test
+    public void test_grep_re()  {
+        try {
+            jsh.eval("grep 'A..' dir1/file1.txt", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"AAA", "AAA"}, output.split("\r\n|\n"));
+    }
+
+    @Test
+    public void test_grep_files()  {
+        try {
+            jsh.eval("grep '...' dir1/file1.txt dir1/file2.txt", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"AAA", "BBB",
+                "AAA", "CCC"}, output.split("\r\n|\n"));
+    }
+
+    @Test
+    public void test_grep_stdin()  {
+        try {
+            jsh.eval("cat dir1/file1.txt dir1/file2.txt | grep '...'", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"AAA", "BBB",
+                "AAA", "CCC"}, output.split("\r\n|\n"));
     }
 }

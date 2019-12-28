@@ -5,20 +5,19 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.rules.ExpectedException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-public class Semicolon {
+public class PwdTest {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public Semicolon() {
+    public PwdTest() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
@@ -37,44 +36,26 @@ public class Semicolon {
 
 
     @Test
-    public void test_semicolon() {
+    public void test_pwd() throws IOException {
         try {
-            jsh.eval("echo AAA; echo BBB", out);
+            jsh.eval("pwd", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        //Scanner scn = new Scanner(in);
-        assertArrayEquals(new String[]{"AAA", "BBB"}, output.split("\r\n|\n"));
+        assertEquals(workingDir.getCanonicalPath(), output);
     }
 
     @Test
-    public void test_semicolon_chain() {
+    public void test_cd_pwd() throws IOException {
         try {
-            jsh.eval("echo AAA; echo BBB; echo CCC", out);
+            jsh.eval("cd dir1; pwd", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        //Scanner scn = new Scanner(in);
-        assertArrayEquals(new String[]{"AAA", "BBB", "CCC"}, output.split("\r\n|\n"));
+        assertEquals(workingDir.getCanonicalPath() + File.separator + "dir1", output);
     }
-
-    @Rule
-    public ExpectedException thrown= ExpectedException.none();
-
-    @Test
-    public void test_semicolon_exception() throws IOException{
-        thrown.expect(RuntimeException.class);
-        jsh.eval("ls dir3; echo BBB", out);
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        //Scanner scn = new Scanner(in);
-        assertEquals("", output);
-    }
-
-
-
 }

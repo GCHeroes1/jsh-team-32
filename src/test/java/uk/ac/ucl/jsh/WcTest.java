@@ -12,12 +12,12 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-public class Wc {
+public class WcTest {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public Wc() {
+    public WcTest() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
