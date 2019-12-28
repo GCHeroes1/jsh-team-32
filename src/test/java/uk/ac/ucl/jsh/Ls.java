@@ -41,10 +41,20 @@ public class Ls {
         } catch (Exception e) {
             fail(e.toString());
         }
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        //Scanner scn = new Scanner(in);
-        assertArrayEquals(new String[]{"dir1", "dir2", "test.txt"}, output.split("[\n\t]"));
+        String outputstr = new String(out.toByteArray());
+        outputstr = outputstr.strip();
+
+        String[] expected = new String[]{
+                "dir1",
+                "dir2",
+                "test.txt"
+        };
+        Arrays.sort(expected);
+
+        String[] output = outputstr.split("\r\n|\n|\t");
+        Arrays.sort(output);
+
+        assertArrayEquals(expected, output);
     }
 
     @Test
@@ -54,10 +64,21 @@ public class Ls {
         } catch (Exception e) {
             fail(e.toString());
         }
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        //Scanner scn = new Scanner(in);
-        assertArrayEquals(new String[]{"file1.txt", "file2.txt", "longfile.txt"}, output.split("[\n\t]"));
+        String outputstr = new String(out.toByteArray());
+        outputstr = outputstr.strip();
+
+        String[] expected = new String[]{
+                "file1.txt",
+                "file2.txt",
+                "longfile.txt"
+        };
+        Arrays.sort(expected);
+
+        String[] output = outputstr.split("\r\n|\n|\t");
+        Arrays.sort(output);
+
+
+        assertArrayEquals(expected, output);
     }
 
     @Test
