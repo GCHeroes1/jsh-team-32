@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class WC extends ShellProgram {
-    private int countChar(Reader file) throws IOException { 
+    private int countChar(Reader file) throws IOException {
         BufferedReader reader = new BufferedReader(file);
         int charCount = 0;
         String line;
