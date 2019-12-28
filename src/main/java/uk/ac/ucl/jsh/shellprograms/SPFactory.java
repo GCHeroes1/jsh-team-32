@@ -17,7 +17,7 @@ public class SPFactory
         programs.put("pwd", new Pwd());
         programs.put("sed", new Sed());
         programs.put("tail", new Tail());
-        programs.put("wc", new WC());
+        programs.put("wc", new Wc());
 
     }
 
