@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 public class WC extends ShellProgram {
     private int countChar(Reader file) throws IOException { //THIS IS RLY BROKEN COZ IT DOESNT COUNT NEW LINE CHARACTERS
         BufferedReader reader = new BufferedReader(file);
-        reader.ready();
         int charCount = 0;
         String line;
         while((line = reader.readLine()) != null){
