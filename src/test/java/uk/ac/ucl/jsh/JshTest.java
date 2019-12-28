@@ -65,9 +65,13 @@ public class JshTest {
 
     @Test
     public void test_globbing_dir()  {
-        try {
-            jsh.eval("echo dir1/*.txt", out);
-        } catch (Exception e) {
+        try
+        {
+//            jsh.eval("echo dir1/*.txt", out);
+            jsh.eval("echo dir1" + File.separator + "*.txt", out);
+        }
+        catch (Exception e)
+        {
             fail(e.toString());
         }
         String outputstr = new String(out.toByteArray());

@@ -30,7 +30,6 @@ public class Call extends Jsh implements CommandInterface
                 {
                     case '>':
                         redirection_target = get_redirection_target(tokens, i, token);
-
                         try
                         {
                             output = new FileOutputStream(new File(redirection_target));
@@ -44,7 +43,6 @@ public class Call extends Jsh implements CommandInterface
 
                     case '<':
                         redirection_target = get_redirection_target(tokens, i, token);
-
                         try
                         {
                             input = new FileInputStream(new File(redirection_target));
@@ -282,34 +280,10 @@ public class Call extends Jsh implements CommandInterface
     {
         ArrayList<String> tokens = new ArrayList<>();                                       // know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
 
-
         int quote_start, quote_end = 0;
         for (int quote_scanning_index = 0; quote_scanning_index < command.length(); quote_scanning_index++)
         {
-
-            //found_matching = false;
             char chr = command.charAt(quote_scanning_index);
-//            if(chr == '`' && is_quote_not_disabled(command, quote_scanning_index))
-//            {
-//                quote_start = quote_end = quote_scanning_index;
-//                while( !found_matching)
-//                {
-//                    if ((quote_end = command.indexOf("`", quote_end + 1)) != -1)
-//                    {
-//                        if(is_quote_not_disabled(command, quote_end))
-//                        {
-//
-//                            String cmd_to_be_subbed = command.substring(quote_start, quote_end + 1);
-//                            cmd_to_be_subbed = cmd_sub(cmd_to_be_subbed);
-//                            tokens.add(cmd_to_be_subbed);
-//
-//                            quote_scanning_index = quote_end + 1;
-//                            found_matching = true;
-//                        }
-//                    }
-//                }
-//
-//            }
             if(chr == '"' && is_quote_not_disabled(command, quote_scanning_index))
             {
                 quote_start = quote_scanning_index;

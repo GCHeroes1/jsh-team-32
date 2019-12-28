@@ -25,13 +25,9 @@ public class Jsh {
 
     // main interpretation function for the shell (what handles executing commands)
     void eval(String cmdline, OutputStream output) throws IOException {
-        // OutputStreamWriter writer = new OutputStreamWriter(output);
-        // ArrayList<String> rawCommands = new ArrayList<>();                                      // assume will be used later for raw commands
-		// int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;
-        // new Sequence().run(cmdline, output);
-        InputStream instream = new ByteArrayInputStream(new byte[0]);
+        InputStream empty_input_stream = new ByteArrayInputStream(new byte[0]);
         Sequence sequence = new Sequence();
-        sequence.run(cmdline, instream, output);
+        sequence.run(cmdline, empty_input_stream, output);
     }
 
     private void shell(String[] args)

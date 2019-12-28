@@ -90,8 +90,8 @@ public class FindTest {
         String output = new String(out.toByteArray());
         output = output.strip();
         assertArrayEquals(new String[]{
-                "." + file_sep + "dir1" + file_sep + "file1.txt",
-                "." + file_sep + "dir1" + file_sep + "file2.txt",
-                "." + file_sep + "dir1" + file_sep + "longfile.txt"}, output.split("\r\n|\n|\t"));
+                "dir1" + file_sep + "file1.txt",
+                "dir1" + file_sep + "file2.txt",
+                "dir1" + file_sep + "longfile.txt"}, output.split("\r\n|\n|\t"));
     }
 }
