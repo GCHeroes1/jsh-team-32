@@ -11,12 +11,11 @@ import java.nio.file.Paths;
 public class WC extends ShellProgram {
     private int countChar(Reader file) throws IOException { //THIS IS RLY BROKEN COZ IT DOESNT COUNT NEW LINE CHARACTERS
         BufferedReader reader = new BufferedReader(file);
+        reader.ready();
         int charCount = 0;
         String line;
         while((line = reader.readLine()) != null){
-            if(!(line.equals(""))){
-                charCount += line.length();
-            }
+            charCount += line.length() + 1;
         }
       return charCount;
     }
@@ -30,7 +29,7 @@ public class WC extends ShellProgram {
                 count += wordList.length; 
             }
         }
-       return count;    
+       return count;
     }
 
     private int countLines(Reader file) throws FileNotFoundException, IOException{ // works fine
@@ -39,6 +38,15 @@ public class WC extends ShellProgram {
         while (reader.readLine() != null) lines++;
         reader.close();
         return lines;
+    }
+
+    private static byte[][] convertToBytes(String[] strings) {
+        byte[][] data = new byte[strings.length][];
+        for (int i = 0; i < strings.length; i++) {
+            String string = strings[i];
+            data[i] = string.getBytes(StandardCharsets.UTF_8); // you can chose charset
+        }
+        return data;
     }
 
     @Override
@@ -54,19 +62,11 @@ public class WC extends ShellProgram {
             wcArg = "stdin";
         }
         if (args.length > 1 && (!args[0].equals("-m") && !args[0].equals("-w") && !args[0].equals("-l"))){
-            // System.out.println("i threw up");
             throw new RuntimeException("wc: wrong argument " + args[0]);
         }
-//        if (args[1].equals("<")){ // no need for this hackyness with the new IO redirection
-//            // IO redirection?? can just skip it and process because it comes after the option
-//            // System.out.println("i redirected");
-//            fileArgument++;
-//        }
         if (args[0].equals("-m")){ //checks that there is an arg length of 2 or more, so there's an option + file included (need to expand with a for loop to iterate through multiple given files and
             // add together the results and output it as a single number, thats why i used "fileArgument" instread of the magic number (1), coz it should allow for multiple files (as stated in spec)
-            // System.out.println("i recognised -m");
             if (args.length > 1){
-                // System.out.println("there are more than 2 arguments with -m");
                 filePath = Paths.get((String) currentDirectory + File.separator + args[fileArgument]);
                 if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
                     !Files.exists(filePath) || !Files.isReadable(filePath)) {
@@ -82,9 +82,7 @@ public class WC extends ShellProgram {
         else if(args[0].equals("-w")){
             // there's a lot of refactoring that can be done, since a lot of the stuff is copy pasted, but i wanted to implement the for loop first and then refactor, up to you though, it would probably
             // save more time to refactor at this stage, just be mindful that a for loop is necessary
-            // System.out.println("i recognised -w");
             if (args.length > 1){
-                // System.out.println("there are more than 2 arguments with -w");
                 filePath = Paths.get((String) currentDirectory + File.separator + args[fileArgument]);
                 if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
                     !Files.exists(filePath) || !Files.isReadable(filePath)) {
@@ -97,9 +95,7 @@ public class WC extends ShellProgram {
              }
         }
         else if(args[0].equals("-l")){
-            // System.out.println("i recognised -l");
             if (args.length > 1){
-                // System.out.println("there are more than 2 arguemnts with -l");
                 filePath = Paths.get((String) currentDirectory + File.separator + args[fileArgument]);
                 if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
                     !Files.exists(filePath) || !Files.isReadable(filePath)) {
@@ -108,7 +104,7 @@ public class WC extends ShellProgram {
                 BufferedReader reader = Files.newBufferedReader(filePath, encoding);
                 int lines = countLines(reader);
                 String lines_count = String.valueOf(lines);
-                str_to_bytes.write(lines_count); 
+                str_to_bytes.write(lines_count);
             }
         }
         // else{
@@ -116,17 +112,21 @@ public class WC extends ShellProgram {
              filePath = Paths.get((String) currentDirectory + File.separator + args[0]);
             if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
                 !Files.exists(filePath) || !Files.isReadable(filePath)) {
-                throw new RuntimeException("sed: wrong file argument");
+                throw new RuntimeException("wc: wrong file argument");
             }
-            BufferedReader reader = Files.newBufferedReader(filePath, encoding);
-            // need to put this stuff in an array and then turn it into a byte array and then put it in the byte stream somehow 
+            BufferedReader reader;
+            // should be lines, then words, then bytes
+            reader = Files.newBufferedReader(filePath, encoding);
             String char_count = String.valueOf(countChar(reader));
+            reader = Files.newBufferedReader(filePath, encoding);
             String word_count = String.valueOf(countWord(reader));
+            reader = Files.newBufferedReader(filePath, encoding);
             String lines_count = String.valueOf(countLines(reader));
-            str_to_bytes.write(char_count);
-            str_to_bytes.write(word_count);
             str_to_bytes.write(lines_count);
-            // there was no option, just print everything
+            str_to_bytes.write("\t");
+            str_to_bytes.write(word_count);
+            str_to_bytes.write("\t");
+            str_to_bytes.write(char_count);
         }
         str_to_bytes.write(System.getProperty("line.separator"));
         str_to_bytes.flush();
