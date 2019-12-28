@@ -56,6 +56,9 @@ public class WC extends ShellProgram {
         if (args[0].equals("-m")){ //checks that there is an arg length of 2 or more, so there's an option + file included (need to expand with a for loop to iterate through multiple given files and
             // add together the results and output it as a single number, thats why i used "fileArgument" instread of the magic number (1), coz it should allow for multiple files (as stated in spec)
             if (args.length > 1){
+                // first the int char_ needs to be initialised outside here
+                // this whole thing needs to be surrounded with a for loop where you increment fileArgument to go through each of the arguments until you see that the argument is null because youve run
+                // out of files to take as arguments, at which point the for loop will terminate and you can finally output the value of char_ (so lines 70 and 71 need to be outside of the for loop)
                 filePath = Paths.get((String) currentDirectory + File.separator + args[fileArgument]);
                 if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
                     !Files.exists(filePath) || !Files.isReadable(filePath)) {
@@ -64,8 +67,8 @@ public class WC extends ShellProgram {
                 // the previous method for outputting the result of the count wasn't quite right, this is the correct method
                 BufferedReader reader = Files.newBufferedReader(filePath, encoding);
                 int char_ = countChar(reader);
-                String char_count = String.valueOf(char_);
-                str_to_bytes.write(char_count); 
+                String char_count = String.valueOf(char_); //"line 70"
+                str_to_bytes.write(char_count); //"line 71"
              }
         }
         else if(args[0].equals("-w")){
