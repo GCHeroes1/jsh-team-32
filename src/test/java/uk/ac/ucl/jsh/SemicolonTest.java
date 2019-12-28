@@ -5,19 +5,20 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.rules.ExpectedException;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-public class Cat {
+public class SemicolonTest {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public Cat() {
+    public SemicolonTest() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
@@ -34,29 +35,46 @@ public class Cat {
         jsh = new Jsh(workingDir.getCanonicalPath());
     }
 
+
     @Test
-    public void test_cat() {
+    public void test_semicolon() {
         try {
-            jsh.eval("cat dir1/file1.txt dir1/file2.txt", out);
+            jsh.eval("echo AAA; echo BBB", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        // can be just \n, but added \r\n because a pleb is using windows...
-        assertArrayEquals(new String[]{"AAA", "BBB", "AAA", "CCC"}, output.split("\r\n|\n"));
+        //Scanner scn = new Scanner(in);
+        assertArrayEquals(new String[]{"AAA", "BBB"}, output.split("\r\n|\n"));
     }
 
     @Test
-    public void test_cat_stdin() {
+    public void test_semicolon_chain() {
         try {
-            jsh.eval("cat < dir1/file1.txt", out);
+            jsh.eval("echo AAA; echo BBB; echo CCC", out);
         } catch (Exception e) {
             fail(e.toString());
         }
         String output = new String(out.toByteArray());
         output = output.strip();
-        // can be just \n, but added \r\n because a pleb is using windows...
-        assertArrayEquals(new String[]{"AAA", "BBB", "AAA"}, output.split("\r\n|\n"));
+        //Scanner scn = new Scanner(in);
+        assertArrayEquals(new String[]{"AAA", "BBB", "CCC"}, output.split("\r\n|\n"));
     }
+
+    @Rule
+    public ExpectedException thrown= ExpectedException.none();
+
+    @Test
+    public void test_semicolon_exception() throws IOException{
+        thrown.expect(RuntimeException.class);
+        jsh.eval("ls dir3; echo BBB", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        //Scanner scn = new Scanner(in);
+        assertEquals("", output);
+    }
+
+
+
 }
