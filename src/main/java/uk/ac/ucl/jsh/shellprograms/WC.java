@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class WC extends ShellProgram {
-    private int countChar(Reader file) throws IOException { //THIS IS RLY BROKEN COZ IT DOESNT COUNT NEW LINE CHARACTERS
+    private int countChar(Reader file) throws IOException { 
         BufferedReader reader = new BufferedReader(file);
         int charCount = 0;
         String line;
@@ -38,7 +38,7 @@ public class WC extends ShellProgram {
         reader.close();
         return lines;
     }
-    
+
     @Override
     public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
     {
