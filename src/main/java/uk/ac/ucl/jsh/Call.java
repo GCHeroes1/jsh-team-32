@@ -9,18 +9,17 @@ public class Call extends Jsh implements CommandInterface
     @Override
     public void run(String command, InputStream input, OutputStream output) throws IOException
     {
+        command = cmd_sub(command);
         command = extract_io_redirects(command);
         command = merge_collated_quotes(command);
 
         ArrayList<String> tokens = split_quotes(command);
 
-        {    // do command redirection here and let the IDE decide what best to do to replace input and output streams.
-            //for (String token : tokens)
+        {
             for(int i = 0; i < tokens.size(); i++)
             {
                 String token = tokens.get(i);
                 String redirection_target;
-                //System.out.println(token);
 
                 if(token.length() == 0)
                 {
@@ -60,12 +59,12 @@ public class Call extends Jsh implements CommandInterface
             }
         }
 
-        ArrayList<String> new_list = new ArrayList<>(tokens.size());
-        for(String token_string : tokens)
-        {
-            new_list.add(cmd_sub(token_string));
-        }
-        tokens = new_list;
+//        ArrayList<String> new_list = new ArrayList<>(tokens.size());
+//        for(String token_string : tokens)
+//        {
+//            new_list.add(cmd_sub(token_string));
+//        }
+//        tokens = new_list;
 
         String appName = tokens.get(0); // first token = program to run
         ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));
@@ -73,11 +72,11 @@ public class Call extends Jsh implements CommandInterface
         {
             if(appName.charAt(0) == '_')
             {
-                spFactory.getSP(appName.substring(1)).executeUnsafe(appArgs.toArray(new String[0]), input, output); //EHERERERERERE
+                spFactory.getSP(appName.substring(1)).executeUnsafe(appArgs.toArray(new String[0]), input, output);
             }
             else
             {
-                spFactory.getSP(appName).execute(appArgs.toArray(new String[0]), input, output); //EHERERERERERE
+                spFactory.getSP(appName).execute(appArgs.toArray(new String[0]), input, output);
             }
         }
         catch (NullPointerException e)
