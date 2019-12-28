@@ -9,7 +9,7 @@ public class Call extends Jsh implements CommandInterface
     @Override
     public void run(String command, InputStream input, OutputStream output) throws IOException
     {
-        command = cmd_sub(command);
+        //command = cmd_sub(command);
         command = extract_io_redirects(command);
         command = merge_collated_quotes(command);
 
@@ -57,12 +57,12 @@ public class Call extends Jsh implements CommandInterface
             }
         }
 
-//        ArrayList<String> new_list = new ArrayList<>(tokens.size());
-//        for(String token_string : tokens)
-//        {
-//            new_list.add(cmd_sub(token_string));
-//        }
-//        tokens = new_list;
+        ArrayList<String> new_list = new ArrayList<>(tokens.size());
+        for(String token_string : tokens)
+        {
+            new_list.addAll(split_spaces(cmd_sub(token_string)));
+        }
+        tokens = new_list;
 
         String appName = tokens.get(0); // first token = program to run
         ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));
@@ -267,6 +267,8 @@ public class Call extends Jsh implements CommandInterface
                     (new Sequence()).run(subCommand, input, sub_command_output);
                     cmdoutput = (new String(sub_command_output.toByteArray()));
                     cmdoutput = cmdoutput.replace("\n", " ").replace("\r", "").strip();
+
+
                     command = command.substring(0, openingBackquoteIndex) + cmdoutput + command.substring(closingBackquoteIndex + 1);
                     splitIndex = openingBackquoteIndex + cmdoutput.length() - 2;
 
@@ -274,6 +276,23 @@ public class Call extends Jsh implements CommandInterface
             }
         }
         return command;
+    }
+
+    private ArrayList<String> split_spaces(String command)
+    {
+        ArrayList<String> temp_list = new ArrayList<>();
+        int last_split = 0;
+        for (int i = 0; i < command.length(); i++)
+        {
+            char chr = command.charAt(i);
+            if(chr == ' ' && is_quote_not_disabled(command, i))
+            {
+                temp_list.add(command.substring(last_split, i));
+                last_split = i + 1;
+            }
+        }
+        temp_list.add(command.substring(last_split));
+        return temp_list;
     }
 
     private ArrayList<String> split_quotes(String command)
