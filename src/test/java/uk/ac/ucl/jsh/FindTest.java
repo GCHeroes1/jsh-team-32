@@ -146,7 +146,6 @@ public class FindTest {
     public void test_find_bad_out() throws IOException
     {
         thrown.expect(RuntimeException.class);
-        //jsh.eval("find dir1", out);
         InputStream is = new InputStream() {
             @Override
             public int read() throws IOException {

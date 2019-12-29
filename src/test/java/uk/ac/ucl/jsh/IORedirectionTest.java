@@ -76,14 +76,14 @@ public class IORedirectionTest {
     @Test
     public void test_output_redirection() throws IOException {
         try {
-            jsh.eval("echo foo > newfile.txt", out);
+            jsh.eval("echo foo > anewfile.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
 
         StringBuilder filecontent = new StringBuilder();
         try {
-            File outputfile = new File("newfile.txt");
+            File outputfile = new File(workingDir + File.separator + "anewfile.txt");
             BufferedReader bfr = new BufferedReader(new FileReader(outputfile));
             String line;
             while ((line = bfr.readLine()) != null) {
@@ -106,7 +106,7 @@ public class IORedirectionTest {
         StringBuilder filecontent = new StringBuilder();
         try
         {
-            File outputfile = new File("test.txt");
+            File outputfile = new File(workingDir + File.separator + "test.txt");
             BufferedReader bfr = new BufferedReader(new FileReader(outputfile));
             String line;
             while ((line = bfr.readLine()) != null) {
@@ -142,7 +142,7 @@ public class IORedirectionTest {
 
         StringBuilder filecontent = new StringBuilder();
         try {
-            File outputfile = new File("temp.txt");
+            File outputfile = new File(workingDir + File.separator + "temp.txt");
             BufferedReader bfr = new BufferedReader(new FileReader(outputfile));
             String line;
             while ((line = bfr.readLine()) != null) {

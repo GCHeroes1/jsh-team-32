@@ -34,7 +34,7 @@ public class Call extends Jsh implements CommandInterface
                         redirection_target = get_redirection_target(tokens, i, token);
                         try
                         {
-                            output = new FileOutputStream(new File(redirection_target));
+                            output = new FileOutputStream(new File(currentDirectory + File.separator + redirection_target));
                         }
                         catch (IOException e)
                         {
@@ -47,7 +47,7 @@ public class Call extends Jsh implements CommandInterface
                         redirection_target = get_redirection_target(tokens, i, token);
                         try
                         {
-                            input = new FileInputStream(new File(redirection_target));
+                            input = new FileInputStream(new File(currentDirectory + File.separator + redirection_target));
                         }
                         catch (IOException e)
                         {

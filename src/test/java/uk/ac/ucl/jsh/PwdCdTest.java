@@ -101,13 +101,13 @@ public class PwdCdTest {
         String os = System.getProperty("os.name");
         if(os.contains("Linux"))
         {
-//            jsh.eval("cd /", out);
-//            out.reset();
-//
-//            jsh.eval("pwd", out);
-//            String output = new String(out.toByteArray());
-//            output = output.strip();
-//            assertEquals("/", output);
+            jsh.eval("cd /", out);
+            out.reset();
+
+            jsh.eval("pwd", out);
+            String output = new String(out.toByteArray());
+            output = output.strip();
+            assertEquals("/", output);
         }
         else if(os.contains("Windows"))
         {

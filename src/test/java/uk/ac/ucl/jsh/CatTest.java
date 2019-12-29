@@ -49,6 +49,7 @@ public class CatTest {
 
     @Test
     public void test_cat_stdin() {
+        System.out.println(workingDir);
         try {
             jsh.eval("cat < dir1/file1.txt", out);
         } catch (Exception e) {
