@@ -1,6 +1,7 @@
 package uk.ac.ucl.jsh;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.NullOutputStream;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,7 +30,6 @@ public class JshTest {
     @Before
     public void setup_file_env() throws IOException {
         workingDir = temporaryFolder.newFolder("testfolder");
-        //System.out.println(workingDir.getCanonicalPath());
         FileUtils.copyDirectory(new File("src/test/test_template"), workingDir);
 
         jsh = new Jsh(workingDir.getCanonicalPath());
@@ -100,15 +100,6 @@ public class JshTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-//    @Before
-//    public void setup_file_en() throws IOException {
-//        workingDir = temporaryFolder.newFolder("testfolder");
-//        //System.out.println(workingDir.getCanonicalPath());
-//        FileUtils.copyDirectory(new File("src/test/test_template"), workingDir);
-//
-//        jsh = new Jsh();
-//    }
-
     @Test
     public void test_unknown_app() throws IOException {
         thrown.expect(RuntimeException.class);
@@ -120,54 +111,109 @@ public class JshTest {
     }
 
     @Test
-    public void test_shell() throws IOException {
+    public void test_non_interactive_shell_bad_arg() throws IOException {
         String[] args = new String[]{"ls", "badDir"};
-        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
-        PrintStream p = new PrintStream(myOut, true, StandardCharsets.UTF_8);
+        ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+        PrintStream p = new PrintStream(stderr, true, StandardCharsets.UTF_8);
         System.setErr(p);
+
         Jsh.main(args);
-        String data = new String(myOut.toByteArray(), StandardCharsets.UTF_8);
-        assertEquals("jsh: badDir: unknown application\n", data);
-        //output = output.strip();
-        //Scanner scn = new Scanner(in);
-        //assertEquals("hello world", output);
+
+        String data = new String(stderr.toByteArray(), StandardCharsets.UTF_8);
+        data = data.strip();
+        assertEquals("jsh: ls: unexpected argument", data);
     }
 
     @Test
-    public void test_shell_c_incorrect() throws IOException {
-        String[] args = new String[]{"-c", "ls", "dir1"};
-        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
-        PrintStream p = new PrintStream(myOut, true, StandardCharsets.UTF_8);
-        System.setOut(p);
+    public void test_non_interactive_shell_too_many_args() throws IOException {
+        String[] args = new String[]{"-c", "ls", "badDir"};
+        ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+        PrintStream p = new PrintStream(stderr, true, StandardCharsets.UTF_8);
+        System.setErr(p);
+
         Jsh.main(args);
-        String data = new String(myOut.toByteArray(), StandardCharsets.UTF_8);
-        assertEquals("jsh: wrong number of arguments\n", data);
-        //output = output.strip();
-        //Scanner scn = new Scanner(in);
-        //assertEquals("hello world", output);
+
+        String data = new String(stderr.toByteArray(), StandardCharsets.UTF_8);
+        data = data.strip();
+        assertEquals("jsh: wrong number of arguments", data);
     }
 
     @Test
-    public void test_shell_c_correct() throws IOException {
+    public void test_non_interactive_shell_too_few_args() throws IOException {
+        String[] args = new String[]{"-c"};
+        ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+        PrintStream p = new PrintStream(stderr, true, StandardCharsets.UTF_8);
+        System.setErr(p);
+
+        Jsh.main(args);
+
+        String data = new String(stderr.toByteArray(), StandardCharsets.UTF_8);
+        data = data.strip();
+        assertEquals("jsh: wrong number of arguments", data);
+    }
+
+    @Test
+    public void test_non_interactive_shell() throws IOException {
         String[] args = new String[]{"-c", "ls dir1"};
-        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
-        PrintStream p = new PrintStream(myOut, true, StandardCharsets.UTF_8);
+        ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+        PrintStream p = new PrintStream(stdout, true, StandardCharsets.UTF_8);
         System.setOut(p);
         Jsh.main(args);
-        String data = new String(myOut.toByteArray(), StandardCharsets.UTF_8);
-        assertEquals("file1.txt\tfile2.txt\tlongfile.txt\t\n", data);
-        //output = output.strip();
-        //Scanner scn = new Scanner(in);
-        //assertEquals("hello world", output);
+        String data = new String(stdout.toByteArray(), StandardCharsets.UTF_8);
+        data = data.strip();
+
+        String[] expected = new String[]{
+                "file1.txt",
+                "file2.txt",
+                "longfile.txt"
+        };
+        Arrays.sort(expected);
+
+        String[] output = data.split("\r\n|\n|\t");
+        Arrays.sort(output);
+
+        assertArrayEquals(expected, output);
     }
 
     @Test
-    public void test_shell_exit() throws IOException {
-        String[] args = new String[]{""};
+    public void test_non_interactive_shell_exception() throws IOException {
+        String[] args = new String[]{"-c", "ls dir3"};
+        ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+        PrintStream p = new PrintStream(stderr, true, StandardCharsets.UTF_8);
+        System.setErr(p);
+
         Jsh.main(args);
-        // fuck around with input stream
-        //output = output.strip();
-        //Scanner scn = new Scanner(in);
-        //assertEquals("hello world", output);
+
+        String data = new String(stderr.toByteArray(), StandardCharsets.UTF_8);
+        data = data.strip();
+        assertEquals("jsh: ls: no such directory", data);
+    }
+
+    @Test(timeout = 1000)
+    public void test_interactive_shell() throws IOException {
+        ByteArrayInputStream input_stream = new ByteArrayInputStream("ls\nexit".getBytes());
+        PrintStream output_stream = new PrintStream(new NullOutputStream());
+        System.setIn(input_stream);
+        System.setOut(output_stream);
+        Jsh.main(new String[0]);
+    }
+
+    @Test(timeout = 1000)
+    public void test_interactive_shell_ls_exception() throws IOException {
+        ByteArrayInputStream input_stream = new ByteArrayInputStream("ls dir3\nexit".getBytes());
+
+        ByteArrayOutputStream err_stream = new ByteArrayOutputStream();
+        PrintStream stderr = new PrintStream(err_stream, true, StandardCharsets.UTF_8);
+        PrintStream stdout = new PrintStream(new NullOutputStream());
+        System.setIn(input_stream);
+        System.setOut(stdout);
+        System.setErr(stderr);
+
+        Jsh.main(new String[0]);
+
+        String err_str = new String(err_stream.toByteArray());
+        err_str = err_str.strip();
+
+        assertEquals("jsh: ls: no such directory", err_str);
     }
 }

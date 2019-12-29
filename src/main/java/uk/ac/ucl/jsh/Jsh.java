@@ -31,18 +31,20 @@ public class Jsh {
     {
         if (args.length > 0) {
             if (args.length != 2) {
-                System.out.println("jsh: wrong number of arguments");
-                return;
+                System.err.println("jsh: wrong number of arguments");
             }
-            if (!args[0].equals("-c")) {
-                System.out.println("jsh: " + args[0] + ": unexpected argument");
+            else if (!args[0].equals("-c")) {
+                System.err.println("jsh: " + args[0] + ": unexpected argument");
             }
-            try {
-                eval(args[1], System.out);
-            } catch (Exception e) {
-                System.err.println("jsh: " + e.getMessage());
-                //System.out.println("jsh: " + e.getMessage());
+            else
+            {
+                try {
+                    eval(args[1], System.out);
+                } catch (Exception e) {
+                    System.err.println("jsh: " + e.getMessage());
+                }
             }
+
         } else {
             //System.out.println("Welcome to JSH!");
             try (Scanner input = new Scanner(System.in)) {
