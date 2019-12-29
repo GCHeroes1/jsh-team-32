@@ -4,11 +4,13 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
 
 import static org.junit.Assert.*;
 
@@ -104,6 +106,19 @@ public class WcTest {
         String output = new String(out.toByteArray());
         output = output.strip();
         assertEquals("4", output);
+    }
+
+
+    //==============================================
+
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void test_wc_bad_file() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("wc nofile.txt", out);
     }
 
 }

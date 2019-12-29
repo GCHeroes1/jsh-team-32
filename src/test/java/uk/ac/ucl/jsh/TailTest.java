@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.ByteArrayOutputStream;
@@ -98,5 +99,57 @@ public class TailTest {
         String output = new String(out.toByteArray());
         output = output.strip();
         assertEquals("", output);
+    }
+
+
+    //======================================================
+
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void test_tail_wrong_arguments() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("tail -n 0 dir1/longfile.txt anotherargument", out);
+//        String output = new String(out.toByteArray());
+//        output = output.strip();
+//        assertEquals("", output);
+    }
+
+    @Test
+    public void test_tail_not_n() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("tail -q 0 dir1/longfile.txt", out);
+//        String output = new String(out.toByteArray());
+//        output = output.strip();
+//        assertEquals("", output);
+    }
+
+    @Test
+    public void test_tail_not_number_file() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("tail -n a dir1/longfile.txt", out);
+//        String output = new String(out.toByteArray());
+//        output = output.strip();
+//        assertEquals("", output);
+    }
+
+    @Test
+    public void test_tail_not_number_stdin() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("tail -n a < dir1/longfile.txt", out);
+//        String output = new String(out.toByteArray());
+//        output = output.strip();
+//        assertEquals("", output);
+    }
+
+    @Test
+    public void test_tail_bad_file() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("tail -n 5 dir1/file5.txt", out);
+//        String output = new String(out.toByteArray());
+//        output = output.strip();
+//        assertEquals("", output);
     }
 }
