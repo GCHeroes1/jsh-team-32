@@ -400,12 +400,21 @@ public class Call extends Jsh implements CommandInterface
 
     private ArrayList<String> glob(String glob_string) throws IOException {
         ArrayList<String> glob_matches = new ArrayList<>();
-        File glob = new File(currentDirectory + File.separator + glob_string);
+        File glob;
+        if(glob_string.charAt(0) == '/')
+        {
+            glob = new File(glob_string);
+        }
+        else
+        {
+            glob = new File(currentDirectory + File.separator + glob_string);
+        }
         Path dir = Paths.get(currentDirectory);
 
-        if(glob.getParentFile().isDirectory())
+        File parent_file;
+        if((parent_file = glob.getParentFile()) != null && parent_file.isDirectory())
         {
-            dir = glob.getParentFile().toPath();
+            dir = parent_file.toPath();
         }
         DirectoryStream<Path> stream;
         stream = Files.newDirectoryStream(dir, glob.getName());

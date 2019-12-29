@@ -10,7 +10,6 @@ import java.util.ArrayList;
 public class Sequence extends Jsh implements CommandInterface{
     @Override
     public void run(String cmdline, InputStream input, OutputStream output) throws IOException {
-        OutputStreamWriter writer = new OutputStreamWriter(output);
         ArrayList<String> rawCommands = new ArrayList<>();                                      // assume will be used later for raw commands
 		int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;
         //Here is the code that separates by semicolons
