@@ -46,20 +46,17 @@ public class Grep extends ShellProgram
                 }
                 filePathArray[i] = filePath;
             }
-            for (int j = 0; j < filePathArray.length; j++) {
+            for (Path path : filePathArray) {
                 Charset encoding = StandardCharsets.UTF_8;
-                try (BufferedReader reader = Files.newBufferedReader(filePathArray[j], encoding)) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        Matcher matcher = grepPattern.matcher(line);
-                        if (matcher.find()) {
-                            str_to_bytes.write(line);
-                            str_to_bytes.write(System.getProperty("line.separator"));
-                            str_to_bytes.flush();
-                        }
+                BufferedReader reader = Files.newBufferedReader(path, encoding);
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    Matcher matcher = grepPattern.matcher(line);
+                    if (matcher.find()) {
+                        str_to_bytes.write(line);
+                        str_to_bytes.write(System.getProperty("line.separator"));
+                        str_to_bytes.flush();
                     }
-                } catch (IOException e) {
-                    throw new RuntimeException("grep: cannot open " + args[j + 1]);
                 }
             }
         }

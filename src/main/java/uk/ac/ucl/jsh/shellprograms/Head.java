@@ -49,34 +49,26 @@ public class Head extends ShellProgram
         }
         if (headArg.equals("stdin")){
             BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
-            for (int i = 0; i < headLines; i++){
-                String line = null;
-                if ((line = bfr.readLine()) != null) {
-                    str_to_bytes.write(line);
-                    str_to_bytes.write(System.getProperty("line.separator"));
-                    str_to_bytes.flush();
-                }
-            }
+            read_to_output(str_to_bytes, headLines, bfr);
         }
         else {
-            File headFile = new File(currentDirectory + File.separator + headArg);         
-            if (headFile.exists()) {
-                Charset encoding = StandardCharsets.UTF_8;
-                Path filePath = Paths.get( currentDirectory + File.separator + headArg);
-                try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
-                    for (int i = 0; i < headLines; i++) {
-                        String line;
-                        if ((line = reader.readLine()) != null) {
-                            str_to_bytes.write(line);
-                            str_to_bytes.write(System.getProperty("line.separator"));
-                            str_to_bytes.flush();
-                        }
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException("head: cannot open " + headArg);
-                }
-            } else {
-                throw new RuntimeException("head: " + headArg + " does not exist");
+            Charset encoding = StandardCharsets.UTF_8;
+            Path filePath = Paths.get( currentDirectory + File.separator + headArg);
+            try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
+                read_to_output(str_to_bytes, headLines, reader);
+            } catch (IOException e) {
+                throw new RuntimeException("head: cannot open " + headArg);
+            }
+        }
+    }
+
+    private void read_to_output(OutputStreamWriter str_to_bytes, int headLines, BufferedReader reader) throws IOException {
+        for (int i = 0; i < headLines; i++) {
+            String line;
+            if ((line = reader.readLine()) != null) {
+                str_to_bytes.write(line);
+                str_to_bytes.write(System.getProperty("line.separator"));
+                str_to_bytes.flush();
             }
         }
     }

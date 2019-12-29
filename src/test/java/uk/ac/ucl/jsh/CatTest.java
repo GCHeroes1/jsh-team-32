@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
@@ -55,5 +56,18 @@ public class CatTest {
         output = output.strip();
         // can be just \n, but added \r\n because a pleb is using windows...
         assertArrayEquals(new String[]{"AAA", "BBB", "AAA"}, output.split("\r\n|\n"));
+    }
+
+
+    //=====================================
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void test_cat_bad_file() throws IOException
+    {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("cat badfile.txt", out);
     }
 }

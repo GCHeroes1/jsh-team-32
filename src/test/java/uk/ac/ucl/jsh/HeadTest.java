@@ -158,4 +158,16 @@ public class HeadTest {
         thrown.expect(RuntimeException.class);
         jsh.eval("head -n 5 bad.txt", out);
     }
+
+    @Test
+    public void test_head_stdin_n5() {
+        try {
+            jsh.eval("head -n 5 < dir1/longfile.txt", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"1", "2", "3", "4", "5"}, output.split("\r\n|\n"));
+    }
 }

@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.ByteArrayOutputStream;
@@ -93,5 +94,18 @@ public class GrepTest {
         output = output.strip();
         assertArrayEquals(new String[]{"AAA", "BBB",
                 "AAA", "CCC"}, output.split("\r\n|\n"));
+    }
+
+
+    //=========================================
+
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void test_grep_bad_file() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("grep '...' badfile.txt", out);
     }
 }

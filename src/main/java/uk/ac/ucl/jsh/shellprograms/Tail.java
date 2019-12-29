@@ -42,7 +42,7 @@ public class Tail extends ShellProgram
         }
         else
         {
-        tailArg = "stdin";
+            tailArg = "stdin";
         }
         if (tailArg.equals("stdin")){
             String line;
@@ -64,31 +64,27 @@ public class Tail extends ShellProgram
         }
         else{
             File tailFile = new File(currentDirectory + File.separator + tailArg);
-            if (tailFile.exists()) {
-                Charset encoding = StandardCharsets.UTF_8;
-                Path filePath = Paths.get((String) currentDirectory + File.separator + tailArg);
+            Charset encoding = StandardCharsets.UTF_8;
+            Path filePath = Paths.get(currentDirectory + File.separator + tailArg);
 
-                ArrayList<String> storage = new ArrayList<>();
-                try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        storage.add(line);
-                    }
-                    int index = 0;
-                    if (tailLines < storage.size())
-                    {
-                        index = storage.size() - tailLines;
-                    }
-                    for (int i = index; i < storage.size(); i++) {
-                        str_to_bytes.write(storage.get(i));
-                        str_to_bytes.write(System.getProperty("line.separator"));
-                        str_to_bytes.flush();
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException("tail: cannot open " + tailArg);
+            ArrayList<String> storage = new ArrayList<>();
+            try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    storage.add(line);
                 }
-            } else {
-                throw new RuntimeException("tail: " + tailArg + " does not exist");
+                int index = 0;
+                if (tailLines < storage.size())
+                {
+                    index = storage.size() - tailLines;
+                }
+                for (int i = index; i < storage.size(); i++) {
+                    str_to_bytes.write(storage.get(i));
+                    str_to_bytes.write(System.getProperty("line.separator"));
+                    str_to_bytes.flush();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("tail: cannot open " + tailArg);
             }
         }
     }

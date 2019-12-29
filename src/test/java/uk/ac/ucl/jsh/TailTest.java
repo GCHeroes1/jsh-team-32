@@ -7,9 +7,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 import static org.junit.Assert.*;
 
@@ -151,5 +149,17 @@ public class TailTest {
 //        String output = new String(out.toByteArray());
 //        output = output.strip();
 //        assertEquals("", output);
+    }
+
+    @Test
+    public void test_tail_stdin_n5() {
+        try {
+            jsh.eval("tail -n 5 < dir1/longfile.txt", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"16", "17", "18", "19", "20"}, output.split("\r\n|\n"));
     }
 }
