@@ -7,15 +7,17 @@ public abstract class ShellProgram extends Jsh
 {
     abstract public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException;
 
-    public void executeUnsafe(String[] args, InputStream stdin, OutputStream stdout)
-    {
+    public void executeUnsafe(String[] args, InputStream stdin, OutputStream stdout) throws IOException {
         try
         {
             execute(args, stdin, stdout);
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+            OutputStreamWriter osw = new OutputStreamWriter(stdout);
+            osw.write(e.toString());
+            osw.write(System.getProperty("line.separator"));
+            osw.flush();
         }
     }
 }
