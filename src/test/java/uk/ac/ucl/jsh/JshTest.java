@@ -133,4 +133,31 @@ public class JshTest {
         //assertEquals("hello world", output);
     }
 
+    @Test
+    public void test_shell_c_incorrect() throws IOException {
+        String[] args = new String[]{"-c", "ls", "dir1"};
+        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        PrintStream p = new PrintStream(myOut, true, StandardCharsets.UTF_8);
+        System.setOut(p);
+        Jsh.main(args);
+        String data = new String(myOut.toByteArray(), StandardCharsets.UTF_8);
+        assertEquals("jsh: wrong number of arguments\n", data);
+        //output = output.strip();
+        //Scanner scn = new Scanner(in);
+        //assertEquals("hello world", output);
+    }
+
+    @Test
+    public void test_shell_c_correct() throws IOException {
+        String[] args = new String[]{"-c", "ls dir1"};
+        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        PrintStream p = new PrintStream(myOut, true, StandardCharsets.UTF_8);
+        System.setOut(p);
+        Jsh.main(args);
+        String data = new String(myOut.toByteArray(), StandardCharsets.UTF_8);
+        assertEquals("file1.txt\tfile2.txt\tlongfile.txt\t\n", data);
+        //output = output.strip();
+        //Scanner scn = new Scanner(in);
+        //assertEquals("hello world", output);
+    }
 }
