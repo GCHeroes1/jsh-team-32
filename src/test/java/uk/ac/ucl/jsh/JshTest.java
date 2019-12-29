@@ -160,4 +160,14 @@ public class JshTest {
         //Scanner scn = new Scanner(in);
         //assertEquals("hello world", output);
     }
+
+    @Test
+    public void test_shell_exit() throws IOException {
+        String[] args = new String[]{""};
+        Jsh.main(args);
+        // fuck around with input stream
+        //output = output.strip();
+        //Scanner scn = new Scanner(in);
+        //assertEquals("hello world", output);
+    }
 }
