@@ -28,11 +28,6 @@ public class Call extends Jsh implements CommandInterface
                 String token = tokens.get(i);
                 String redirection_target;
 
-                if(token.length() == 0)
-                {
-                    continue;
-                }
-
                 switch (token.charAt(0))
                 {
                     case '>':
@@ -90,10 +85,6 @@ public class Call extends Jsh implements CommandInterface
         catch (NullPointerException e)
         {
             throw new RuntimeException(appName + ": unknown application");
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
         }
 
     }

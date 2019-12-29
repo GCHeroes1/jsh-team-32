@@ -43,10 +43,10 @@ public class Jsh {
             try {
                 eval(args[1], System.out);
             } catch (Exception e) {
-                //System.out.println("jsh: " + e.getMessage());
+                System.out.println("jsh: " + e.getMessage());
             }
         } else {
-            System.out.println("Welcome to JSH!");
+            //System.out.println("Welcome to JSH!");
             try (Scanner input = new Scanner(System.in)) {
                 while (true) {                                                                // this infinite loop just waits for the user to input and enter
                     String prompt = currentDirectory + "> ";

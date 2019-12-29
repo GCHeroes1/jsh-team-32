@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
@@ -42,6 +43,8 @@ public class JshTest {
         //Scanner scn = new Scanner(in);
         assertEquals("hello world", output);
     }
+
+
 
 
     @Test
@@ -89,5 +92,21 @@ public class JshTest {
         assertArrayEquals(expected, output);
     }
 
+
+    //======================================
+
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void test_unknown_app() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("hi there", out);
+        String output = new String(out.toByteArray());
+        //output = output.strip();
+        //Scanner scn = new Scanner(in);
+        //assertEquals("hello world", output);
+    }
 
 }

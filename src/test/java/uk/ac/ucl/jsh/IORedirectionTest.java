@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
@@ -12,12 +13,12 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-public class IO_redirection_test {
+public class IORedirectionTest {
     private Jsh jsh;
     private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public IO_redirection_test() {
+    public IORedirectionTest() {
         //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
@@ -119,6 +120,39 @@ public class IO_redirection_test {
         assertEquals("foo", filecontent.toString());
     }
 
+
+    //===================================================
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void test_io_redirect_no_target() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("cat test.txt >", out);
+        //String output = new String(out.toByteArray());
+        //output = output.strip();
+        //assertEquals("CCC", output);
+    }
+
+    @Test
+    public void test_output_redirection_no_space() throws IOException {
+        jsh.eval("echo hello >temp.txt", out);
+        String output = new String(out.toByteArray());
+
+        StringBuilder filecontent = new StringBuilder();
+        try {
+            File outputfile = new File("temp.txt");
+            BufferedReader bfr = new BufferedReader(new FileReader(outputfile));
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                filecontent.append(line);
+            }
+        } catch (FileNotFoundException e) {
+            fail("File not created");
+        }
+        assertEquals("hello", filecontent.toString());
+    }
 
 
 }

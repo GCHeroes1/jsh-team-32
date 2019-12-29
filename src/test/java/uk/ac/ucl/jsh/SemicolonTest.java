@@ -63,7 +63,7 @@ public class SemicolonTest {
     }
 
     @Rule
-    public ExpectedException thrown= ExpectedException.none();
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void test_semicolon_exception() throws IOException{
