@@ -101,7 +101,7 @@ public class LsTest {
         StringBuilder filecontent = new StringBuilder();
         try
         {
-            File outputfile = new File("newfile.txt");
+            File outputfile = new File(workingDir + File.separator + "newfile.txt");
             BufferedReader bfr = new BufferedReader(new FileReader(outputfile));
             String line;
             while ((line = bfr.readLine()) != null) {
@@ -131,7 +131,7 @@ public class LsTest {
         StringBuilder filecontent = new StringBuilder();
         try
         {
-            File outputfile = new File("newfile.txt");
+            File outputfile = new File(workingDir + File.separator + "newfile.txt");
             BufferedReader bfr = new BufferedReader(new FileReader(outputfile));
             String line;
             while ((line = bfr.readLine()) != null) {
