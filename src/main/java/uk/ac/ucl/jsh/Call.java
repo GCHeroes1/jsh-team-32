@@ -173,25 +173,32 @@ public class Call extends Jsh implements CommandInterface
             char chr = command.charAt(q_index);
             if(chr == '"' || chr == '\'')
             {
-                if((is_quote_not_disabled(command, q_index)) || (q_index > 0)) {
-                    if (q_index == command.length() - 1) {
-                        continue;
-                    } else if (command.charAt(q_index + 1) == ' ') {
-                        continue;
-                    }
-                    if (command.charAt(q_index - 1) != ' ' && space_end > q_end) {
-                        command = command.substring(0, space_end + 1) + chr +
-                                command.substring(space_end + 1, q_index) +
-                                command.substring(q_index + 1);
-                        q_end = space_end;
-                    } else if (space_end == q_end) {
-                        q_end = q_index;
-                    } else if ((q_end > space_end) || (command.charAt(q_end) == chr)) { // check if they're the same kind of quotes, otherwise ignore
-                        command = command.substring(0, q_end) +
-                                command.substring(q_end + 1, q_index) +
-                                command.substring(q_index + 1);
-                        q_index = q_index - 2;
-                        q_end = space_end;
+                if(is_quote_not_disabled(command, q_index)) {
+                    if (q_index > 0) {
+                        if (q_index == command.length() - 1) {
+                            continue;
+                        } else if (command.charAt(q_index + 1) == ' ') {
+                            continue;
+                        }
+
+                        if (command.charAt(q_index - 1) != ' ' && space_end > q_end) {
+                            command = command.substring(0, space_end + 1) + chr +
+                                    command.substring(space_end + 1, q_index) +
+                                    command.substring(q_index + 1);
+                            q_end = space_end;
+                        } else if (space_end == q_end) {
+                            q_end = q_index;
+                        } else if (q_end > space_end) {
+                            if (command.charAt(q_end) == chr) // check if they're the same kind of quotes, otherwise ignore
+
+                            {
+                                command = command.substring(0, q_end) +
+                                        command.substring(q_end + 1, q_index) +
+                                        command.substring(q_index + 1);
+                                q_index = q_index - 2;
+                                q_end = space_end;
+                            }
+                        }
                     }
                 }
             }
