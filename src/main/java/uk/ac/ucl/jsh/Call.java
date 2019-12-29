@@ -173,7 +173,7 @@ public class Call extends Jsh implements CommandInterface
             char chr = command.charAt(q_index);
             if(chr == '"' || chr == '\'')
             {
-                if((is_quote_not_disabled(command, q_index)) && (q_index > 0)) {
+                if(is_quote_not_disabled(command, q_index) && (q_index > 0)) {
                     if (q_index == command.length() - 1) {
                         continue;
                     } else if (command.charAt(q_index + 1) == ' ') {
@@ -260,7 +260,7 @@ public class Call extends Jsh implements CommandInterface
                 if (closingBackquoteIndex != -1) // check if quote is closed
                 {
                     ByteArrayOutputStream sub_command_output = new ByteArrayOutputStream();
-                    String subCommand = command.substring((openingBackquoteIndex + 1), closingBackquoteIndex); // create a command of the
+                    String subCommand = command.substring(openingBackquoteIndex + 1, closingBackquoteIndex); // create a command of the
                     (new Sequence()).run(subCommand, input, sub_command_output);
                     cmdoutput = (new String(sub_command_output.toByteArray()));
                     cmdoutput = cmdoutput.replace("\n", " ").replace("\r", "").strip();

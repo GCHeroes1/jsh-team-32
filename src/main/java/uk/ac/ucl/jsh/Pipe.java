@@ -3,8 +3,6 @@ package uk.ac.ucl.jsh;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Pipe extends Jsh implements CommandInterface
 {
@@ -42,7 +40,7 @@ public class Pipe extends Jsh implements CommandInterface
             if (ch == '\'' || ch == '\"') // if it finds a quote (' or ")
             {
                 inside_quote = !inside_quote;
-            } else if ((ch == '|') && (!inside_quote)) {
+            } else if ((ch == '|') && !inside_quote) {
                 commands.add(command.substring(last_pipe, splitIndex).trim());
                 last_pipe = splitIndex + 1;
             }

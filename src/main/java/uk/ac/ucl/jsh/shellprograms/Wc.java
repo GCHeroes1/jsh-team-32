@@ -53,11 +53,11 @@ public class Wc extends ShellProgram {
                 case "-l":
                     wc_option = 3;
                 default:
-                    ArrayList<String> new_args = new ArrayList<>();
-                    for(String arg_entry : args)
-                    {
-
-                    }
+//                    ArrayList<String> new_args = new ArrayList<>();
+//                    for(String arg_entry : args)
+//                    {
+//
+//                    }
                     break;
             }
 
