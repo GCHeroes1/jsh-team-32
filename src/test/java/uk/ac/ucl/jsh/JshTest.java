@@ -8,6 +8,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
@@ -99,11 +100,34 @@ public class JshTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+//    @Before
+//    public void setup_file_en() throws IOException {
+//        workingDir = temporaryFolder.newFolder("testfolder");
+//        //System.out.println(workingDir.getCanonicalPath());
+//        FileUtils.copyDirectory(new File("src/test/test_template"), workingDir);
+//
+//        jsh = new Jsh();
+//    }
+
     @Test
     public void test_unknown_app() throws IOException {
         thrown.expect(RuntimeException.class);
         jsh.eval("hi there", out);
         String output = new String(out.toByteArray());
+        //output = output.strip();
+        //Scanner scn = new Scanner(in);
+        //assertEquals("hello world", output);
+    }
+
+    @Test
+    public void test_shell() throws IOException {
+        String[] args = new String[]{"ls", "badDir"};
+        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        PrintStream p = new PrintStream(myOut, true, StandardCharsets.UTF_8);
+        System.setErr(p);
+        Jsh.main(args);
+        String data = new String(myOut.toByteArray(), StandardCharsets.UTF_8);
+        assertEquals("jsh: badDir: unknown application\n", data);
         //output = output.strip();
         //Scanner scn = new Scanner(in);
         //assertEquals("hello world", output);

@@ -14,10 +14,7 @@ public class Jsh {
     protected static String currentDirectory = System.getProperty("user.dir");
     static SPFactory spFactory = new SPFactory();
 
-    public Jsh(String pwd)
-    {
-        currentDirectory = pwd;
-    }
+    public Jsh(String pwd){currentDirectory = pwd;}
 
     public Jsh()
     {
@@ -73,5 +70,4 @@ public class Jsh {
         Jsh jsh = new Jsh();
         jsh.shell(args);
     }
-
 }
