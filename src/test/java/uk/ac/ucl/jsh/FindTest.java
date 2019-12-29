@@ -47,10 +47,17 @@ public class FindTest {
         } catch (Exception e) {
             fail(e.toString());
         }
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        assertArrayEquals(new String[]{"." + file_sep + "dir2"
-                + file_sep + "subdir" + file_sep + "file.txt"}, output.split("\r\n|\n|\t"));
+        String outputstr = new String(out.toByteArray());
+        outputstr = outputstr.strip();
+
+        String[] expected = new String[]{
+                "." + file_sep + "dir2" + file_sep + "subdir" + file_sep + "file.txt"};
+        Arrays.sort(expected);
+
+        String[] output = outputstr.split("\r\n|\n|\t");
+        Arrays.sort(output);
+
+        assertArrayEquals(expected, output);
     }
 
     @Test
@@ -85,12 +92,19 @@ public class FindTest {
         } catch (Exception e) {
             fail(e.toString());
         }
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        assertArrayEquals(new String[]{
+        String outputstr = new String(out.toByteArray());
+        outputstr = outputstr.strip();
+
+        String[] expected = new String[]{
                 "dir1" + file_sep + "file1.txt",
                 "dir1" + file_sep + "file2.txt",
-                "dir1" + file_sep + "longfile.txt"}, output.split("\r\n|\n|\t"));
+                "dir1" + file_sep + "longfile.txt"};
+        Arrays.sort(expected);
+
+        String[] output = outputstr.split("\r\n|\n|\t");
+        Arrays.sort(output);
+
+        assertArrayEquals(expected, output);
     }
 
 
