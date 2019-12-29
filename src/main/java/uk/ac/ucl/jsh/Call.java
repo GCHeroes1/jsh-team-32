@@ -1,6 +1,10 @@
 package uk.ac.ucl.jsh;
 
 import java.io.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class Call extends Jsh implements CommandInterface
@@ -13,9 +17,11 @@ public class Call extends Jsh implements CommandInterface
         command = extract_io_redirects(command);
         command = merge_collated_quotes(command);
 
+        //globbing happens here
+
         ArrayList<String> tokens = split_quotes(command);
 
-
+        //execute io redirection
         {
             for(int i = 0; i < tokens.size(); i++)
             {
@@ -58,12 +64,15 @@ public class Call extends Jsh implements CommandInterface
             }
         }
 
-        ArrayList<String> new_list = new ArrayList<>(tokens.size());
+        //do command substitution
+        ArrayList<String> new_list = new ArrayList<>();
         for(String token_string : tokens)
         {
             new_list.addAll(split_spaces(cmd_sub(token_string)));
         }
         tokens = new_list;
+
+
 
         String appName = tokens.get(0); // first token = program to run
         ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));
@@ -248,6 +257,9 @@ public class Call extends Jsh implements CommandInterface
         return command;
     }
 
+
+    //this method was originally written to be called from somewhere else
+    //which is why there are some checks that are irrelevant now
     private String cmd_sub(String command) throws IOException
     {
         int splitIndex, openingBackquoteIndex, closingBackquoteIndex;
@@ -296,9 +308,8 @@ public class Call extends Jsh implements CommandInterface
         return temp_list;
     }
 
-    private ArrayList<String> split_quotes(String command)
-    {
-        ArrayList<String> tokens = new ArrayList<>();                                       // know that whitespace \s is \\s in java and \| is \\| because we escape metacharacters
+    private ArrayList<String> split_quotes(String command) throws IOException {
+        ArrayList<String> tokens = new ArrayList<>();
 
         int quote_start, quote_end = 0;
         for (int quote_scanning_index = 0; quote_scanning_index < command.length(); quote_scanning_index++)
@@ -341,13 +352,15 @@ public class Call extends Jsh implements CommandInterface
             {
                 if(quote_end != -1 && quote_end < quote_scanning_index)
                 {
-                    tokens.add(command.substring(quote_end, quote_scanning_index));
+                    String token = command.substring(quote_end, quote_scanning_index);
+                    tokens.addAll(glob(token));
                 }
                 quote_end = quote_scanning_index + 1;
             }
             else if(quote_scanning_index == command.length() - 1)
             {
-                tokens.add(command.substring(quote_end));
+                String token = command.substring(quote_end);
+                tokens.addAll(glob(token));
             }
         }
 
@@ -392,5 +405,34 @@ public class Call extends Jsh implements CommandInterface
 //        }
 
         return tokens;
+    }
+
+    private ArrayList<String> glob(String glob_string) throws IOException {
+        ArrayList<String> glob_matches = new ArrayList<>();
+        File glob = new File(currentDirectory + File.separator + glob_string);
+        Path dir = Paths.get(currentDirectory);
+
+        if(glob.getParentFile().isDirectory())
+        {
+            dir = glob.getParentFile().toPath();
+        }
+        DirectoryStream<Path> stream;
+        stream = Files.newDirectoryStream(dir, glob.getName());
+        String rel_path = Paths.get(currentDirectory).relativize(dir).toString();
+        for (Path entry : stream) {
+            if(rel_path.equals(""))
+            {
+                glob_matches.add(entry.getFileName().toString());
+            }
+            else
+            {
+                glob_matches.add(rel_path + File.separator + entry.getFileName().toString());
+            }
+        }
+        if(glob_matches.isEmpty())
+        {
+            glob_matches.add(glob_string);
+        }
+        return new ArrayList<>(glob_matches);
     }
 }
