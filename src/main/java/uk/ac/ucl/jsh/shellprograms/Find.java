@@ -44,29 +44,27 @@ public class Find  extends ShellProgram {
                 throw new RuntimeException("find: wrong number of arguments");
         }
 
-
         Path target_path = Paths.get(find_dir.getCanonicalPath());
         Path working_path = Paths.get(working_dir.getCanonicalPath());
         Stream<Path> stream = Files.walk(target_path);
         PathMatcher pm = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
-        stream.filter(path1 -> pm.matches(path1.getFileName())).forEach(found_file_path -> this.relativize_path(working_path, target_path, found_file_path, str_to_bytes));
+        stream.filter(path1 -> pm.matches(path1.getFileName())).forEach(found_file_path -> {
+            try {
+                this.relativize_path(working_path, target_path, found_file_path, str_to_bytes);
+            } catch (IOException e) {
+                throw new RuntimeException("find: IOException");
+            }
+        });
     }
 
-    private void relativize_path(Path path_source, Path target_path, Path found_file_path, OutputStreamWriter osw)
+    private void relativize_path(Path path_source, Path target_path, Path found_file_path, OutputStreamWriter osw) throws IOException
     {
-        try
+        if(path_source.equals(target_path))
         {
-            if(path_source.equals(target_path))
-            {
-                osw.write("." + File.separator);
-            }
-            osw.write(path_source.relativize(found_file_path).toString());
-            osw.write(System.getProperty("line.separator"));
-            osw.flush();
+            osw.write("." + File.separator);
         }
-        catch (IOException e)
-        {
-            throw new RuntimeException("find: IOException\n" + e);
-        }
+        osw.write(path_source.relativize(found_file_path).toString());
+        osw.write(System.getProperty("line.separator"));
+        osw.flush();
     }
 }

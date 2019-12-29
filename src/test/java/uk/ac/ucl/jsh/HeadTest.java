@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.ByteArrayOutputStream;
@@ -96,5 +97,65 @@ public class HeadTest {
         String output = new String(out.toByteArray());
         output = output.strip();
         assertEquals("", output);
+    }
+
+
+    //=======================================
+
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void test_head_wrong_arguments() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("head -n 0 dir1/longfile.txt anotherargument", out);
+//        String output = new String(out.toByteArray());
+//        output = output.strip();
+//        assertEquals("", output);
+    }
+
+    @Test
+    public void test_head_not_n() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("head -q 0 dir1/longfile.txt", out);
+//        String output = new String(out.toByteArray());
+//        output = output.strip();
+//        assertEquals("", output);
+    }
+
+    @Test
+    public void test_head_not_number_file() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("head -n a dir1/longfile.txt", out);
+//        String output = new String(out.toByteArray());
+//        output = output.strip();
+//        assertEquals("", output);
+    }
+
+    @Test
+    public void test_head_not_number_stdin() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("head -n a < dir1/longfile.txt", out);
+//        String output = new String(out.toByteArray());
+//        output = output.strip();
+//        assertEquals("", output);
+    }
+
+    @Test
+    public void test_head_bad_file() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("head -n 5 dir1/file5.txt", out);
+//        String output = new String(out.toByteArray());
+//        output = output.strip();
+//        assertEquals("", output);
+    }
+
+    @Test
+    public void test_head_unreadable_file() throws IOException {
+        File badfile = temporaryFolder.newFile("bad.txt");
+        badfile.setReadable(false);
+        thrown.expect(RuntimeException.class);
+        jsh.eval("head -n 5 bad.txt", out);
     }
 }

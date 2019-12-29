@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.ByteArrayOutputStream;
@@ -96,4 +97,53 @@ public class SedTest {
         output = output.strip();
         assertArrayEquals(new String[]{"DDA", "DDB", "DDA"}, output.split("\r\n|\n"));
     }
+
+
+    //============================================
+
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+
+    @Test
+    public void test_bad_pattern_no_s() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("sed '/./B/g' dir1/file1.txt", out);
+    }
+
+    @Test
+    public void test_bad_pattern_too_many() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("sed 's/./B/q/g' dir1/file1.txt", out);
+    }
+
+    @Test
+    public void test_bad_pattern_not_g() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("sed 's/./B/d' dir1/file1.txt", out);
+    }
+
+
+    @Test
+    public void test_bad_file() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("sed 's/./B/g' dir1/file5.txt", out);
+    }
+
+
+    @Test
+    public void test_sed_too_many_args() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("sed 's/./B/g' dir1/file1.txt dir1/file2.txt", out);
+    }
+
+    @Test
+    public void test_sed_unreadable_file() throws IOException {
+        File badfile = temporaryFolder.newFile("bad.txt");
+        badfile.setReadable(false);
+        thrown.expect(RuntimeException.class);
+        jsh.eval("sed 's/./B/g' bad.txt", out);
+    }
+
 }

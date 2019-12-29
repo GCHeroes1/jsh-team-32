@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Sed extends ShellProgram
@@ -17,7 +16,6 @@ public class Sed extends ShellProgram
     public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
     {
         OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
-        Pattern grepPattern = Pattern.compile(args[0]);
 
 
         //int n = stdin.available();
@@ -27,7 +25,7 @@ public class Sed extends ShellProgram
 
 
         String regexstring = args[0];
-        String target, result;
+        String target;
         char separator;
         boolean global = false;
         if(regexstring.charAt(0) != 's')
@@ -58,7 +56,6 @@ public class Sed extends ShellProgram
 
         if (args.length == 1) // use stdin as the file argument is not specified
         {
-            String line = null;
             BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
             find_and_replace(str_to_bytes, regexstring, target, global, bfr);
         }
@@ -75,8 +72,6 @@ public class Sed extends ShellProgram
             Charset encoding = StandardCharsets.UTF_8;
             try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
                 find_and_replace(str_to_bytes, regexstring, target, global, reader);
-            } catch (IOException e) {
-                throw new RuntimeException("grep: cannot open " + args[1]);
             }
 
         }

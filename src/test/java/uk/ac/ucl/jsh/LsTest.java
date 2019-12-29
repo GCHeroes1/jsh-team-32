@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
@@ -114,5 +115,42 @@ public class LsTest {
 
         assertEquals("AAA", filecontent.toString());
     }
+
+
+    //========================================================
+
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+
+    @Test
+    public void test_unsafe_ls_no_exception() throws IOException {
+        jsh.eval("_ls dir1; echo AAA > newfile.txt", out);
+
+        StringBuilder filecontent = new StringBuilder();
+        try
+        {
+            File outputfile = new File("newfile.txt");
+            BufferedReader bfr = new BufferedReader(new FileReader(outputfile));
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                filecontent.append(line);
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            fail("File not created");
+        }
+
+        assertEquals("AAA", filecontent.toString());
+    }
+
+    @Test
+    public void test_ls_too_many_args() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("ls dir1 dir2", out);
+    }
+
 
 }

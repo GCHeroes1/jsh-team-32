@@ -4,12 +4,11 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
+import uk.ac.ucl.jsh.shellprograms.Find;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.*;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -17,7 +16,6 @@ import static org.junit.Assert.fail;
 
 public class FindTest {
     private Jsh jsh;
-    private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
     private String file_sep = File.separator;
 
@@ -32,7 +30,7 @@ public class FindTest {
 
     @Before
     public void setup_file_env() throws IOException {
-        workingDir = temporaryFolder.newFolder("testfolder");
+        File workingDir = temporaryFolder.newFolder("testfolder");
         //System.out.println(workingDir.getCanonicalPath());
         FileUtils.copyDirectory(new File("src/test/test_template"), workingDir);
 
@@ -93,5 +91,61 @@ public class FindTest {
                 "dir1" + file_sep + "file1.txt",
                 "dir1" + file_sep + "file2.txt",
                 "dir1" + file_sep + "longfile.txt"}, output.split("\r\n|\n|\t"));
+    }
+
+
+    //============================================
+
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void test_find_no_name() throws IOException
+    {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("find -n '*.txt'", out);
+    }
+
+    @Test
+    public void test_find_no_name_with_dir() throws IOException
+    {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("find dir1 -n '*.txt'", out);
+    }
+
+    @Test
+    public void test_find_too_many_args() throws IOException
+    {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("find dir1 -n '*.txt' '*.pub", out);
+    }
+
+    @Test
+    public void test_find_too_few_args() throws IOException
+    {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("find dir1", out);
+    }
+
+    @Test
+    public void test_find_bad_out() throws IOException
+    {
+        thrown.expect(RuntimeException.class);
+        //jsh.eval("find dir1", out);
+        InputStream is = new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw new IOException("Expected IOException");
+            }
+        };
+
+        OutputStream os = new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                throw new IOException("expected IOException");
+            }
+        };
+        (new Find()).execute(new String[]{"-name", "*.txt"}, is, os);
     }
 }
