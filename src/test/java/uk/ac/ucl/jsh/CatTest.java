@@ -48,13 +48,9 @@ public class CatTest {
     }
 
     @Test
-    public void test_cat_stdin() {
-        System.out.println(workingDir);
-        try {
-            jsh.eval("cat < dir1/file1.txt", out);
-        } catch (Exception e) {
-            fail(e.toString());
-        }
+    public void test_cat_stdin() throws IOException
+    {
+        jsh.eval("cat < dir1/file1.txt", out);
         String output = new String(out.toByteArray());
         output = output.strip();
         // can be just \n, but added \r\n because a pleb is using windows...
