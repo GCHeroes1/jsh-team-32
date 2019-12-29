@@ -333,8 +333,5 @@ ASALocalRun/
 
 target
 /target/
-<<<<<<< HEAD
-testOutputDao.txt
-=======
-testOutputDao.txt
->>>>>>> devRajesh2
+temp.txt
+newfile.txt

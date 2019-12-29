@@ -190,7 +190,6 @@ public class Call extends Jsh implements CommandInterface
                             q_end = q_index;
                         } else if (q_end > space_end) {
                             if (command.charAt(q_end) == chr) // check if they're the same kind of quotes, otherwise ignore
-
                             {
                                 command = command.substring(0, q_end) +
                                         command.substring(q_end + 1, q_index) +
