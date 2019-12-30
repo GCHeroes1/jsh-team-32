@@ -5,6 +5,7 @@ import java.util.HashMap;
 public class SPFactory
 {
     private HashMap<String, ShellProgram> programs = new HashMap<>();
+
     public SPFactory()
     {
         programs.put("cat", new Cat());

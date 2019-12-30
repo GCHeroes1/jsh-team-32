@@ -28,26 +28,23 @@ public class Sed extends ShellProgram
         String target;
         char separator;
         boolean global = false;
-        if(regexstring.charAt(0) != 's')
+        if (regexstring.charAt(0) != 's')
         {
             throw new RuntimeException("sed: regex pattern not starting with an 's'");
-        }
-        else
+        } else
         {
             separator = regexstring.charAt(1);
             String[] regex_split = regexstring.split(Pattern.quote(String.valueOf(separator)));
-            if(regex_split.length == 3)
+            if (regex_split.length == 3)
             {
                 target = regex_split[2];
                 regexstring = regex_split[1];
-            }
-            else if(regex_split.length == 4 && regex_split[3].equals("g"))
+            } else if (regex_split.length == 4 && regex_split[3].equals("g"))
             {
                 target = regex_split[2];
                 regexstring = regex_split[1];
                 global = true;
-            }
-            else
+            } else
             {
                 throw new RuntimeException("sed: invalid pattern provided");
             }
@@ -58,43 +55,42 @@ public class Sed extends ShellProgram
         {
             BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
             find_and_replace(str_to_bytes, regexstring, target, global, bfr);
-        }
-        else if(args.length == 2)
+        } else if (args.length == 2)
         {
             Path filePath;
             Path currentDir = Paths.get(currentDirectory);
             filePath = currentDir.resolve(args[1]);
             if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
-                    !Files.exists(filePath) || !Files.isReadable(filePath)) {
+                    !Files.exists(filePath) || !Files.isReadable(filePath))
+            {
                 throw new RuntimeException("sed: wrong file argument");
             }
 
             Charset encoding = StandardCharsets.UTF_8;
-            try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
+            try (BufferedReader reader = Files.newBufferedReader(filePath, encoding))
+            {
                 find_and_replace(str_to_bytes, regexstring, target, global, reader);
             }
 
-        }
-        else
+        } else
         {
             throw new RuntimeException("sed: wrong number of arguments given");
         }
 
 
-
-
     }
 
-    private void find_and_replace(OutputStreamWriter str_to_bytes, String regexstring, String target, boolean global, BufferedReader reader) throws IOException {
+    private void find_and_replace(OutputStreamWriter str_to_bytes, String regexstring, String target, boolean global, BufferedReader reader) throws IOException
+    {
         String line;
         String result;
 
-        while ((line = reader.readLine()) != null) {
-            if(global)
+        while ((line = reader.readLine()) != null)
+        {
+            if (global)
             {
                 result = Pattern.compile(regexstring).matcher(line).replaceAll(target);
-            }
-            else
+            } else
             {
                 result = Pattern.compile(regexstring).matcher(line).replaceFirst(target);
             }

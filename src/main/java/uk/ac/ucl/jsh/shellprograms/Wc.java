@@ -7,16 +7,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Wc extends ShellProgram {
-    private int[] counting(Reader file) throws IOException {
+public class Wc extends ShellProgram
+{
+    private int[] counting(Reader file) throws IOException
+    {
         BufferedReader reader = new BufferedReader(file);
         int charCount = 0;
         int wordCount = 0;
         int lineCount = 0;
         String line;
-        while((line = reader.readLine()) != null){
+        while ((line = reader.readLine()) != null)
+        {
             charCount += line.length() + 1;
-            if(!(line.equals(""))){
+            if (!(line.equals("")))
+            {
                 String[] wordList = line.split(" ");
                 wordCount += wordList.length;
             }
@@ -26,7 +30,7 @@ public class Wc extends ShellProgram {
 //        System.out.println(wordCount);
 //        System.out.println(lineCount);
         return new int[]{charCount, wordCount, lineCount};
-        }
+    }
 
     @Override
     public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
@@ -60,29 +64,27 @@ public class Wc extends ShellProgram {
                     break;
             }
 
-            if(wc_option != 0 && args.length == 1)
+            if (wc_option != 0 && args.length == 1)
             {
                 use_stdin = true;
             }
-        }
-        else
+        } else
         {
             use_stdin = true;
         }
 
-        if(use_stdin)
+        if (use_stdin)
         {
             InputStreamReader isr = new InputStreamReader(stdin);
             countArray = counting(isr);
-        }
-        else
+        } else
         {
             Path filePath;
             BufferedReader reader;
             Charset encoding = StandardCharsets.UTF_8;
-            for(String file : args)
+            for (String file : args)
             {
-                if( !(file.equals("-w") | file.equals("-m") | file.equals("-l")) ) // todo:remove this when not necessary anymore
+                if (!(file.equals("-w") | file.equals("-m") | file.equals("-l"))) // todo:remove this when not necessary anymore
                 {
                     filePath = Paths.get(currentDirectory + File.separator + file);
 
@@ -94,7 +96,8 @@ public class Wc extends ShellProgram {
 
                     reader = Files.newBufferedReader(filePath, encoding);
                     int[] currentCounting = counting(reader);
-                    for (int j = 0; j < 3; j++) {
+                    for (int j = 0; j < 3; j++)
+                    {
                         countArray[j] += currentCounting[j];
                     }
                 }

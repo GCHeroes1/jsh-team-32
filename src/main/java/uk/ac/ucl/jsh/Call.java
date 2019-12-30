@@ -22,7 +22,7 @@ public class Call extends Jsh implements CommandInterface
 
         //execute io redirection
         {
-            for(int i = 0; i < tokens.size(); i++)
+            for (int i = 0; i < tokens.size(); i++)
             {
                 String token = tokens.get(i);
                 String redirection_target;
@@ -34,8 +34,7 @@ public class Call extends Jsh implements CommandInterface
                         try
                         {
                             output = new FileOutputStream(new File(currentDirectory + File.separator + redirection_target));
-                        }
-                        catch (IOException e)
+                        } catch (IOException e)
                         {
                             throw new RuntimeException("[redirection] Unable to open output file for writing");
                         }
@@ -47,8 +46,7 @@ public class Call extends Jsh implements CommandInterface
                         try
                         {
                             input = new FileInputStream(new File(currentDirectory + File.separator + redirection_target));
-                        }
-                        catch (IOException e)
+                        } catch (IOException e)
                         {
                             throw new RuntimeException("[redirection] Unable to open input file for reading");
                         }
@@ -60,50 +58,46 @@ public class Call extends Jsh implements CommandInterface
 
         //do command substitution
         ArrayList<String> new_list = new ArrayList<>();
-        for(String token_string : tokens)
+        for (String token_string : tokens)
         {
             new_list.addAll(split_spaces(cmd_sub(token_string)));
         }
         tokens = new_list;
 
 
-
         String appName = tokens.get(0); // first token = program to run
         ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));
         try
         {
-            if(appName.charAt(0) == '_')
+            if (appName.charAt(0) == '_')
             {
                 spFactory.getSP(appName.substring(1)).executeUnsafe(appArgs.toArray(new String[0]), input, output);
-            }
-            else
+            } else
             {
                 spFactory.getSP(appName).execute(appArgs.toArray(new String[0]), input, output);
             }
-        }
-        catch (NullPointerException e)
+        } catch (NullPointerException e)
         {
             throw new RuntimeException(appName + ": unknown application");
         }
 
     }
 
-    private String get_redirection_target(ArrayList<String> tokens, int i, String token) {
+    private String get_redirection_target(ArrayList<String> tokens, int i, String token)
+    {
         String redirection_target;
-        if(token.length() == 1)
+        if (token.length() == 1)
         {
             try
             {
                 redirection_target = tokens.get(i + 1);
                 tokens.remove(i + 1);
                 tokens.remove(i);
-            }
-            catch (IndexOutOfBoundsException e)
+            } catch (IndexOutOfBoundsException e)
             {
                 throw new RuntimeException("[redirection] No redirection target provided");
             }
-        }
-        else
+        } else
         {
             redirection_target = token.substring(1);
             tokens.remove(token);
@@ -122,37 +116,35 @@ public class Call extends Jsh implements CommandInterface
         char chr = command.charAt(index_of_quote);
         int quote_start, quote_end;
 
-        if(command.substring(0, index_of_quote).lastIndexOf('`') != -1 &&
+        if (command.substring(0, index_of_quote).lastIndexOf('`') != -1 &&
                 command.substring(index_of_quote + 1).indexOf('`') != -1)
         {
             return false;
         }
 
-        switch(chr)
+        switch (chr)
         {
             case '"': //if we're checking if a double quote is disabled, we look for single quotes
-                if((quote_start = command.indexOf('\'')) == -1)
+                if ((quote_start = command.indexOf('\'')) == -1)
                 {
                     return true;
-                }
-                else
+                } else
                 {
                     quote_end = command.substring(quote_start + 1).indexOf('\'') + quote_start + 1;
-                    if(quote_start < index_of_quote && index_of_quote < quote_end)
+                    if (quote_start < index_of_quote && index_of_quote < quote_end)
                     {
                         return false;
                     }
                 }
                 break;
             case '\'':
-                if((quote_start = command.indexOf('"')) == -1)
+                if ((quote_start = command.indexOf('"')) == -1)
                 {
                     return true;
-                }
-                else
+                } else
                 {
-                    quote_end = command.substring(quote_start + 1).indexOf('"')  + quote_start + 1;
-                    if(quote_start < index_of_quote && index_of_quote < quote_end)
+                    quote_end = command.substring(quote_start + 1).indexOf('"') + quote_start + 1;
+                    if (quote_start < index_of_quote && index_of_quote < quote_end)
                     {
                         return false;
                     }
@@ -167,26 +159,32 @@ public class Call extends Jsh implements CommandInterface
     private String merge_collated_quotes(String command)
     {
         int space_end = 0, q_end = -1, q_index;
-        for(q_index = 0; q_index < command.length(); q_index++)
+        for (q_index = 0; q_index < command.length(); q_index++)
         {
             char chr = command.charAt(q_index);
-            if(chr == '"' || chr == '\'')
+            if (chr == '"' || chr == '\'')
             {
-                if(is_quote_not_disabled(command, q_index) && q_index > 0) {
-                    if (q_index == command.length() - 1) {
+                if (is_quote_not_disabled(command, q_index) && q_index > 0)
+                {
+                    if (q_index == command.length() - 1)
+                    {
                         continue;
-                    } else if (command.charAt(q_index + 1) == ' ') {
+                    } else if (command.charAt(q_index + 1) == ' ')
+                    {
                         continue;
                     }
 
-                    if (command.charAt(q_index - 1) != ' ' && space_end > q_end) {
+                    if (command.charAt(q_index - 1) != ' ' && space_end > q_end)
+                    {
                         command = command.substring(0, space_end + 1) + chr +
                                 command.substring(space_end + 1, q_index) +
                                 command.substring(q_index + 1);
                         q_end = space_end;
-                    } else if (space_end == q_end) {
+                    } else if (space_end == q_end)
+                    {
                         q_end = q_index;
-                    } else if (q_end > space_end && command.charAt(q_end) == chr) { // check if they're the same kind of quotes, otherwise ignore
+                    } else if (q_end > space_end && command.charAt(q_end) == chr)
+                    { // check if they're the same kind of quotes, otherwise ignore
                         command = command.substring(0, q_end) +
                                 command.substring(q_end + 1, q_index) +
                                 command.substring(q_index + 1);
@@ -194,18 +192,16 @@ public class Call extends Jsh implements CommandInterface
                         q_end = space_end;
                     }
                 }
-            }
-            else if(chr == ' ')
+            } else if (chr == ' ')
             {
-                if(q_end > space_end)
+                if (q_end > space_end)
                 {
                     command = command.substring(0, q_end) +
                             command.substring(q_end + 1, q_index) +
                             command.charAt(q_end);
                 }
                 space_end = q_index;
-            }
-            else if(q_index == command.length() - 1 && q_end > space_end)
+            } else if (q_index == command.length() - 1 && q_end > space_end)
             {
                 command = command.substring(0, q_end) +
                         command.substring(q_end + 1) +
@@ -255,7 +251,7 @@ public class Call extends Jsh implements CommandInterface
         for (int i = 0; i < command.length(); i++)
         {
             char chr = command.charAt(i);
-            if(chr == ' ' && is_quote_not_disabled(command, i))
+            if (chr == ' ' && is_quote_not_disabled(command, i))
             {
                 temp_list.add(command.substring(last_split, i));
                 last_split = i + 1;
@@ -265,22 +261,23 @@ public class Call extends Jsh implements CommandInterface
         return temp_list;
     }
 
-    private ArrayList<String> split_quotes_and_glob(String command) throws IOException {
+    private ArrayList<String> split_quotes_and_glob(String command) throws IOException
+    {
         ArrayList<String> tokens = new ArrayList<>();
 
         int quote_start, quote_end = 0;
         for (int quote_scanning_index = 0; quote_scanning_index < command.length(); quote_scanning_index++)
         {
             char chr = command.charAt(quote_scanning_index);
-            if(chr == '"' && is_quote_not_disabled(command, quote_scanning_index))
+            if (chr == '"' && is_quote_not_disabled(command, quote_scanning_index))
             {
                 quote_start = quote_scanning_index;
                 if ((quote_end = command.indexOf("\"", quote_start + 1)) != -1)
                 {
-                    while(!is_quote_not_disabled(command, quote_end))
+                    while (!is_quote_not_disabled(command, quote_end))
                     {
                         quote_end = command.indexOf("\"", quote_end + 1);
-                        if(quote_end == -1)
+                        if (quote_end == -1)
                         {
                             throw new RuntimeException("unmatched quote");
                         }
@@ -288,33 +285,30 @@ public class Call extends Jsh implements CommandInterface
                     tokens.add(command.substring(quote_start + 1, quote_end));
 
                 }
-            }
-            else if(chr == '\'' && is_quote_not_disabled(command, quote_scanning_index))
+            } else if (chr == '\'' && is_quote_not_disabled(command, quote_scanning_index))
             {
                 quote_start = quote_scanning_index;
                 if ((quote_end = command.indexOf("\'", quote_start + 1)) != -1)
                 {
-                    while(!is_quote_not_disabled(command, quote_end))
+                    while (!is_quote_not_disabled(command, quote_end))
                     {
                         quote_end = command.indexOf("\'", quote_end + 1);
-                        if(quote_end == -1)
+                        if (quote_end == -1)
                         {
                             throw new RuntimeException("unmatched quote");
                         }
                     }
                     tokens.add(command.substring(quote_start + 1, quote_end));
                 }
-            }
-            else if(chr == ' ' && is_quote_not_disabled(command, quote_scanning_index))
+            } else if (chr == ' ' && is_quote_not_disabled(command, quote_scanning_index))
             {
-                if(quote_end != -1 && quote_end < quote_scanning_index)
+                if (quote_end != -1 && quote_end < quote_scanning_index)
                 {
                     String token = command.substring(quote_end, quote_scanning_index);
                     tokens.addAll(glob(token));
                 }
                 quote_end = quote_scanning_index + 1;
-            }
-            else if(quote_scanning_index == command.length() - 1)
+            } else if (quote_scanning_index == command.length() - 1)
             {
                 String token = command.substring(quote_end);
                 tokens.addAll(glob(token));
@@ -364,38 +358,38 @@ public class Call extends Jsh implements CommandInterface
         return tokens;
     }
 
-    private ArrayList<String> glob(String glob_string) throws IOException {
+    private ArrayList<String> glob(String glob_string) throws IOException
+    {
         ArrayList<String> glob_matches = new ArrayList<>();
         File glob;
-        if(glob_string.charAt(0) == '/')
+        if (glob_string.charAt(0) == '/')
         {
             glob = new File(glob_string);
-        }
-        else
+        } else
         {
             glob = new File(currentDirectory + File.separator + glob_string);
         }
         Path dir = Paths.get(currentDirectory);
 
         File parent_file;
-        if((parent_file = glob.getParentFile()) != null && parent_file.isDirectory())
+        if ((parent_file = glob.getParentFile()) != null && parent_file.isDirectory())
         {
             dir = parent_file.toPath();
         }
         DirectoryStream<Path> stream;
         stream = Files.newDirectoryStream(dir, glob.getName());
         String rel_path = Paths.get(currentDirectory).relativize(dir).toString();
-        for (Path entry : stream) {
-            if(rel_path.equals(""))
+        for (Path entry : stream)
+        {
+            if (rel_path.equals(""))
             {
                 glob_matches.add(entry.getFileName().toString());
-            }
-            else
+            } else
             {
                 glob_matches.add(rel_path + File.separator + entry.getFileName().toString());
             }
         }
-        if(glob_matches.isEmpty())
+        if (glob_matches.isEmpty())
         {
             glob_matches.add(glob_string);
         }

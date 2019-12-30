@@ -17,13 +17,14 @@ public class Grep extends ShellProgram
         OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
         Pattern grepPattern = Pattern.compile(args[0]);
 
-        if (args.length == 1) {
+        if (args.length == 1)
+        {
             String line;
             BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
-            while((line = bfr.readLine()) != null)
+            while ((line = bfr.readLine()) != null)
             {
                 Matcher matcher = grepPattern.matcher(line);
-                if(matcher.find())
+                if (matcher.find())
                 {
                     str_to_bytes.write(line);
                     str_to_bytes.write(System.getProperty("line.separator"));
@@ -31,28 +32,32 @@ public class Grep extends ShellProgram
                 }
             }
 
-        }
-        else // read the file instead
+        } else // read the file instead
         {
             int numOfFiles = args.length - 1;
             Path filePath;
             Path[] filePathArray = new Path[numOfFiles];
             Path currentDir = Paths.get(currentDirectory);
-            for (int i = 0; i < numOfFiles; i++) {
+            for (int i = 0; i < numOfFiles; i++)
+            {
                 filePath = currentDir.resolve(args[i + 1]);
                 if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
-                        !Files.exists(filePath) || !Files.isReadable(filePath)) {
+                        !Files.exists(filePath) || !Files.isReadable(filePath))
+                {
                     throw new RuntimeException("grep: wrong file argument");
                 }
                 filePathArray[i] = filePath;
             }
-            for (Path path : filePathArray) {
+            for (Path path : filePathArray)
+            {
                 Charset encoding = StandardCharsets.UTF_8;
                 BufferedReader reader = Files.newBufferedReader(path, encoding);
                 String line;
-                while ((line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null)
+                {
                     Matcher matcher = grepPattern.matcher(line);
-                    if (matcher.find()) {
+                    if (matcher.find())
+                    {
                         str_to_bytes.write(line);
                         str_to_bytes.write(System.getProperty("line.separator"));
                         str_to_bytes.flush();
