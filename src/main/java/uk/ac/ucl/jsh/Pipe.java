@@ -37,7 +37,7 @@ public class Pipe extends Jsh implements CommandInterface
         boolean inside_quote = false;
         for (splitIndex = 0; splitIndex < command.length(); splitIndex++) {                     // iterates through the command line characters
             char ch = command.charAt(splitIndex);                                               // isolates each character of the command line input
-            if (ch == '\'' || ch == '\"') // if it finds a quote (' or ")
+            if (ch == '\'' || ch == '\"' || ch == '`') // if it finds a quote (' or ")
             {
                 inside_quote = !inside_quote;
             } else if (ch == '|' && !inside_quote) {

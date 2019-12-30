@@ -17,9 +17,8 @@ public class Call extends Jsh implements CommandInterface
         command = extract_io_redirects(command);
         command = merge_collated_quotes(command);
 
-        //globbing happens here
-
-        ArrayList<String> tokens = split_quotes(command);
+        //globbing happens inside split_quotes
+        ArrayList<String> tokens = split_quotes_and_glob(command);
 
         //execute io redirection
         {
@@ -213,32 +212,6 @@ public class Call extends Jsh implements CommandInterface
                         command.charAt(q_end);
             }
         }
-
-//        String collated_quotes_regex = "([^\\s\"]*(\"[^\"]*\")+[^\\s\"]*)|([^\\s\']*(\'[^\']*\')+[^\\s\']*)|[^\"']+";
-//        Pattern regex_pattern = Pattern.compile(collated_quotes_regex);
-//        //command = command.replace("\'", "\"");
-//        Matcher regex_matcher = regex_pattern.matcher(command);
-//        ArrayList<String> pieces = new ArrayList<>();
-//        String match;
-//
-//        while (regex_matcher.find())
-//        {
-//            match = regex_matcher.group();
-//            int q_index;
-//            if((q_index = match.indexOf('\'')) != -1 && is_quote_not_disabled(match, q_index))  // only put quotes around if the part contains quotes
-//            {
-//                match = match.replace("\'", "");
-//                match = "\'" + match + "\'";
-//            }
-//            if((q_index = match.indexOf('\"')) != -1 && is_quote_not_disabled(match, q_index))  // only put quotes around if the part contains quotes
-//            {
-//                match = match.replace("\"", "");
-//                match = "\"" + match + "\"";
-//            }
-//
-//            pieces.add(match);
-//        }
-        //return String.join(" ", pieces);
         return command;
     }
 
@@ -292,7 +265,7 @@ public class Call extends Jsh implements CommandInterface
         return temp_list;
     }
 
-    private ArrayList<String> split_quotes(String command) throws IOException {
+    private ArrayList<String> split_quotes_and_glob(String command) throws IOException {
         ArrayList<String> tokens = new ArrayList<>();
 
         int quote_start, quote_end = 0;

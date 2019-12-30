@@ -126,6 +126,60 @@ public class QuotingTest {
     }
 
 
+    //============================================
 
+
+    @Test
+    public void test_pipe_in_cmd_sub() throws IOException {
+        jsh.eval("echo `echo abc | sed 's/a/b/g'`", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals("bbc", output);
+    }
+
+    @Test
+    public void test_redirection_in_quote() throws IOException
+    {
+        jsh.eval("echo abc \">\" def", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals("abc > def", output);
+    }
+
+    @Test
+    public void test_pipe_character_in_quote() throws IOException
+    {
+        jsh.eval("echo abc \"|\" def", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals("abc | def", output);
+    }
+
+    @Test
+    public void test_nested_mixed_quotes() throws IOException
+    {
+        jsh.eval("echo \"a'b'c\"", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals("a'b'c", output);
+    }
+
+    @Test
+    public void test_nested_mixed_quotes_2() throws IOException
+    {
+        jsh.eval("echo 'a\"b\"c'", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals("a\"b\"c", output);
+    }
+
+    @Test
+    public void test_mixed_quotes() throws IOException
+    {
+        jsh.eval("echo a\"b\"c'd'e", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals("abcde", output);
+    }
 
 }
