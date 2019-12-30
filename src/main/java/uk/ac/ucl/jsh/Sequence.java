@@ -18,6 +18,10 @@ public class Sequence extends Jsh implements CommandInterface{
 			char ch = cmdline.charAt(splitIndex);                                               // isolates each character of the command line input  
 			if (ch == ';')
 			{
+				if(splitIndex == 0)
+				{
+					throw new RuntimeException("jsh: unexpected token \';\'");
+				}
 				String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();      // stores and trims the command line up to the semi colon as a command 
 				rawCommands.add(command);                                                       // adds that command to the arraylist of commands 
 				prevDelimiterIndex = splitIndex + 1;                                            // jumps to the section after semi-colon 

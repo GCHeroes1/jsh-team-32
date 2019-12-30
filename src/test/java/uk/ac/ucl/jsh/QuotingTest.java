@@ -140,6 +140,7 @@ public class QuotingTest {
     @Test
     public void test_redirection_in_quote() throws IOException
     {
+        System.out.println("echo abc \">\" def");
         jsh.eval("echo abc \">\" def", out);
         String output = new String(out.toByteArray());
         output = output.strip();
@@ -176,6 +177,7 @@ public class QuotingTest {
     @Test
     public void test_mixed_quotes() throws IOException
     {
+        System.out.println("echo a\"b\"c'd'e");
         jsh.eval("echo a\"b\"c'd'e", out);
         String output = new String(out.toByteArray());
         output = output.strip();
