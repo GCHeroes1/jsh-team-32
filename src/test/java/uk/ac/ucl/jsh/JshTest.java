@@ -200,11 +200,12 @@ public class JshTest {
 
     @Test
     public void test_semicolon() throws IOException {
+        thrown.expect(RuntimeException.class);
         jsh.eval(";", out);
         String output = new String(out.toByteArray());
-        output = output.strip();
+        //output = output.strip();
         //Scanner scn = new Scanner(in);
-        assertEquals("", output);
+        //assertEquals("unexpected token \';\'", output);
     }
 
     @Test(timeout = 1000)
