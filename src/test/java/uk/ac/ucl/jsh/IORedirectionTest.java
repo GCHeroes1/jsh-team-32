@@ -164,7 +164,7 @@ public class IORedirectionTest {
     }
 
     @Test
-    public void test_io_redirect_invalid_write() throws IOException //doesnt work properly 
+    public void test_io_redirect_invalid_write() throws IOException //doesnt work properly
     {
         thrown.expect(IOException.class);
         File tf = temporaryFolder.newFile("lol.txt");

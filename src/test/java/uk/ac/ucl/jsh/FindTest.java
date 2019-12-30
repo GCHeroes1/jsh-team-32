@@ -75,6 +75,7 @@ public class FindTest {
                 "." + file_sep + "test.txt",
                 "." + file_sep + "dir1" + file_sep + "file1.txt",
                 "." + file_sep + "dir1" + file_sep + "file2.txt",
+                "." + file_sep + "dir1" + file_sep + "file3.txt",
                 "." + file_sep + "dir1" + file_sep + "longfile.txt"};
         Arrays.sort(expected);
 
@@ -98,6 +99,7 @@ public class FindTest {
         String[] expected = new String[]{
                 "dir1" + file_sep + "file1.txt",
                 "dir1" + file_sep + "file2.txt",
+                "dir1" + file_sep + "file3.txt",
                 "dir1" + file_sep + "longfile.txt"};
         Arrays.sort(expected);
 

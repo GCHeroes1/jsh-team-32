@@ -279,6 +279,7 @@ public class Call extends Jsh implements CommandInterface
                         quote_end = command.indexOf("\"", quote_end + 1);
                         if (quote_end == -1)
                         {
+                            System.out.println("lol");
                             throw new RuntimeException("unmatched quote");
                         }
                     }
@@ -295,6 +296,7 @@ public class Call extends Jsh implements CommandInterface
                         quote_end = command.indexOf("\'", quote_end + 1);
                         if (quote_end == -1)
                         {
+                            System.out.println("lol");
                             throw new RuntimeException("unmatched quote");
                         }
                     }

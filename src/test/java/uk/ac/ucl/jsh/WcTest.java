@@ -121,4 +121,15 @@ public class WcTest {
         jsh.eval("wc nofile.txt", out);
     }
 
+    @Test
+    public void test_wc_spaces_in_file()  {
+        try {
+            jsh.eval("wc dir1/file3.txt", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"5", "3", "15"}, output.split("\\s"));
+    }
 }

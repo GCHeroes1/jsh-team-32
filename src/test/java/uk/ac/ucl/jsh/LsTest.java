@@ -71,6 +71,7 @@ public class LsTest {
         String[] expected = new String[]{
                 "file1.txt",
                 "file2.txt",
+                "file3.txt",
                 "longfile.txt"
         };
         Arrays.sort(expected);
