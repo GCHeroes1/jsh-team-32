@@ -21,7 +21,7 @@ public class Sequence extends Jsh implements CommandInterface
             {
                 if (splitIndex == 0)
                 {
-                    throw new RuntimeException("jsh: unexpected token \';\'");
+                    throw new RuntimeException("unexpected token \';\'");
                 }
                 String command = cmdline.substring(prevDelimiterIndex, splitIndex).trim();      // stores and trims the command line up to the semi colon as a command
                 rawCommands.add(command);                                                       // adds that command to the arraylist of commands
