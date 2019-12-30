@@ -189,6 +189,24 @@ public class JshTest {
         assertEquals("jsh: ls: no such directory", data);
     }
 
+    @Test
+    public void test_blank() throws IOException {
+        jsh.eval(" ", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        //Scanner scn = new Scanner(in);
+        assertEquals("", output);
+    }
+
+    @Test
+    public void test_semicolon() throws IOException {
+        jsh.eval(";", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        //Scanner scn = new Scanner(in);
+        assertEquals("", output);
+    }
+
     @Test(timeout = 1000)
     public void test_interactive_shell() throws IOException {
         ByteArrayInputStream input_stream = new ByteArrayInputStream("ls\nexit".getBytes());
