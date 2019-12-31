@@ -8,10 +8,14 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
+import static uk.ac.ucl.jsh.Jsh.currentDirectory;
 
 public class IORedirectionTest {
     private Jsh jsh;
@@ -163,12 +167,16 @@ public class IORedirectionTest {
         //assertEquals("CCC", output);
     }
 
-//    @Test
-//    public void test_io_redirect_invalid_write() throws IOException //doesnt work properly
-//    {
-//        thrown.expect(IOException.class);
-//        File tf = temporaryFolder.newFile("lol.txt");
-//        tf.setWritable(false, true);
-//        jsh.eval("echo abc > lol.txt", out);
-//    }
+    @Test
+    public void test_io_redirect_invalid_write() throws IOException //doesnt work properly
+    {
+        thrown.expect(IOException.class);
+        File tf = temporaryFolder.newFile("lol.txt");
+        Path filePath;
+        Charset encoding = StandardCharsets.UTF_8;
+        filePath = Paths.get(currentDirectory + File.separator + tf);
+        BufferedReader reader = Files.newBufferedReader(filePath, encoding);
+        tf.setWritable(false, true);
+        jsh.eval("echo abc > lol.txt", out);
+    }
 }
