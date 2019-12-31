@@ -3,7 +3,6 @@
 package uk.ac.ucl.jsh.shellprograms;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,9 +55,8 @@ public class Sed extends ShellProgram
         {
             Path filePath;
             Path currentDir = Paths.get(currentDirectory);
-            Charset encoding = StandardCharsets.UTF_8;
             filePath = currentDir.resolve(args[1]);
-            try (BufferedReader reader = Files.newBufferedReader(filePath, encoding))
+            try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8))
             {
                 find_and_replace(str_to_bytes, regexString, target, global, reader);
             }
@@ -71,11 +69,9 @@ public class Sed extends ShellProgram
         {
             throw new RuntimeException("sed: wrong number of arguments given");
         }
-
-
     }
 
-    private void find_and_replace(OutputStreamWriter str_to_bytes, String regexstring, String target, boolean global, BufferedReader reader) throws IOException
+    private void find_and_replace(OutputStreamWriter str_to_bytes, String regexString, String target, boolean global, BufferedReader reader) throws IOException
     {
         String line;
         String result;
@@ -83,8 +79,8 @@ public class Sed extends ShellProgram
         while ((line = reader.readLine()) != null)
         {
             result = global ?
-                    Pattern.compile(regexstring).matcher(line).replaceAll(target) :
-                    Pattern.compile(regexstring).matcher(line).replaceFirst(target);
+                    Pattern.compile(regexString).matcher(line).replaceAll(target) :
+                    Pattern.compile(regexString).matcher(line).replaceFirst(target);
             write_line_to_output(str_to_bytes, result);
         }
     }
