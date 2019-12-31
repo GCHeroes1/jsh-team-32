@@ -14,6 +14,9 @@ public class Tail extends ShellProgram
     public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
     {
         OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
+        BufferedReader reader;
+        int tailLines = 10; //default number of lines
+
 
         if (args.length > 3)
         {
@@ -23,90 +26,68 @@ public class Tail extends ShellProgram
         {
             throw new RuntimeException("tail: wrong argument " + args[0]);
         }
-        int tailLines = 10; //default number of lines
+
         String tailArg;
-        if (args.length == 3)
+        switch (args.length)
         {
-            try
-            {
-                tailLines = Integer.parseInt(args[1]);
-            } catch (Exception e)
-            {
-                throw new RuntimeException("tail: wrong argument " + args[1]);
-            }
-            tailArg = args[2];
-        }
-        else if (args.length == 2)
-        {
-            try
-            {
-                tailLines = Integer.parseInt(args[1]);
-            } catch (Exception e)
-            {
-                throw new RuntimeException("tail: wrong argument " + args[1]);
-            }
-            tailArg = "stdin";
-        }
-        else if (args.length == 1)
-        {
-            tailArg = args[0];
-        }
-        else
-        {
-            tailArg = "stdin";
-        }
-        if (tailArg.equals("stdin"))
-        {
-            String line;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
-            ArrayList<String> lines = new ArrayList<>();
-            while ((line = reader.readLine()) != null)
-            {
-                lines.add(line);
-            }
-            reader.close();
-            //this is very inefficient and I'm sorry
-            if (lines.size() > 0)
-            {
-                int index = Math.max(lines.size() - tailLines, 0);
-                for (; index < lines.size(); index++)
+            case 3:
+                try
                 {
-                    str_to_bytes.write(lines.get(index));
-                    str_to_bytes.write(System.getProperty("line.separator"));
-                    str_to_bytes.flush();
+                    tailLines = Integer.parseInt(args[1]);
+                } catch (Exception e)
+                {
+                    throw new RuntimeException("tail: wrong argument " + args[1]);
                 }
-            }
+                tailArg = args[2];
+                break;
+            case 2:
+                try
+                {
+                    tailLines = Integer.parseInt(args[1]);
+                } catch (Exception e)
+                {
+                    throw new RuntimeException("tail: wrong argument " + args[1]);
+                }
+                reader = new BufferedReader(new InputStreamReader(stdin));
+                count_and_write(reader, str_to_bytes, tailLines);
+                return;
+            case 1:
+                tailArg = args[0];
+                break;
+            default:
+                reader = new BufferedReader(new InputStreamReader(stdin));
+                count_and_write(reader, str_to_bytes, tailLines);
+                return;
+        }
 
-        }
-        else
+        Path filePath = Paths.get(currentDirectory + File.separator + tailArg);
+        try (BufferedReader fileReader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8))
         {
-            Charset encoding = StandardCharsets.UTF_8;
-            Path filePath = Paths.get(currentDirectory + File.separator + tailArg);
+            count_and_write(fileReader, str_to_bytes, tailLines);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException("tail: cannot open " + tailArg);
+        }
+    }
 
-            ArrayList<String> storage = new ArrayList<>();
-            try (BufferedReader reader = Files.newBufferedReader(filePath, encoding))
+    private void count_and_write(BufferedReader reader, OutputStreamWriter str_to_bytes, int tailLines) throws IOException
+    {
+        String line;
+        ArrayList<String> lines = new ArrayList<>();
+        while ((line = reader.readLine()) != null)
+        {
+            lines.add(line);
+        }
+        reader.close();
+
+        if (lines.size() > 0)
+        {
+            int index = Math.max(lines.size() - tailLines, 0);
+            for (; index < lines.size(); index++)
             {
-                String line;
-                while ((line = reader.readLine()) != null)
-                {
-                    storage.add(line);
-                }
-                int index = 0;
-                if (tailLines < storage.size())
-                {
-                    index = storage.size() - tailLines;
-                }
-                for (int i = index; i < storage.size(); i++)
-                {
-                    str_to_bytes.write(storage.get(i));
-                    str_to_bytes.write(System.getProperty("line.separator"));
-                    str_to_bytes.flush();
-                }
-            } catch (IOException e)
-            {
-                throw new RuntimeException("tail: cannot open " + tailArg);
+                write_line_to_output(str_to_bytes, lines.get(index));
             }
         }
     }
 }
-// also have not tested this yet. potentially should close our buffer readers.
