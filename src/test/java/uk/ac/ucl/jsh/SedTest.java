@@ -65,7 +65,7 @@ public class SedTest {
     @Test
     public void test_sed_separator()  {
         try {
-            jsh.eval("sed 's|A|D|'  dir1/file1.txt", out);
+            jsh.eval("sed 's|A|D|' dir1/file1.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
@@ -77,7 +77,7 @@ public class SedTest {
     @Test
     public void test_sed_g()  {
         try {
-            jsh.eval("sed 's/A/D/g'  dir1/file1.txt", out);
+            jsh.eval("sed 's/A/D/g' dir1/file1.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
@@ -89,7 +89,7 @@ public class SedTest {
     @Test
     public void test_sed_re()  {
         try {
-            jsh.eval("sed 's/../DD/g'  dir1/file1.txt", out);
+            jsh.eval("sed 's/../DD/g' dir1/file1.txt", out);
         } catch (Exception e) {
             fail(e.toString());
         }
