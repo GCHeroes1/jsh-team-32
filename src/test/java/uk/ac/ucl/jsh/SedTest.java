@@ -127,7 +127,7 @@ public class SedTest {
 
     @Test
     public void test_bad_file() throws IOException {
-        thrown.expect(RuntimeException.class);
+        thrown.expect(IOException.class);
         jsh.eval("sed 's/./B/g' dir1/file5.txt", out);
     }
 
@@ -141,8 +141,9 @@ public class SedTest {
     @Test
     public void test_sed_unreadable_file() throws IOException {
         File badfile = temporaryFolder.newFile("bad.txt");
+        //noinspection ResultOfMethodCallIgnored
         badfile.setReadable(false);
-        thrown.expect(RuntimeException.class);
+        thrown.expect(IOException.class);
         jsh.eval("sed 's/./B/g' bad.txt", out);
     }
 

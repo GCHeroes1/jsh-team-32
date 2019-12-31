@@ -12,17 +12,25 @@ public class Ls extends ShellProgram
         if (args.length == 0)
         {
             currDir = new File(currentDirectory);                                       // if there is no argument to ls, it just puts the current directory as the directory to list 
-        } else if (args.length == 1)
+        }
+        else if (args.length == 1)
         {
             currDir = new File(currentDirectory + File.separator + args[0]);                                         // if there is an argument, list the directory specified by the argument
-        } else
+        }
+        else
         {
             throw new RuntimeException("ls: too many arguments");                       // otherwise throw an error 
         }
-        try
+
+        File[] listOfFiles = currDir.listFiles();                                   // carries the OS for files present in the directory
+        boolean atLeastOnePrinted = false;                                          // avoids printing new line if no files are present
+        if (listOfFiles == null)
         {
-            File[] listOfFiles = currDir.listFiles();                                   // carries the OS for files present in the directory 
-            boolean atLeastOnePrinted = false;                                          // avoids printing new line if no files are present
+            throw new RuntimeException("ls: no such directory");                        // if it cant find the directory
+
+        }
+        else
+        {
             for (File file : listOfFiles)
             {
                 if (!file.getName().startsWith("."))
@@ -38,9 +46,7 @@ public class Ls extends ShellProgram
                 str_to_bytes.write(System.getProperty("line.separator"));                     // prints a new line after its done printing
                 str_to_bytes.flush();
             }
-        } catch (NullPointerException e)
-        {
-            throw new RuntimeException("ls: no such directory");                        // if it cant find the directory 
         }
+
     }
 }

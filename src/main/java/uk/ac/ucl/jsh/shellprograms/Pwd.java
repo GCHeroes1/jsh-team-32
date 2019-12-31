@@ -8,8 +8,6 @@ public class Pwd extends ShellProgram
     public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
     {
         OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
-        str_to_bytes.write(currentDirectory);
-        str_to_bytes.write(System.getProperty("line.separator"));                             // gets property that defines what separates the directories - actually useless
-        str_to_bytes.flush();                                                                 // writes thing to terminal
+        write_line_to_output(str_to_bytes, currentDirectory);
     }
 }
