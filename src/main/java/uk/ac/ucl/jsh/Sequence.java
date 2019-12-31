@@ -12,7 +12,7 @@ public class Sequence extends Jsh implements CommandInterface
     public void run(String cmdline, InputStream input, OutputStream output) throws IOException
     {
         ArrayList<String> rawCommands = new ArrayList<>();                                      // assume will be used later for raw commands
-        int closingPairIndex, prevDelimiterIndex = 0, splitIndex = 0;
+        int closingPairIndex, prevDelimiterIndex = 0, splitIndex;
 
         for (splitIndex = 0; splitIndex < cmdline.length(); splitIndex++)
         {                     // iterates through the command line characters
@@ -35,7 +35,8 @@ public class Sequence extends Jsh implements CommandInterface
                 }
             }
         }
-        if (!cmdline.isEmpty() && prevDelimiterIndex != splitIndex)
+        if(prevDelimiterIndex < splitIndex)
+        //if (!cmdline.isEmpty() && prevDelimiterIndex != splitIndex)
         {                           // if the command line wasn't empty and the line didn't end with a semi colon
             String command = cmdline.substring(prevDelimiterIndex).trim();                      // creates a substring at the index and trims the word
             if (!command.isEmpty())
