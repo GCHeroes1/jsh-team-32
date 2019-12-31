@@ -132,4 +132,22 @@ public class WcTest {
         output = output.strip();
         assertArrayEquals(new String[]{"5", "3", "15"}, output.split("\\s"));
     }
+
+    @Test
+    public void test_wc_bad_arg() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("wc -x nofile.txt", out);
+    }
+
+    @Test
+    public void test_wc_bad_dir() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("wc -w dir3", out);
+    }
+
+//    @Test
+//    public void test_wc_bad_dir() throws IOException {
+//        thrown.expect(RuntimeException.class);
+//        jsh.eval("wc -w dir3", out);
+//    }
 }
