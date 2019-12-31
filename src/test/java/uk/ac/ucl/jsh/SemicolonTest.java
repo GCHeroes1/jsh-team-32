@@ -75,6 +75,14 @@ public class SemicolonTest {
         assertEquals("", output);
     }
 
+    @Test
+    public void test_empty_command() throws IOException{
+        jsh.eval("", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals("", output);
+    }
+
 
 
 }

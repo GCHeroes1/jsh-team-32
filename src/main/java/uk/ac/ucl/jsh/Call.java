@@ -242,26 +242,22 @@ public class Call extends Jsh implements CommandInterface
     private ArrayList<String> glob(String glob_string) throws IOException
     {
         ArrayList<String> glob_matches = new ArrayList<>();
-        File glob;
-        if (glob_string.charAt(0) == '/' ||
-                (glob_string.length() > 1 && glob_string.charAt(1) == ':')) //for windows support...
-        {
-            glob = new File(glob_string);
-        }
-        else
+        File glob = new File(glob_string);
+        if(!glob.isAbsolute())
         {
             glob = new File(currentDirectory + File.separator + glob_string);
         }
-        Path dir = Paths.get(currentDirectory);
 
         File parent_file;
+        Path glob_working_dir = Paths.get(currentDirectory);
         if ((parent_file = glob.getParentFile()) != null && parent_file.isDirectory())
         {
-            dir = parent_file.toPath();
+            glob_working_dir = parent_file.toPath();
         }
+
         DirectoryStream<Path> stream;
-        stream = Files.newDirectoryStream(dir, glob.getName());
-        String rel_path = Paths.get(currentDirectory).relativize(dir).toString();
+        stream = Files.newDirectoryStream(glob_working_dir, glob.getName());
+        String rel_path = Paths.get(currentDirectory).relativize(glob_working_dir).toString();
         for (Path entry : stream)
         {
             if (rel_path.equals(""))
