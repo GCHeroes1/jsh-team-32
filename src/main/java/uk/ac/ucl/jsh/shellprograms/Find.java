@@ -15,7 +15,6 @@ public class Find extends ShellProgram
         boolean is_absolute = false;
         boolean has_path = false;
         String pattern;
-        File working_dir = new File(currentDirectory);
         File find_dir = new File(currentDirectory);
         switch (args.length)
         {

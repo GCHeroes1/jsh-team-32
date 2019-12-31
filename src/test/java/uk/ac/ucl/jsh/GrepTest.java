@@ -117,7 +117,7 @@ public class GrepTest {
 
     @Test
     public void test_grep_bad_file() throws IOException {
-        thrown.expect(RuntimeException.class);
+        thrown.expect(IOException.class);
         jsh.eval("grep '...' badfile.txt", out);
     }
 }

@@ -1,7 +1,6 @@
 package uk.ac.ucl.jsh.shellprograms;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,76 +12,76 @@ public class Head extends ShellProgram
     public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
     {
         OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
+        int headLines = 10; //spit out 10 lines by default
 
         if (args.length > 3)
         {
             throw new RuntimeException("head: wrong arguments");
         }
-        if (args.length == 3 && !args[0].equals("-n"))
+        else if (args.length == 3 && !args[0].equals("-n"))
         {
             throw new RuntimeException("head: wrong argument " + args[0]);
+
         }
-        // if no file specified (if 2 args where arg[0] == '-n' and arg[1] is an int, or 0 arg) use stdin
-        //if no number specified (if 1 arg where arg[0] is a file or 0 arg) use 10
-        int headLines = 10; //spit out 10 lines by default
         String headArg;
-        if (args.length == 3)
+        BufferedReader bfr;
+        switch (args.length)
         {
-            try
-            {
-                headLines = Integer.parseInt(args[1]);
-            } catch (Exception e)
-            {
-                throw new RuntimeException("head: wrong argument " + args[1]);
-            }
-            headArg = args[2];
-        } else if (args.length == 2)
-        {
-            try
-            {
-                headLines = Integer.parseInt(args[1]);
-            } catch (Exception e)
-            {
-                throw new RuntimeException("head: wrong argument " + args[1]);
-            }
-            headArg = "stdin";
-        } else if (args.length == 1)
-        {
-            headArg = args[0];
-        } else
-        {
-            headArg = "stdin";
+            case 3:
+                try
+                {
+                    headLines = Integer.parseInt(args[1]);
+                } catch (Exception e)
+                {
+                    throw new RuntimeException("head: wrong argument " + args[1]);
+                }
+                headArg = args[2];
+                break;
+
+            case 2:
+                try
+                {
+                    headLines = Integer.parseInt(args[1]);
+                } catch (Exception e)
+                {
+                    throw new RuntimeException("head: wrong argument " + args[1]);
+                }
+                bfr = new BufferedReader(new InputStreamReader(stdin));
+                write_n_lines(str_to_bytes, headLines, bfr);
+                return;
+
+            case 1:
+                headArg = args[0];
+                break;
+
+            default:
+                // no reason to throw IOException when reading from a bytearrayinputstream
+                bfr = new BufferedReader(new InputStreamReader(stdin));
+                write_n_lines(str_to_bytes, headLines, bfr);
+                return;
         }
-        if (headArg.equals("stdin"))
+
+
+        Path filePath = Paths.get(currentDirectory + File.separator + headArg);
+        try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8))
         {
-            BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
-            read_to_output(str_to_bytes, headLines, bfr);
-        } else
+            write_n_lines(str_to_bytes, headLines, reader);
+        }
+        catch (IOException e)
         {
-            Charset encoding = StandardCharsets.UTF_8;
-            Path filePath = Paths.get(currentDirectory + File.separator + headArg);
-            try (BufferedReader reader = Files.newBufferedReader(filePath, encoding))
-            {
-                read_to_output(str_to_bytes, headLines, reader);
-            } catch (IOException e)
-            {
-                throw new RuntimeException("head: cannot open " + headArg);
-            }
+            throw new IOException("head: cannot open " + headArg, e);
         }
     }
 
-    private void read_to_output(OutputStreamWriter str_to_bytes, int headLines, BufferedReader reader) throws IOException
+    private void write_n_lines(OutputStreamWriter str_to_bytes, int headLines, BufferedReader reader) throws IOException
     {
         for (int i = 0; i < headLines; i++)
         {
             String line;
             if ((line = reader.readLine()) != null)
             {
-                str_to_bytes.write(line);
-                str_to_bytes.write(System.getProperty("line.separator"));
-                str_to_bytes.flush();
+                write_line_to_output(str_to_bytes, line);
             }
         }
     }
-    //I haven't tested this so don't kill me if it's broken oops
 }

@@ -26,9 +26,7 @@ public class Grep extends ShellProgram
                 Matcher matcher = grepPattern.matcher(line);
                 if (matcher.find())
                 {
-                    str_to_bytes.write(line);
-                    str_to_bytes.write(System.getProperty("line.separator"));
-                    str_to_bytes.flush();
+                    write_line_to_output(str_to_bytes, line);
                 }
             }
 
@@ -45,21 +43,19 @@ public class Grep extends ShellProgram
                 try
                 {
                     reader = Files.newBufferedReader(filePath, encoding);
-                    String line;
-                    while ((line = reader.readLine()) != null)
-                    {
-                        Matcher matcher = grepPattern.matcher(line);
-                        if (matcher.find())
-                        {
-                            str_to_bytes.write(line);
-                            str_to_bytes.write(System.getProperty("line.separator"));
-                            str_to_bytes.flush();
-                        }
-                    }
                 }
                 catch (IOException e)
                 {
-                    throw new RuntimeException("grep: wrong file argument");
+                    throw new IOException("grep: wrong file argument", e);
+                }
+                String line;
+                while ((line = reader.readLine()) != null)
+                {
+                    Matcher matcher = grepPattern.matcher(line);
+                    if (matcher.find())
+                    {
+                        write_line_to_output(str_to_bytes, line);
+                    }
                 }
             }
 

@@ -15,7 +15,6 @@ import static org.junit.Assert.*;
 
 public class HeadTest {
     private Jsh jsh;
-    private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     public HeadTest() {
@@ -28,7 +27,7 @@ public class HeadTest {
 
     @Before
     public void setup_file_env() throws IOException {
-        workingDir = temporaryFolder.newFolder("testfolder");
+        File workingDir = temporaryFolder.newFolder("testfolder");
         //System.out.println(workingDir.getCanonicalPath());
         FileUtils.copyDirectory(new File("src/test/test_template"), workingDir);
 
@@ -144,7 +143,7 @@ public class HeadTest {
 
     @Test
     public void test_head_bad_file() throws IOException {
-        thrown.expect(RuntimeException.class);
+        thrown.expect(IOException.class);
         jsh.eval("head -n 5 dir1/file5.txt", out);
 //        String output = new String(out.toByteArray());
 //        output = output.strip();
@@ -154,8 +153,9 @@ public class HeadTest {
     @Test
     public void test_head_unreadable_file() throws IOException {
         File badfile = temporaryFolder.newFile("bad.txt");
+        //noinspection ResultOfMethodCallIgnored
         badfile.setReadable(false);
-        thrown.expect(RuntimeException.class);
+        thrown.expect(IOException.class);
         jsh.eval("head -n 5 bad.txt", out);
     }
 
