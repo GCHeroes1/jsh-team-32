@@ -160,14 +160,4 @@ public class IORedirectionTest {
         jsh.eval("echo abc < bad.txt", out);
     }
 
-//    @Test
-//    public void test_io_redirect_invalid_write() throws IOException //doesnt work properly
-//    {
-//        thrown.expect(IOException.class);
-//        FileOutputStream outputStream = new FileOutputStream(currentDirectory + File.separator + "temp.txt");
-//        java.nio.channels.FileLock lock = outputStream.getChannel().lock();
-//        jsh.eval("echo abc > temp.txt", out);
-//        lock.release();
-//        outputStream.close();
-//    }
 }
