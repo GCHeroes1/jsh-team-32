@@ -68,7 +68,7 @@ public class SubstitutionTest
         String output = new String(out.toByteArray());
         output = output.strip();
         //Scanner scn = new Scanner(in);
-        assertEquals("26", output);
+        assertEquals("31", output);
     }
 
     @Test

@@ -121,4 +121,33 @@ public class WcTest {
         jsh.eval("wc nofile.txt", out);
     }
 
+    @Test
+    public void test_wc_spaces_in_file()  {
+        try {
+            jsh.eval("wc dir1/file3.txt", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"5", "3", "15"}, output.split("\\s"));
+    }
+
+    @Test
+    public void test_wc_bad_arg() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("wc -x nofile.txt", out);
+    }
+
+    @Test
+    public void test_wc_bad_dir() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("wc -w dir3", out);
+    }
+
+//    @Test
+//    public void test_wc_bad_dir() throws IOException {
+//        thrown.expect(RuntimeException.class);
+//        jsh.eval("wc -w dir3", out);
+//    }
 }

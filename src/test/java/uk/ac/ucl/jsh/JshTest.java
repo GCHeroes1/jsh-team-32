@@ -84,6 +84,7 @@ public class JshTest {
         String[] expected = new String[]{
                 "dir1" + File.separator + "file1.txt",
                 "dir1" + File.separator + "file2.txt",
+                "dir1" + File.separator + "file3.txt",
                 "dir1" + File.separator + "longfile.txt"};
         Arrays.sort(expected);
 
@@ -165,6 +166,7 @@ public class JshTest {
         String[] expected = new String[]{
                 "file1.txt",
                 "file2.txt",
+                "file3.txt",
                 "longfile.txt"
         };
         Arrays.sort(expected);
@@ -200,11 +202,12 @@ public class JshTest {
 
     @Test
     public void test_semicolon() throws IOException {
+        thrown.expect(RuntimeException.class);
         jsh.eval(";", out);
         String output = new String(out.toByteArray());
-        output = output.strip();
+        //output = output.strip();
         //Scanner scn = new Scanner(in);
-        assertEquals("", output);
+        //assertEquals("unexpected token \';\'", output);
     }
 
     @Test(timeout = 1000)
