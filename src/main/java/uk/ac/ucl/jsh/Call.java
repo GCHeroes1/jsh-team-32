@@ -156,30 +156,24 @@ public class Call extends Jsh implements CommandInterface
         {
             case '"':
             case '`':
-                return !is_char_surrounded_by(command, index_of_quote, '\'');
+                return is_char_not_surrounded_by(command, index_of_quote, '\'');
             case '\'':
-                return !is_char_surrounded_by(command, index_of_quote, '"');
+                return is_char_not_surrounded_by(command, index_of_quote, '"');
             default:
-                return !is_char_surrounded_by(command, index_of_quote, '"') &&
-                        !is_char_surrounded_by(command, index_of_quote, '\'');
+                return is_char_not_surrounded_by(command, index_of_quote, '"') &&
+                        is_char_not_surrounded_by(command, index_of_quote, '\'');
         }
 
     }
 
 
-    private boolean is_char_surrounded_by(String command, int index_of_quote, char quote_to_check)
+    private boolean is_char_not_surrounded_by(String command, int index_of_quote, char quote_to_check)
     {
         boolean inside_quote = false;
-//        int quote_start;
-//        int quote_end;
         int index;
 
-        for (index = 0; index < command.length(); index++)
+        for (index = 0; index <= index_of_quote; index++)
         {
-            if(index == index_of_quote)
-            {
-                return inside_quote;
-            }
             if(quote_to_check == command.charAt(index)) //if char at index is one of ", ', or `
             {
 //                if(!inside_quote)
@@ -193,7 +187,7 @@ public class Call extends Jsh implements CommandInterface
                 inside_quote = !inside_quote;
             }
         }
-        return false;
+        return !inside_quote;
 
 //        if ((quote_start = command.indexOf(quote_to_check)) == -1)
 //        {
@@ -316,7 +310,7 @@ public class Call extends Jsh implements CommandInterface
 //        return temp_list;
 //    }
 
-    private ArrayList<String> split_to_tokens(String command) throws IOException
+    private ArrayList<String> split_to_tokens(String command)
     {
         ArrayList<String> tokens = new ArrayList<>();
 
