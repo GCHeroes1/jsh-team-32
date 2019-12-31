@@ -134,19 +134,15 @@ public class IORedirectionTest {
     public void test_io_redirect_no_target() throws IOException {
         thrown.expect(RuntimeException.class);
         jsh.eval("cat test.txt >", out);
-        //String output = new String(out.toByteArray());
-        //output = output.strip();
-        //assertEquals("CCC", output);
     }
 
     @Test
     public void test_output_redirection_no_space() throws IOException {
-        jsh.eval("echo hello >temp.txt", out);
-        String output = new String(out.toByteArray());
+        jsh.eval("echo hello >output.txt", out);
 
         StringBuilder filecontent = new StringBuilder();
         try {
-            File outputfile = new File(workingDir + File.separator + "temp.txt");
+            File outputfile = new File(workingDir + File.separator + "output.txt");
             BufferedReader bfr = new BufferedReader(new FileReader(outputfile));
             String line;
             while ((line = bfr.readLine()) != null) {
@@ -160,23 +156,18 @@ public class IORedirectionTest {
 
     @Test
     public void test_io_redirect_invalid_read() throws IOException {
-        thrown.expect(RuntimeException.class);
-        jsh.eval("echo abc < lol.txt", out);
-        //String output = new String(out.toByteArray());
-        //output = output.strip();
-        //assertEquals("CCC", output);
+        thrown.expect(IOException.class);
+        jsh.eval("echo abc < bad.txt", out);
     }
 
     @Test
     public void test_io_redirect_invalid_write() throws IOException //doesnt work properly
     {
         thrown.expect(IOException.class);
-        File tf = temporaryFolder.newFile("lol.txt");
-        Path filePath;
-        Charset encoding = StandardCharsets.UTF_8;
-        filePath = Paths.get(currentDirectory + File.separator + tf);
-        BufferedReader reader = Files.newBufferedReader(filePath, encoding);
-        tf.setWritable(false, true);
-        jsh.eval("echo abc > lol.txt", out);
+        FileOutputStream outputStream = new FileOutputStream(currentDirectory + File.separator + "temp.txt");
+        java.nio.channels.FileLock lock = outputStream.getChannel().lock();
+        jsh.eval("echo abc > temp.txt", out);
+        lock.release();
+        outputStream.close();
     }
 }

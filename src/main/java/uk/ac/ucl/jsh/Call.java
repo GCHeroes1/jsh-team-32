@@ -31,25 +31,12 @@ public class Call extends Jsh implements CommandInterface
                 {
                     case '>':
                         redirection_target = get_redirection_target(tokens, i, token);
-                        try
-                        {
-                            output = new FileOutputStream(new File(currentDirectory + File.separator + redirection_target));
-                        } catch (IOException e)
-                        {
-                            throw new RuntimeException("[redirection] Unable to open output file for writing");
-                        }
+                        output = new FileOutputStream(new File(currentDirectory + File.separator + redirection_target));
                         break;
-
 
                     case '<':
                         redirection_target = get_redirection_target(tokens, i, token);
-                        try
-                        {
-                            input = new FileInputStream(new File(currentDirectory + File.separator + redirection_target));
-                        } catch (IOException e)
-                        {
-                            throw new RuntimeException("[redirection] Unable to open input file for reading");
-                        }
+                        input = new FileInputStream(new File(currentDirectory + File.separator + redirection_target));
                         break;
                     default:
                 }
