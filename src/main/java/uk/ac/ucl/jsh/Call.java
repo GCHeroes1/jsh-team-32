@@ -226,19 +226,17 @@ public class Call extends Jsh implements CommandInterface
     private String strip_quotes(String command)
     {
         int index;
-        //ArrayList<Integer> to_remove = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder stripped = new StringBuilder();
         char chr;
         for (index = 0; index < command.length(); index++)
         {
             chr = command.charAt(index);
             if ("\"'`".indexOf(chr) == -1 || !is_quote_not_disabled(command, index))
             {
-                sb.append(chr);
+                stripped.append(chr);
             }
         }
-
-        return sb.toString();
+        return stripped.toString();
     }
 
     private ArrayList<String> glob(String glob_string) throws IOException
