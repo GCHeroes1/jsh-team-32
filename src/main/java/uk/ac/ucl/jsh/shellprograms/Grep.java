@@ -36,13 +36,18 @@ public class Grep extends ShellProgram
         {
             int numOfFiles = args.length - 1;
             Path filePath;
+            BufferedReader reader;
             Path[] filePathArray = new Path[numOfFiles];
             Path currentDir = Paths.get(currentDirectory);
+            Charset encoding = StandardCharsets.UTF_8;
             for (int i = 0; i < numOfFiles; i++)
             {
                 filePath = currentDir.resolve(args[i + 1]);
-                if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
-                        !Files.exists(filePath) || !Files.isReadable(filePath))
+                try
+                {
+                    reader = Files.newBufferedReader(filePath, encoding);
+                }
+                catch (IOException e)
                 {
                     throw new RuntimeException("grep: wrong file argument");
                 }
@@ -50,8 +55,7 @@ public class Grep extends ShellProgram
             }
             for (Path path : filePathArray)
             {
-                Charset encoding = StandardCharsets.UTF_8;
-                BufferedReader reader = Files.newBufferedReader(path, encoding);
+                reader = Files.newBufferedReader(path, encoding);
                 String line;
                 while ((line = reader.readLine()) != null)
                 {
