@@ -8,7 +8,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
@@ -109,6 +109,7 @@ public class LsTest {
             while ((line = bfr.readLine()) != null) {
                 filecontent.append(line);
             }
+            bfr.close();
         }
         catch (FileNotFoundException e)
         {
@@ -139,6 +140,7 @@ public class LsTest {
             while ((line = bfr.readLine()) != null) {
                 filecontent.append(line);
             }
+            bfr.close();
         }
         catch (FileNotFoundException e)
         {

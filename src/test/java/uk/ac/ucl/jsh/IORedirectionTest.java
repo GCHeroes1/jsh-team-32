@@ -8,14 +8,14 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+// import java.nio.charset.Charset;
+// import java.nio.charset.StandardCharsets;
+// import java.nio.file.Files;
+// import java.nio.file.Path;
+// import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
-import static uk.ac.ucl.jsh.Jsh.currentDirectory;
+//import static uk.ac.ucl.jsh.Jsh.currentDirectory;
 
 public class IORedirectionTest {
     private Jsh jsh;
@@ -93,6 +93,7 @@ public class IORedirectionTest {
             while ((line = bfr.readLine()) != null) {
                 filecontent.append(line);
             }
+            bfr.close();
         } catch (FileNotFoundException e) {
             fail("File not created");
         }
@@ -116,6 +117,7 @@ public class IORedirectionTest {
             while ((line = bfr.readLine()) != null) {
                 filecontent.append(line);
             }
+            bfr.close();
         }
         catch (FileNotFoundException e)
         {
@@ -148,6 +150,7 @@ public class IORedirectionTest {
             while ((line = bfr.readLine()) != null) {
                 filecontent.append(line);
             }
+            bfr.close();
         } catch (FileNotFoundException e) {
             fail("File not created");
         }

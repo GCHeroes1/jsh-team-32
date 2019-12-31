@@ -97,7 +97,7 @@ public class JshTest {
     public void test_unknown_app() throws IOException {
         thrown.expect(RuntimeException.class);
         jsh.eval("hi there", out);
-        String output = new String(out.toByteArray());
+        //String output = new String(out.toByteArray());
         //output = output.strip();
         //Scanner scn = new Scanner(in);
         //assertEquals("hello world", output);
