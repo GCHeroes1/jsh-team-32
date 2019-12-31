@@ -55,6 +55,7 @@ public class Find extends ShellProgram
                 throw new RuntimeException("find: IOException");
             }
         });
+        stream.close();
     }
 
     private void relativize_path(Path path_source, Path target_path, Path found_file_path, OutputStreamWriter osw) throws IOException
