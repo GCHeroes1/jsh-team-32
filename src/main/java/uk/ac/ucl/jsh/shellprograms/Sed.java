@@ -59,14 +59,16 @@ public class Sed extends ShellProgram
         {
             Path filePath;
             Path currentDir = Paths.get(currentDirectory);
+            Charset encoding = StandardCharsets.UTF_8;
             filePath = currentDir.resolve(args[1]);
-            if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
-                    !Files.exists(filePath) || !Files.isReadable(filePath))
+            try
+            {
+                Files.newBufferedReader(filePath, encoding);
+            }
+            catch (IOException e)
             {
                 throw new RuntimeException("sed: wrong file argument");
             }
-
-            Charset encoding = StandardCharsets.UTF_8;
             try (BufferedReader reader = Files.newBufferedReader(filePath, encoding))
             {
                 find_and_replace(str_to_bytes, regexstring, target, global, reader);

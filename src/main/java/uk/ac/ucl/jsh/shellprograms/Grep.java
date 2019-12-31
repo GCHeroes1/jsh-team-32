@@ -45,7 +45,7 @@ public class Grep extends ShellProgram
                 filePath = currentDir.resolve(args[i + 1]);
                 try
                 {
-                    reader = Files.newBufferedReader(filePath, encoding);
+                    Files.newBufferedReader(filePath, encoding);
                 }
                 catch (IOException e)
                 {
