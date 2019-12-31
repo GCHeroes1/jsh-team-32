@@ -8,6 +8,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -65,9 +66,9 @@ public class CatTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void test_cat_bad_file() throws IOException
+    public void test_cat_file_not_exist() throws IOException
     {
-        thrown.expect(RuntimeException.class);
+        thrown.expect(NoSuchFileException.class);
         jsh.eval("cat badfile.txt", out);
     }
 }
