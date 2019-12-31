@@ -35,7 +35,8 @@ public class Tail extends ShellProgram
                 throw new RuntimeException("tail: wrong argument " + args[1]);
             }
             tailArg = args[2];
-        } else if (args.length == 2)
+        }
+        else if (args.length == 2)
         {
             try
             {
@@ -45,10 +46,12 @@ public class Tail extends ShellProgram
                 throw new RuntimeException("tail: wrong argument " + args[1]);
             }
             tailArg = "stdin";
-        } else if (args.length == 1)
+        }
+        else if (args.length == 1)
         {
             tailArg = args[0];
-        } else
+        }
+        else
         {
             tailArg = "stdin";
         }
@@ -57,7 +60,10 @@ public class Tail extends ShellProgram
             String line;
             BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
             ArrayList<String> lines = new ArrayList<>();
-            while ((line = reader.readLine()) != null) lines.add(line);
+            while ((line = reader.readLine()) != null)
+            {
+                lines.add(line);
+            }
             reader.close();
             //this is very inefficient and I'm sorry
             if (lines.size() > 0)
@@ -71,9 +77,9 @@ public class Tail extends ShellProgram
                 }
             }
 
-        } else
+        }
+        else
         {
-            File tailFile = new File(currentDirectory + File.separator + tailArg);
             Charset encoding = StandardCharsets.UTF_8;
             Path filePath = Paths.get(currentDirectory + File.separator + tailArg);
 

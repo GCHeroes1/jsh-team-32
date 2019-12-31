@@ -162,4 +162,16 @@ public class TailTest {
         output = output.strip();
         assertArrayEquals(new String[]{"16", "17", "18", "19", "20"}, output.split("\r\n|\n"));
     }
+
+    @Test
+    public void test_tail_no_input() {
+        try {
+            jsh.eval("echo | tail", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{""}, output.split("\r\n|\n"));
+    }
 }

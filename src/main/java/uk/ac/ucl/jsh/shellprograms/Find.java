@@ -27,11 +27,8 @@ public class Find extends ShellProgram
                 }
                 break;
             case 3:
-                find_dir = new File(args[0]);
-                if (!find_dir.isAbsolute())
-                {
-                    find_dir = new File(currentDirectory, args[0]);
-                }
+                //find_dir = new File(args[0]);  //path will always be relative; globbing does that for us
+                find_dir = new File(currentDirectory, args[0]);
                 if (args[1].equals("-name"))
                 {
                     pattern = args[2];

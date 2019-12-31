@@ -48,6 +48,7 @@ public class LsTest {
         String[] expected = new String[]{
                 "dir1",
                 "dir2",
+                "empty",
                 "test.txt"
         };
         Arrays.sort(expected);
@@ -153,5 +154,18 @@ public class LsTest {
         jsh.eval("ls dir1 dir2", out);
     }
 
+    @Test
+    public void test_ls_empty_dir() {
+        try {
+            jsh.eval("ls empty", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String outputstr = new String(out.toByteArray());
+        outputstr = outputstr.strip();
+
+
+        assertEquals("", outputstr);
+    }
 
 }

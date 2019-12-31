@@ -16,6 +16,7 @@ import static org.junit.Assert.fail;
 
 public class FindTest {
     private Jsh jsh;
+    private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
     private String file_sep = File.separator;
 
@@ -30,7 +31,7 @@ public class FindTest {
 
     @Before
     public void setup_file_env() throws IOException {
-        File workingDir = temporaryFolder.newFolder("testfolder");
+        workingDir = temporaryFolder.newFolder("testfolder");
         //System.out.println(workingDir.getCanonicalPath());
         FileUtils.copyDirectory(new File("src/test/test_template"), workingDir);
 
@@ -162,5 +163,23 @@ public class FindTest {
             }
         };
         (new Find()).execute(new String[]{"-name", "*.txt"}, is, os);
+    }
+
+    @Test
+    public void test_find_abs_dir() throws IOException
+    {
+
+        jsh.eval("find " + workingDir.getCanonicalPath() + " -name file.txt", out);
+        String outputstr = new String(out.toByteArray());
+        outputstr = outputstr.strip();
+
+        String[] expected = new String[]{
+                "." + file_sep + "dir2" + file_sep + "subdir" + file_sep + "file.txt"};
+        Arrays.sort(expected);
+
+        String[] output = outputstr.split("\r\n|\n|\t");
+        Arrays.sort(output);
+
+        assertArrayEquals(expected, output);
     }
 }

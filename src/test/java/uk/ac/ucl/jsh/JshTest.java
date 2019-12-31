@@ -37,18 +37,6 @@ public class JshTest {
 
 
     @Test
-    public void test_echo() throws IOException {
-        jsh.eval("echo hello world", out);
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        //Scanner scn = new Scanner(in);
-        assertEquals("hello world", output);
-    }
-
-
-
-
-    @Test
     public void test_globbing()  {
         try {
             jsh.eval("echo *", out);
@@ -58,7 +46,11 @@ public class JshTest {
         String outputstr = new String(out.toByteArray());
         outputstr = outputstr.strip();
 
-        String[] expected = new String[]{"dir1", "dir2", "test.txt"};
+        String[] expected = new String[]{
+                "dir1",
+                "dir2",
+                "empty",
+                "test.txt"};
         Arrays.sort(expected);
 
         String[] output = outputstr.split("\\s");

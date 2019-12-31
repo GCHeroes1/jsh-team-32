@@ -59,6 +59,18 @@ public class GrepTest {
     }
 
     @Test
+    public void test_grep_stdin_no_match()  {
+        try {
+            jsh.eval("echo AAA | grep DDD", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals("", output);
+    }
+
+    @Test
     public void test_grep_re()  {
         try {
             jsh.eval("grep 'A..' dir1/file1.txt", out);

@@ -57,19 +57,18 @@ public class Call extends Jsh implements CommandInterface
         }
 
         ArrayList<String> newtokens = new ArrayList<>();
-        for(String c : tokens)
+        for (String c : tokens)
         {
             newtokens.addAll(glob(c));
         }
         tokens = newtokens;
 
         newtokens = new ArrayList<>();
-        for(String c : tokens)
+        for (String c : tokens)
         {
             newtokens.add(strip_quotes(c));
         }
         tokens = newtokens;
-
 
 
         String appName = tokens.get(0); // first token = program to run
@@ -159,7 +158,7 @@ public class Call extends Jsh implements CommandInterface
 
         for (index = 0; index <= index_of_quote; index++)
         {
-            if(quote_to_check == command.charAt(index)) //if char at index is one of ", ', or `
+            if (quote_to_check == command.charAt(index)) //if char at index is one of ", ', or `
             {
                 inside_quote = !inside_quote;
             }
@@ -209,7 +208,7 @@ public class Call extends Jsh implements CommandInterface
         for (int scanning_index = 0; scanning_index < command.length(); scanning_index++)
         {
             char chr = command.charAt(scanning_index);
-            if(chr == ' ' && is_quote_not_disabled(command, scanning_index, true))
+            if (chr == ' ' && is_quote_not_disabled(command, scanning_index, true))
             {
                 tokens.add(command.substring(last_quote_end, scanning_index));
                 last_quote_end = scanning_index + 1;
@@ -230,10 +229,10 @@ public class Call extends Jsh implements CommandInterface
         //ArrayList<Integer> to_remove = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         char chr;
-        for(index = 0; index < command.length(); index++)
+        for (index = 0; index < command.length(); index++)
         {
             chr = command.charAt(index);
-            if("\"'`".indexOf(chr) == -1 || !is_quote_not_disabled(command, index))
+            if ("\"'`".indexOf(chr) == -1 || !is_quote_not_disabled(command, index))
             {
                 sb.append(chr);
             }
@@ -246,7 +245,8 @@ public class Call extends Jsh implements CommandInterface
     {
         ArrayList<String> glob_matches = new ArrayList<>();
         File glob;
-        if (glob_string.charAt(0) == '/')
+        if (glob_string.charAt(0) == '/' ||
+                (glob_string.length() > 1 && glob_string.charAt(1) == ':')) //for windows support...
         {
             glob = new File(glob_string);
         }
