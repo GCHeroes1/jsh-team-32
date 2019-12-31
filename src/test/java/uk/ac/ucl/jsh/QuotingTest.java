@@ -184,4 +184,13 @@ public class QuotingTest {
         assertEquals("abcde", output);
     }
 
+    @Test
+    public void test_backtick_in_single_quotes() throws IOException
+    {
+        //System.out.println("echo '`echo hi`'");
+        jsh.eval("echo \'`echo hi`\'", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals("`echo hi`", output);
+    }
 }
