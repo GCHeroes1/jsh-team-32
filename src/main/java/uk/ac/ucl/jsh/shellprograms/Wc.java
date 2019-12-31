@@ -104,29 +104,19 @@ public class Wc extends ShellProgram
             }
         }
 
-
-        switch (wc_option)
+        if(wc_option > 0)
         {
-            case 0:
-                str_to_bytes.write(String.valueOf(countArray[2]));
-                str_to_bytes.write("\t");
-                str_to_bytes.write(String.valueOf(countArray[1]));
-                str_to_bytes.write("\t");
-                str_to_bytes.write(String.valueOf(countArray[0]));
-                break;
-            case 1:
-                String char_count = String.valueOf(countArray[0]);
-                str_to_bytes.write(char_count);
-                break;
-            case 2:
-                String word_count = String.valueOf(countArray[1]);
-                str_to_bytes.write(word_count);
-                break;
-            case 3:
-                String lines_count = String.valueOf(countArray[2]);
-                str_to_bytes.write(lines_count);
-                break;
+            str_to_bytes.write(String.valueOf(countArray[wc_option + 1]));
         }
+        else
+        {
+            str_to_bytes.write(String.valueOf(countArray[2]));
+            str_to_bytes.write("\t");
+            str_to_bytes.write(String.valueOf(countArray[1]));
+            str_to_bytes.write("\t");
+            str_to_bytes.write(String.valueOf(countArray[0]));
+        }
+
 
         str_to_bytes.write(System.getProperty("line.separator"));
         str_to_bytes.flush();
