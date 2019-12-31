@@ -60,7 +60,6 @@ public class Jsh {
                         eval(cmdline, System.out);
                     } catch (Exception e) {
                         System.err.println("jsh: " + e.getMessage());
-                        //System.out.println("jsh: " + e.getMessage());
                     }
                 }
             }

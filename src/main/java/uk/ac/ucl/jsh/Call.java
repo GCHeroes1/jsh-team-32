@@ -71,7 +71,7 @@ public class Call extends Jsh implements CommandInterface
             }
         } catch (NullPointerException e)
         {
-            throw new RuntimeException(appName + ": unknown application");
+            throw new RuntimeException(appName + ": NullPointerException", e);
         }
 
     }
@@ -227,11 +227,18 @@ public class Call extends Jsh implements CommandInterface
 
     private ArrayList<String> glob(String glob_string) throws IOException
     {
+        boolean is_absolute;
         ArrayList<String> glob_matches = new ArrayList<>();
         File glob = new File(glob_string);
-        if(!glob.isAbsolute())
+        if(!(is_absolute = glob.isAbsolute()))
         {
             glob = new File(currentDirectory + File.separator + glob_string);
+        }
+
+        if(glob.isDirectory() && !is_absolute)
+        {
+            glob_matches.add(Paths.get(glob_string).toString().replace(currentDirectory, ""));
+            return glob_matches;
         }
 
         File parent_file;
@@ -241,16 +248,17 @@ public class Call extends Jsh implements CommandInterface
             glob_working_dir = parent_file.toPath();
         }
 
+
         DirectoryStream<Path> stream;
         stream = Files.newDirectoryStream(glob_working_dir, glob.getName());
         String rel_path = Paths.get(currentDirectory).relativize(glob_working_dir).toString();
         for (Path entry : stream)
         {
-            if (rel_path.equals(""))
+            if (rel_path.equals("")) //empty path means both are equal
             {
                 glob_matches.add(entry.getFileName().toString());
             }
-            else
+            else if(!is_absolute)
             {
                 glob_matches.add(rel_path + File.separator + entry.getFileName().toString());
             }
@@ -259,6 +267,6 @@ public class Call extends Jsh implements CommandInterface
         {
             glob_matches.add(glob_string);
         }
-        return new ArrayList<>(glob_matches);
+        return glob_matches;
     }
 }

@@ -148,7 +148,7 @@ public class FindTest {
     @Test
     public void test_find_bad_out() throws IOException
     {
-        thrown.expect(RuntimeException.class);
+        thrown.expect(IOException.class);
         InputStream is = new InputStream() {
             @Override
             public int read() throws IOException {
@@ -174,7 +174,31 @@ public class FindTest {
         outputstr = outputstr.strip();
 
         String[] expected = new String[]{
-                "." + file_sep + "dir2" + file_sep + "subdir" + file_sep + "file.txt"};
+                workingDir.getCanonicalPath() + file_sep + "dir2" + file_sep + "subdir" + file_sep + "file.txt"};
+        Arrays.sort(expected);
+
+        String[] output = outputstr.split("\r\n|\n|\t");
+        Arrays.sort(output);
+
+        assertArrayEquals(expected, output);
+    }
+
+    @Test
+    public void test_rel_dir()
+    {
+        try {
+            jsh.eval("find dir1/../dir1 -name '*.txt'", out);
+        } catch (Exception e) {
+            fail(e.toString());
+        }
+        String outputstr = new String(out.toByteArray());
+        outputstr = outputstr.strip();
+
+        String[] expected = new String[]{
+                "dir1" + file_sep + ".." + file_sep + "dir1" +file_sep + "file1.txt",
+                "dir1" + file_sep + ".." + file_sep + "dir1" +file_sep + "file2.txt",
+                "dir1" + file_sep + ".." + file_sep + "dir1" +file_sep + "file3.txt",
+                "dir1" + file_sep + ".." + file_sep + "dir1" +file_sep + "longfile.txt"};
         Arrays.sort(expected);
 
         String[] output = outputstr.split("\r\n|\n|\t");

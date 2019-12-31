@@ -27,10 +27,15 @@ public abstract class ShellProgram extends Jsh
         String line;
         while ((line = reader.readLine()) != null)
         {
-            output.write(line);
-            output.write(System.getProperty("line.separator"));
-            output.flush();
+            write_line_to_output(output, line);
         }
         reader.close();
+    }
+
+    void write_line_to_output(OutputStreamWriter output, String string) throws IOException
+    {
+        output.write(string);
+        output.write(System.getProperty("line.separator"));
+        output.flush();
     }
 }
