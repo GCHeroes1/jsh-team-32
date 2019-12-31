@@ -1,7 +1,6 @@
 package uk.ac.ucl.jsh.shellprograms;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,24 +19,22 @@ public class Cat extends ShellProgram
         }
         else
         {
-            for (String arg : args)
+            for (String file : args)
             {
-                Path filePath = Paths.get(currentDirectory + File.separator + arg);
-                BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8);
+                BufferedReader reader;
+                try
+                {
+                    Path filePath = Paths.get(currentDirectory + File.separator + file);
+                    reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8);
+                }
+                catch (IOException e)
+                {
+                    throw new IOException("cat: cannot cat file: " + file, e);
+                }
                 read_to_output(outputStreamWriter, reader);
             }
         }
     }
 
-    private void read_to_output(OutputStreamWriter str_to_bytes, BufferedReader reader) throws IOException
-    {
-        String line;
-        while ((line = reader.readLine()) != null)
-        {
-            str_to_bytes.write(line);
-            str_to_bytes.write(System.getProperty("line.separator"));
-            str_to_bytes.flush();
-        }
-        reader.close();
-    }
+
 }

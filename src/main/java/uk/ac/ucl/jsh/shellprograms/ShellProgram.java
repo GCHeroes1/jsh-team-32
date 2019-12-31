@@ -21,4 +21,16 @@ public abstract class ShellProgram extends Jsh
             osw.flush();
         }
     }
+
+    void read_to_output(OutputStreamWriter output, BufferedReader reader) throws IOException
+    {
+        String line;
+        while ((line = reader.readLine()) != null)
+        {
+            output.write(line);
+            output.write(System.getProperty("line.separator"));
+            output.flush();
+        }
+        reader.close();
+    }
 }

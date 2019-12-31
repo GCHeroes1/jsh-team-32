@@ -15,7 +15,6 @@ public class Call extends Jsh implements CommandInterface
     {
         command = cmd_sub(command);
         command = extract_io_redirects(command);
-        //command = merge_collated_quotes(command);
 
         //globbing happens inside split_quotes
         ArrayList<String> tokens = split_to_tokens(command);

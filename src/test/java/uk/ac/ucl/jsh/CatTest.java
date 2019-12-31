@@ -68,7 +68,7 @@ public class CatTest {
     @Test
     public void test_cat_file_not_exist() throws IOException
     {
-        thrown.expect(NoSuchFileException.class);
+        thrown.expect(IOException.class);
         jsh.eval("cat badfile.txt", out);
     }
 }
