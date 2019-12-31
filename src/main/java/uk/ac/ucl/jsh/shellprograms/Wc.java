@@ -87,14 +87,14 @@ public class Wc extends ShellProgram
                 if (!(file.equals("-w") | file.equals("-m") | file.equals("-l"))) // todo:remove this when not necessary anymore
                 {
                     filePath = Paths.get(currentDirectory + File.separator + file);
-
-                    if (Files.notExists(filePath) || Files.isDirectory(filePath) ||
-                            !Files.exists(filePath) || !Files.isReadable(filePath))
+                    try
                     {
-                        throw new RuntimeException("wc: wrong file argument");
+                        reader = Files.newBufferedReader(filePath, encoding);
                     }
-
-                    reader = Files.newBufferedReader(filePath, encoding);
+                    catch (IOException e)
+                    {
+                        throw new RuntimeException("wc: cannot open file '" + filePath + "'");
+                    }
                     int[] currentCounting = counting(reader);
                     for (int j = 0; j < 3; j++)
                     {

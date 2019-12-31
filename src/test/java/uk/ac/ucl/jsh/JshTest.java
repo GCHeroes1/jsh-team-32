@@ -204,13 +204,17 @@ public class JshTest {
     public void test_semicolon() throws IOException {
         thrown.expect(RuntimeException.class);
         jsh.eval(";", out);
-        String output = new String(out.toByteArray());
-        //output = output.strip();
-        //Scanner scn = new Scanner(in);
-        //assertEquals("unexpected token \';\'", output);
     }
 
-    @Test(timeout = 1000)
+    @Test
+    public void test_double_space() throws IOException {
+        jsh.eval("echo  foo", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals("foo", output);
+    }
+
+    @Test(timeout = 2000)
     public void test_interactive_shell() throws IOException {
         ByteArrayInputStream input_stream = new ByteArrayInputStream("ls\nexit".getBytes());
         PrintStream output_stream = new PrintStream(new NullOutputStream());
@@ -219,7 +223,7 @@ public class JshTest {
         Jsh.main(new String[0]);
     }
 
-    @Test(timeout = 1000)
+    @Test(timeout = 2000)
     public void test_interactive_shell_ls_exception() throws IOException {
         ByteArrayInputStream input_stream = new ByteArrayInputStream("ls dir3\nexit".getBytes());
 
