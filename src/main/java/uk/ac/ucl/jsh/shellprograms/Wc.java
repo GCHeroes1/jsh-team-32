@@ -106,7 +106,7 @@ public class Wc extends ShellProgram
 
         if(wc_option > 0)
         {
-            str_to_bytes.write(String.valueOf(countArray[wc_option + 1]));
+            str_to_bytes.write(String.valueOf(countArray[wc_option - 1]));
         }
         else
         {
