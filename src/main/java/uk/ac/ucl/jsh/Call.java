@@ -13,48 +13,44 @@ public class Call extends Jsh implements CommandInterface
     @Override
     public void run(String command, InputStream input, OutputStream output) throws IOException
     {
-        command = cmd_sub(command);
-        command = extract_io_redirects(command);
+        command = cmd_sub(command); //execute command substitution
 
-        //globbing happens inside split_quotes
-        ArrayList<String> tokens = split_to_tokens(command);
+        ArrayList<String> tokens = split_to_tokens(command); //globbing happens inside split_quotes
 
         //execute io redirection
+        for (int index_of_token = 0; index_of_token < tokens.size(); index_of_token++)
         {
-            for (int i = 0; i < tokens.size(); i++)
+            String token = tokens.get(index_of_token);
+            String redirection_target;
+
+            switch (token.charAt(0))
             {
-                String token = tokens.get(i);
-                String redirection_target;
+                case '>':
+                    redirection_target = get_redirection_target(tokens, index_of_token, token);
+                    output = new FileOutputStream(new File(currentDirectory + File.separator + redirection_target));
+                    break;
 
-                switch (token.charAt(0))
-                {
-                    case '>':
-                        redirection_target = get_redirection_target(tokens, i, token);
-                        output = new FileOutputStream(new File(currentDirectory + File.separator + redirection_target));
-                        break;
-
-                    case '<':
-                        redirection_target = get_redirection_target(tokens, i, token);
-                        input = new FileInputStream(new File(currentDirectory + File.separator + redirection_target));
-                        break;
-                    default:
-                }
+                case '<':
+                    redirection_target = get_redirection_target(tokens, index_of_token, token);
+                    input = new FileInputStream(new File(currentDirectory + File.separator + redirection_target));
+                    break;
             }
         }
 
-        ArrayList<String> newtokens = new ArrayList<>();
-        for (String c : tokens)
-        {
-            newtokens.addAll(glob(c));
-        }
-        tokens = newtokens;
 
-        newtokens = new ArrayList<>();
+        ArrayList<String> new_tokens = new ArrayList<>();
         for (String c : tokens)
         {
-            newtokens.add(strip_quotes(c));
+            new_tokens.addAll(glob(c));
         }
-        tokens = newtokens;
+        tokens = new_tokens;
+
+        new_tokens = new ArrayList<>();
+        for (String c : tokens)
+        {
+            new_tokens.add(strip_quotes(c));
+        }
+        tokens = new_tokens;
 
 
         String appName = tokens.get(0); // first token = program to run
@@ -76,16 +72,16 @@ public class Call extends Jsh implements CommandInterface
 
     }
 
-    private String get_redirection_target(ArrayList<String> tokens, int i, String token)
+    private String get_redirection_target(ArrayList<String> tokens, int index_of_token, String token)
     {
         String redirection_target;
         if (token.length() == 1)
         {
             try
             {
-                redirection_target = tokens.get(i + 1);
-                tokens.remove(i + 1);
-                tokens.remove(i);
+                redirection_target = tokens.get(index_of_token + 1);
+                tokens.remove(index_of_token + 1);
+                tokens.remove(index_of_token);
             } catch (IndexOutOfBoundsException e)
             {
                 throw new RuntimeException("[redirection] No redirection target provided");
@@ -97,12 +93,6 @@ public class Call extends Jsh implements CommandInterface
             tokens.remove(token);
         }
         return redirection_target;
-    }
-
-
-    private String extract_io_redirects(String command)
-    {
-        return command;
     }
 
 
@@ -230,12 +220,12 @@ public class Call extends Jsh implements CommandInterface
         boolean is_absolute;
         ArrayList<String> glob_matches = new ArrayList<>();
         File glob = new File(glob_string);
-        if(!(is_absolute = glob.isAbsolute()))
+        if (!(is_absolute = glob.isAbsolute()))
         {
             glob = new File(currentDirectory + File.separator + glob_string);
         }
 
-        if(glob.isDirectory() && !is_absolute)
+        if (glob.isDirectory() && !is_absolute)
         {
             glob_matches.add(Paths.get(glob_string).toString().replace(currentDirectory, ""));
             return glob_matches;
@@ -258,7 +248,7 @@ public class Call extends Jsh implements CommandInterface
             {
                 glob_matches.add(entry.getFileName().toString());
             }
-            else if(!is_absolute)
+            else if (!is_absolute)
             {
                 glob_matches.add(rel_path + File.separator + entry.getFileName().toString());
             }
