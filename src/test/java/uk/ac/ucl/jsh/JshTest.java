@@ -16,11 +16,9 @@ import static org.junit.Assert.*;
 
 public class JshTest {
     private Jsh jsh;
-    private File workingDir;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     public JshTest() {
-        //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
 
@@ -29,7 +27,7 @@ public class JshTest {
 
     @Before
     public void setup_file_env() throws IOException {
-        workingDir = temporaryFolder.newFolder("testfolder");
+        File workingDir = temporaryFolder.newFolder("testfolder");
         FileUtils.copyDirectory(new File("src/test/test_template"), workingDir);
 
         jsh = new Jsh(workingDir.getCanonicalPath());
@@ -97,14 +95,10 @@ public class JshTest {
     public void test_unknown_app() throws IOException {
         thrown.expect(RuntimeException.class);
         jsh.eval("hi there", out);
-        //String output = new String(out.toByteArray());
-        //output = output.strip();
-        //Scanner scn = new Scanner(in);
-        //assertEquals("hello world", output);
     }
 
     @Test
-    public void test_non_interactive_shell_bad_arg() throws IOException {
+    public void test_non_interactive_shell_bad_arg()  {
         String[] args = new String[]{"ls", "badDir"};
         ByteArrayOutputStream stderr = new ByteArrayOutputStream();
         PrintStream p = new PrintStream(stderr, true, StandardCharsets.UTF_8);
@@ -118,7 +112,7 @@ public class JshTest {
     }
 
     @Test
-    public void test_non_interactive_shell_too_many_args() throws IOException {
+    public void test_non_interactive_shell_too_many_args()  {
         String[] args = new String[]{"-c", "ls", "badDir"};
         ByteArrayOutputStream stderr = new ByteArrayOutputStream();
         PrintStream p = new PrintStream(stderr, true, StandardCharsets.UTF_8);
@@ -132,7 +126,7 @@ public class JshTest {
     }
 
     @Test
-    public void test_non_interactive_shell_too_few_args() throws IOException {
+    public void test_non_interactive_shell_too_few_args()  {
         String[] args = new String[]{"-c"};
         ByteArrayOutputStream stderr = new ByteArrayOutputStream();
         PrintStream p = new PrintStream(stderr, true, StandardCharsets.UTF_8);
@@ -146,7 +140,7 @@ public class JshTest {
     }
 
     @Test
-    public void test_non_interactive_shell() throws IOException {
+    public void test_non_interactive_shell() {
         String[] args = new String[]{"-c", "ls dir1"};
         ByteArrayOutputStream stdout = new ByteArrayOutputStream();
         PrintStream p = new PrintStream(stdout, true, StandardCharsets.UTF_8);
@@ -170,7 +164,7 @@ public class JshTest {
     }
 
     @Test
-    public void test_non_interactive_shell_exception() throws IOException {
+    public void test_non_interactive_shell_exception() {
         String[] args = new String[]{"-c", "ls dir3"};
         ByteArrayOutputStream stderr = new ByteArrayOutputStream();
         PrintStream p = new PrintStream(stderr, true, StandardCharsets.UTF_8);
@@ -188,7 +182,6 @@ public class JshTest {
         jsh.eval(" ", out);
         String output = new String(out.toByteArray());
         output = output.strip();
-        //Scanner scn = new Scanner(in);
         assertEquals("", output);
     }
 
@@ -207,7 +200,7 @@ public class JshTest {
     }
 
     @Test(timeout = 2000)
-    public void test_interactive_shell() throws IOException {
+    public void test_interactive_shell() {
         ByteArrayInputStream input_stream = new ByteArrayInputStream("ls\nexit".getBytes());
         PrintStream output_stream = new PrintStream(new NullOutputStream());
         System.setIn(input_stream);
@@ -216,7 +209,7 @@ public class JshTest {
     }
 
     @Test(timeout = 2000)
-    public void test_interactive_shell_ls_exception() throws IOException {
+    public void test_interactive_shell_ls_exception() {
         ByteArrayInputStream input_stream = new ByteArrayInputStream("ls dir3\nexit".getBytes());
 
         ByteArrayOutputStream err_stream = new ByteArrayOutputStream();
