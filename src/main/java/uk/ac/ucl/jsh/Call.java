@@ -19,34 +19,7 @@ public class Call extends Jsh implements CommandInterface
     public void run(String command, InputStream input, OutputStream output) throws IOException
     {
         command = cmd_sub(command); //execute command substitution
-
         ArrayList<String> tokens = split_to_tokens(command); //globbing happens inside split_quotes
-
-
-
-        //execute io redirection; not sure how to extract this into its own method so I'm keeping this here
-        //SCRAP THIS UGH
-//        for (int index_of_token = 0; index_of_token < tokens.size(); index_of_token++)
-//        {
-//            String token = tokens.get(index_of_token);
-//            String redirection_target;
-//
-//            switch (token.charAt(0))
-//            {
-//                case '>':
-//                    redirection_target = get_redirection_target(tokens, index_of_token, token);
-//                    output = new FileOutputStream(new File(currentDirectory + File.separator + redirection_target));
-//                    index_of_token = 0;
-//                    break;
-//
-//                case '<':
-//                    redirection_target = get_redirection_target(tokens, index_of_token, token);
-//                    input = new FileInputStream(new File(currentDirectory + File.separator + redirection_target));
-//                    index_of_token = 0;
-//                    break;
-//            }
-//        }
-
 
         this.input = input;
         this.output = output;
@@ -155,7 +128,6 @@ public class Call extends Jsh implements CommandInterface
             }
             catch (IndexOutOfBoundsException e)
             {
-                //throw new RuntimeException("[redirection] No redirection target provided");
                 redirection_target = "";
                 tokens.remove(index_of_token);
             }
@@ -268,7 +240,10 @@ public class Call extends Jsh implements CommandInterface
             }
 
         }
-        tokens.remove("");
+        while(tokens.contains(""))
+        {
+            tokens.remove("");
+        }
         return tokens;
     }
 
