@@ -163,4 +163,18 @@ public class IORedirectionTest {
         jsh.eval("echo abc < bad.txt", out);
     }
 
+    @Test
+    public void test_io_redirect_out_too_many_files() throws IOException
+    {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("echo abc > a.txt > b.txt", out);
+    }
+
+    @Test
+    public void test_io_redirect_in_too_many_files() throws IOException
+    {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("echo abc < dir1/file1.txt < dir1/file2.txt", out);
+    }
+
 }

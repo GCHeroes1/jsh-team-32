@@ -1,5 +1,7 @@
 package uk.ac.ucl.jsh;
 
+import uk.ac.ucl.jsh.shellprograms.ShellProgram;
+
 import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -9,6 +11,8 @@ import java.util.ArrayList;
 
 public class Call extends Jsh implements CommandInterface
 {
+    private InputStream input;
+    private OutputStream output;
 
     @Override
     public void run(String command, InputStream input, OutputStream output) throws IOException
@@ -17,25 +21,38 @@ public class Call extends Jsh implements CommandInterface
 
         ArrayList<String> tokens = split_to_tokens(command); //globbing happens inside split_quotes
 
-        //execute io redirection
-        for (int index_of_token = 0; index_of_token < tokens.size(); index_of_token++)
-        {
-            String token = tokens.get(index_of_token);
-            String redirection_target;
 
-            switch (token.charAt(0))
-            {
-                case '>':
-                    redirection_target = get_redirection_target(tokens, index_of_token, token);
-                    output = new FileOutputStream(new File(currentDirectory + File.separator + redirection_target));
-                    break;
 
-                case '<':
-                    redirection_target = get_redirection_target(tokens, index_of_token, token);
-                    input = new FileInputStream(new File(currentDirectory + File.separator + redirection_target));
-                    break;
-            }
-        }
+        //execute io redirection; not sure how to extract this into its own method so I'm keeping this here
+        //SCRAP THIS UGH
+//        for (int index_of_token = 0; index_of_token < tokens.size(); index_of_token++)
+//        {
+//            String token = tokens.get(index_of_token);
+//            String redirection_target;
+//
+//            switch (token.charAt(0))
+//            {
+//                case '>':
+//                    redirection_target = get_redirection_target(tokens, index_of_token, token);
+//                    output = new FileOutputStream(new File(currentDirectory + File.separator + redirection_target));
+//                    index_of_token = 0;
+//                    break;
+//
+//                case '<':
+//                    redirection_target = get_redirection_target(tokens, index_of_token, token);
+//                    input = new FileInputStream(new File(currentDirectory + File.separator + redirection_target));
+//                    index_of_token = 0;
+//                    break;
+//            }
+//        }
+
+
+        this.input = input;
+        this.output = output;
+        //DO IO REDIRECTION HERE
+        io_redirection(tokens);
+        input = this.input;
+        output = this.output;
 
 
         ArrayList<String> new_tokens = new ArrayList<>();
@@ -53,23 +70,54 @@ public class Call extends Jsh implements CommandInterface
         tokens = new_tokens;
 
 
+        boolean unsafe = false;
+        ShellProgram program;
         String appName = tokens.get(0); // first token = program to run
         ArrayList<String> appArgs = new ArrayList<>(tokens.subList(1, tokens.size()));
-        try
+        if(appName.charAt(0) == '_')
         {
-            if (appName.charAt(0) == '_')
-            {
-                spFactory.getSP(appName.substring(1)).executeUnsafe(appArgs.toArray(new String[0]), input, output);
-            }
-            else
-            {
-                spFactory.getSP(appName).execute(appArgs.toArray(new String[0]), input, output);
-            }
-        } catch (NullPointerException e)
-        {
-            throw new RuntimeException(appName + ": NullPointerException", e);
+            unsafe = true;
+            appName = appName.substring(1);
         }
 
+        program = spFactory.getSP(appName);
+        if(program == null)
+        {
+            throw new RuntimeException("appName: : program not found");
+        }
+
+
+        if (unsafe) program.executeUnsafe(appArgs.toArray(new String[0]), input, output);
+        else program.execute(appArgs.toArray(new String[0]), input, output);
+    }
+
+    private void io_redirection(ArrayList<String> tokens) throws FileNotFoundException
+    {
+        boolean in = false, out = false;
+        for (int index_of_token = 0; index_of_token < tokens.size(); index_of_token++)
+        {
+            String token = tokens.get(index_of_token);
+            String redirection_target;
+
+            switch (token.charAt(0))
+            {
+                case '>':
+                    if(out) throw new RuntimeException("[IO Redirection] Multiple output targets specified");
+                    redirection_target = get_redirection_target(tokens, index_of_token, token);
+                    this.output = new FileOutputStream(new File(currentDirectory + File.separator + redirection_target));
+                    index_of_token = 0;
+                    out = true;
+                    break;
+
+                case '<':
+                    if(in) throw new RuntimeException("[IO Redirection] Multiple input sources specified");
+                    redirection_target = get_redirection_target(tokens, index_of_token, token);
+                    this.input = new FileInputStream(new File(currentDirectory + File.separator + redirection_target));
+                    index_of_token = 0;
+                    in = true;
+                    break;
+            }
+        }
     }
 
     private String get_redirection_target(ArrayList<String> tokens, int index_of_token, String token)
