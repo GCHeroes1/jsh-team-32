@@ -199,6 +199,14 @@ public class JshTest {
         assertEquals("foo", output);
     }
 
+    @Test
+    public void test_lots_of_space() throws IOException {
+        jsh.eval("echo         foo    bar", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertArrayEquals(new String[]{"foo", "bar"}, output.split("\t|\\s"));
+    }
+
     @Test(timeout = 2000)
     public void test_interactive_shell() {
         ByteArrayInputStream input_stream = new ByteArrayInputStream("ls\nexit".getBytes());
