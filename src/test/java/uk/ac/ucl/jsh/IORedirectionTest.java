@@ -127,14 +127,6 @@ public class IORedirectionTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void test_io_redirect_no_target() throws IOException {
-        jsh.eval("cat test.txt >", out);
-        String output = new String(out.toByteArray());
-        output = output.strip();
-        assertEquals("", output);
-    }
-
-    @Test
     public void test_output_redirection_no_space() throws IOException {
         jsh.eval("echo hello >output.txt", out);
 
@@ -172,5 +164,33 @@ public class IORedirectionTest {
         thrown.expect(RuntimeException.class);
         jsh.eval("echo abc < dir1/file1.txt < dir1/file2.txt", out);
     }
+
+    @Test
+    public void test_io_redirect_no_target() throws IOException {
+        jsh.eval("cat test.txt >", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals("", output);
+    }
+
+    @Test
+    public void test_io_redirect_in_no_file() throws IOException
+    {
+        jsh.eval("cat <", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals("", output);
+    }
+
+    @Test
+    public void test_io_redirect_in_and_out_no_file() throws IOException
+    {
+        jsh.eval("cat < >", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals("", output);
+    }
+
+
 
 }
