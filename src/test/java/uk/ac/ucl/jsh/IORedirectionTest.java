@@ -8,14 +8,9 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
-// import java.nio.charset.Charset;
-// import java.nio.charset.StandardCharsets;
-// import java.nio.file.Files;
-// import java.nio.file.Path;
-// import java.nio.file.Paths;
+
 
 import static org.junit.Assert.*;
-//import static uk.ac.ucl.jsh.Jsh.currentDirectory;
 
 public class IORedirectionTest {
     private Jsh jsh;
@@ -23,7 +18,6 @@ public class IORedirectionTest {
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     public IORedirectionTest() {
-        //jsh = new Jsh(System.getProperty("user.dir"));
         out.reset();
     }
 
@@ -134,8 +128,10 @@ public class IORedirectionTest {
 
     @Test
     public void test_io_redirect_no_target() throws IOException {
-        thrown.expect(RuntimeException.class);
         jsh.eval("cat test.txt >", out);
+        String output = new String(out.toByteArray());
+        output = output.strip();
+        assertEquals("", output);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package uk.ac.ucl.jsh;
 
+import org.apache.commons.io.output.NullOutputStream;
 import uk.ac.ucl.jsh.shellprograms.ShellProgram;
 
 import java.io.*;
@@ -104,7 +105,14 @@ public class Call extends Jsh implements CommandInterface
                 case '>':
                     if(out) throw new RuntimeException("[IO Redirection] Multiple output targets specified");
                     redirection_target = get_redirection_target(tokens, index_of_token, token);
-                    this.output = new FileOutputStream(new File(currentDirectory + File.separator + redirection_target));
+                    if(redirection_target.equals(""))
+                    {
+                        this.output = new NullOutputStream();
+                    }
+                    else
+                    {
+                        this.output = new FileOutputStream(new File(currentDirectory + File.separator + redirection_target));
+                    }
                     index_of_token = 0;
                     out = true;
                     break;
@@ -112,7 +120,14 @@ public class Call extends Jsh implements CommandInterface
                 case '<':
                     if(in) throw new RuntimeException("[IO Redirection] Multiple input sources specified");
                     redirection_target = get_redirection_target(tokens, index_of_token, token);
-                    this.input = new FileInputStream(new File(currentDirectory + File.separator + redirection_target));
+                    if(redirection_target.equals(""))
+                    {
+                        this.input = new ByteArrayInputStream(new byte[0]);
+                    }
+                    else
+                    {
+                        this.input = new FileInputStream(new File(currentDirectory + File.separator + redirection_target));
+                    }
                     index_of_token = 0;
                     in = true;
                     break;
@@ -128,11 +143,21 @@ public class Call extends Jsh implements CommandInterface
             try
             {
                 redirection_target = tokens.get(index_of_token + 1);
-                tokens.remove(index_of_token + 1);
+                if("<>".contains(Character.toString(redirection_target.charAt(0))))
+                {
+                    redirection_target = "";
+                }
+                else
+                {
+                    tokens.remove(index_of_token + 1);
+                }
                 tokens.remove(index_of_token);
-            } catch (IndexOutOfBoundsException e)
+            }
+            catch (IndexOutOfBoundsException e)
             {
-                throw new RuntimeException("[redirection] No redirection target provided");
+                //throw new RuntimeException("[redirection] No redirection target provided");
+                redirection_target = "";
+                tokens.remove(index_of_token);
             }
         }
         else
