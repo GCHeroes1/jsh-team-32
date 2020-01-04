@@ -75,7 +75,7 @@ public class Call extends Jsh implements CommandInterface
                     redirection_target = get_redirection_target(tokens, index_of_token, token);
                     if(redirection_target.equals(""))
                     {
-                        this.output = new NullOutputStream();
+                        this.output = OutputStream.nullOutputStream();
                     }
                     else
                     {
