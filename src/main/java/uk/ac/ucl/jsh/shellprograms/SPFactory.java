@@ -19,11 +19,16 @@ public class SPFactory
         programs.put("sed", new Sed());
         programs.put("tail", new Tail());
         programs.put("wc", new Wc());
-
     }
 
     public ShellProgram getSP(String program)
     {
-        return programs.get(program);
+        ShellProgram instance = programs.get(program);
+        if(instance == null)
+        {
+            throw new RuntimeException("appName: : program not found");
+        }
+
+        return instance;
     }
 }

@@ -55,11 +55,6 @@ public class Call extends Jsh implements CommandInterface
         }
 
         program = spFactory.getSP(appName);
-        if(program == null)
-        {
-            throw new RuntimeException("appName: : program not found");
-        }
-
 
         if (unsafe) program.executeUnsafe(appArgs.toArray(new String[0]), input, output);
         else program.execute(appArgs.toArray(new String[0]), input, output);
