@@ -10,7 +10,7 @@ This repository refactors and extends the legacy JSH shell.
 * ##### find
     The specification calls for printing of relative paths; however we felt like adhering to the POSIX-defined behaviour
     of `find`.
-    - When no search path is specified, print the relative path to the present working directory, prefixed with `./`.[^abc]
+    - When no search path is specified, print the relative path to the present working directory, prefixed with `./`.
     - When there is a relative path specified, print with the relative path prefixed to the rest of the path as it was 
     typed in the command line
         - Paths that contain circular routes such as `dir1/../dir1` will remain as such when printed
@@ -18,38 +18,38 @@ This repository refactors and extends the legacy JSH shell.
     given points to a directory that is the same, or that is a subdirectory, of the present working directory, the
     absolute path will be printed anyway.
     
-[^abc]: First footnote
+![Example image](https://cdn.discordapp.com/attachments/622838479608348672/663238382864039946/unknown.png)
     
-* #####grep
+* ##### grep
 Built according to specification
-* #####head
+* ##### head
 Built according to specification
 * ##### IO redirection
 Built according to specification
-* #####ls
+* ##### ls
 Built according to specification
-* #####pwd
+* ##### pwd
 Built according to specification
-* #####sed
+* ##### sed
 Built according to specification
-* #####shellProgram
-* #####SPFactory
-* #####Tail
+* ##### shellProgram
+* ##### SPFactory
+* ##### Tail
 Built according to specification
-* #####Wc
+* ##### Wc
 Built according to specification
-* #####Call
+* ##### Call
 Built according to specification
-* #####Semicolon
+* ##### Semicolon
 Built according to specification
-* #####Substitution
+* ##### Substitution
 Built according to specification
-* #####Pipe
+* ##### Pipe
 Built according to specification
-* #####Sequence
+* ##### Sequence
 Built according to specification
-* #####Jsh
+* ##### Jsh
 Built according to specification
-* #####Quoting
+* ##### Quoting
 Built according to specification
 
