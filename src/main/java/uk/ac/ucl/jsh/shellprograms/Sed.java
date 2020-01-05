@@ -14,7 +14,7 @@ public class Sed extends ShellProgram
     @Override
     public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
     {
-        OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(stdout);
 
         String regexString = args[0];
         String target;
@@ -29,16 +29,16 @@ public class Sed extends ShellProgram
             try
             {
                 separator = regexString.charAt(1);
-                String[] regex_split = regexString.split(Pattern.quote(String.valueOf(separator)));
-                if (regex_split.length == 3)
+                String[] regexSplit = regexString.split(Pattern.quote(String.valueOf(separator)));
+                if (regexSplit.length == 3)
                 {
-                    target = regex_split[2];
-                    regexString = regex_split[1];
+                    target = regexSplit[2];
+                    regexString = regexSplit[1];
                 }
-                else if (regex_split.length == 4 && regex_split[3].equals("g"))
+                else if (regexSplit.length == 4 && regexSplit[3].equals("g"))
                 {
-                    target = regex_split[2];
-                    regexString = regex_split[1];
+                    target = regexSplit[2];
+                    regexString = regexSplit[1];
                     global = true;
                 }
                 else
@@ -57,7 +57,7 @@ public class Sed extends ShellProgram
         if (args.length == 1) // use stdin as the file argument is not specified
         {
             BufferedReader bfr = new BufferedReader(new InputStreamReader(stdin));
-            find_and_replace(str_to_bytes, regexString, target, global, bfr);
+            findAndReplace(outputStreamWriter, regexString, target, global, bfr);
         }
         else if (args.length == 2)
         {
@@ -66,7 +66,7 @@ public class Sed extends ShellProgram
             filePath = currentDir.resolve(args[1]);
             try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8))
             {
-                find_and_replace(str_to_bytes, regexString, target, global, reader);
+                findAndReplace(outputStreamWriter, regexString, target, global, reader);
             }
             catch (IOException e)
             {
@@ -79,7 +79,7 @@ public class Sed extends ShellProgram
         }
     }
 
-    private void find_and_replace(OutputStreamWriter str_to_bytes, String regexString, String target, boolean global, BufferedReader reader) throws IOException
+    private void findAndReplace(OutputStreamWriter outputStreamWriter, String regexString, String target, boolean global, BufferedReader reader) throws IOException
     {
         String line;
         String result;
@@ -89,7 +89,7 @@ public class Sed extends ShellProgram
             result = global ?
                     Pattern.compile(regexString).matcher(line).replaceAll(target) :
                     Pattern.compile(regexString).matcher(line).replaceFirst(target);
-            write_line_to_output(str_to_bytes, result);
+            writeLineToOutput(outputStreamWriter, result);
         }
     }
 

@@ -22,17 +22,17 @@ public abstract class ShellProgram extends Jsh
         }
     }
 
-    void read_to_output(OutputStreamWriter output, BufferedReader reader) throws IOException
+    void readToOutput(OutputStreamWriter output, BufferedReader reader) throws IOException
     {
         String line;
         while ((line = reader.readLine()) != null)
         {
-            write_line_to_output(output, line);
+            writeLineToOutput(output, line);
         }
         reader.close();
     }
 
-    void write_line_to_output(OutputStreamWriter output, String string) throws IOException
+    void writeLineToOutput(OutputStreamWriter output, String string) throws IOException
     {
         output.write(string);
         output.write(System.getProperty("line.separator"));

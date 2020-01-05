@@ -15,7 +15,7 @@ public class Cat extends ShellProgram
         if (args.length == 0)
         {
             BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
-            read_to_output(outputStreamWriter, reader);
+            readToOutput(outputStreamWriter, reader);
         }
         else
         {
@@ -31,7 +31,7 @@ public class Cat extends ShellProgram
                 {
                     throw new IOException("cat: cannot cat file: " + file, e);
                 }
-                read_to_output(outputStreamWriter, reader);
+                readToOutput(outputStreamWriter, reader);
             }
         }
     }

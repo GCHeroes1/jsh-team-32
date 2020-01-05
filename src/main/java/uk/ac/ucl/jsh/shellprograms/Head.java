@@ -11,7 +11,7 @@ public class Head extends ShellProgram
     @Override
     public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
     {
-        OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(stdout);
         int headLines = 10; //spit out 10 lines by default
 
         if (args.length > 3)
@@ -47,7 +47,7 @@ public class Head extends ShellProgram
                     throw new RuntimeException("head: wrong argument " + args[1]);
                 }
                 bfr = new BufferedReader(new InputStreamReader(stdin));
-                write_n_lines(str_to_bytes, headLines, bfr);
+                write_n_lines(outputStreamWriter, headLines, bfr);
                 return;
 
             case 1:
@@ -57,7 +57,7 @@ public class Head extends ShellProgram
             default:
                 // no reason to throw IOException when reading from a bytearrayinputstream
                 bfr = new BufferedReader(new InputStreamReader(stdin));
-                write_n_lines(str_to_bytes, headLines, bfr);
+                write_n_lines(outputStreamWriter, headLines, bfr);
                 return;
         }
 
@@ -65,7 +65,7 @@ public class Head extends ShellProgram
         Path filePath = Paths.get(currentDirectory + File.separator + headArg);
         try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8))
         {
-            write_n_lines(str_to_bytes, headLines, reader);
+            write_n_lines(outputStreamWriter, headLines, reader);
         }
         catch (IOException e)
         {
@@ -80,7 +80,7 @@ public class Head extends ShellProgram
             String line;
             if ((line = reader.readLine()) != null)
             {
-                write_line_to_output(str_to_bytes, line);
+                writeLineToOutput(str_to_bytes, line);
             }
         }
     }

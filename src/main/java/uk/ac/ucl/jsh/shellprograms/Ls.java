@@ -7,7 +7,7 @@ public class Ls extends ShellProgram
     @Override
     public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
     {
-        OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(stdout);
         File currDir;
         if (args.length == 0)
         {
@@ -35,16 +35,16 @@ public class Ls extends ShellProgram
             {
                 if (!file.getName().startsWith("."))
                 {                                  // hides names that start with a .
-                    str_to_bytes.write(file.getName());                                       // prints it to terminal
-                    str_to_bytes.write("\t");                                                 // line feed
-                    str_to_bytes.flush();
+                    outputStreamWriter.write(file.getName());                                       // prints it to terminal
+                    outputStreamWriter.write("\t");                                                 // line feed
+                    outputStreamWriter.flush();
                     atLeastOnePrinted = true;
                 }
             }
             if (atLeastOnePrinted)
             {                                                    //
-                str_to_bytes.write(System.getProperty("line.separator"));                     // prints a new line after its done printing
-                str_to_bytes.flush();
+                outputStreamWriter.write(System.getProperty("line.separator"));                     // prints a new line after its done printing
+                outputStreamWriter.flush();
             }
         }
 

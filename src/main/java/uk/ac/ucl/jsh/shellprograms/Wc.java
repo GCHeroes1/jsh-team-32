@@ -35,11 +35,11 @@ public class Wc extends ShellProgram
     @Override
     public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
     {
-        OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
+        OutputStreamWriter strToBytes = new OutputStreamWriter(stdout);
 
         // 0: default    1: -m    2: -w    3: -l
-        int wc_option = 0; // by default, no option
-        boolean use_stdin = false;
+        int wcOption = 0; // by default, no option
+        boolean useStdin = false;
         int[] countArray = new int[]{0, 0, 0};
 
         // mode selection and determining whether or not to use stdin
@@ -48,27 +48,27 @@ public class Wc extends ShellProgram
             switch (args[0])
             {
                 case "-m":
-                    wc_option = 1;
+                    wcOption = 1;
                     break;
                 case "-w":
-                    wc_option = 2;
+                    wcOption = 2;
                     break;
                 case "-l":
-                    wc_option = 3;
+                    wcOption = 3;
                 default:
                     break;
             }
 
-            if (wc_option != 0 && args.length == 1)
+            if (wcOption != 0 && args.length == 1)
             {
-                use_stdin = true;
+                useStdin = true;
             }
         } else
         {
-            use_stdin = true;
+            useStdin = true;
         }
 
-        if (use_stdin)
+        if (useStdin)
         {
             InputStreamReader isr = new InputStreamReader(stdin);
             countArray = counting(isr);
@@ -99,21 +99,21 @@ public class Wc extends ShellProgram
             }
         }
 
-        if(wc_option > 0)
+        if(wcOption > 0)
         {
-            str_to_bytes.write(String.valueOf(countArray[wc_option - 1]));
+            strToBytes.write(String.valueOf(countArray[wcOption - 1]));
         }
         else
         {
-            str_to_bytes.write(String.valueOf(countArray[2]));
-            str_to_bytes.write("\t");
-            str_to_bytes.write(String.valueOf(countArray[1]));
-            str_to_bytes.write("\t");
-            str_to_bytes.write(String.valueOf(countArray[0]));
+            strToBytes.write(String.valueOf(countArray[2]));
+            strToBytes.write("\t");
+            strToBytes.write(String.valueOf(countArray[1]));
+            strToBytes.write("\t");
+            strToBytes.write(String.valueOf(countArray[0]));
         }
 
 
-        str_to_bytes.write(System.getProperty("line.separator"));
-        str_to_bytes.flush();
+        strToBytes.write(System.getProperty("line.separator"));
+        strToBytes.flush();
     }
 }

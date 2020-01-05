@@ -22,9 +22,9 @@ public class Jsh {
 
     // main interpretation function for the shell (what handles executing commands)
     void eval(String cmdline, OutputStream output) throws IOException {
-        InputStream empty_input_stream = new ByteArrayInputStream(new byte[0]);
+        InputStream emptyInputStream = new ByteArrayInputStream(new byte[0]);
         Sequence sequence = new Sequence();
-        sequence.run(cmdline, empty_input_stream, output);
+        sequence.run(cmdline, emptyInputStream, output);
     }
 
     private void shell(String[] args)

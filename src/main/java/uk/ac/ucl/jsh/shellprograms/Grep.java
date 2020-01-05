@@ -14,7 +14,7 @@ public class Grep extends ShellProgram
     @Override
     public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
     {
-        OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(stdout);
         Pattern grepPattern = Pattern.compile(args[0]);
 
         if (args.length == 1)
@@ -26,7 +26,7 @@ public class Grep extends ShellProgram
                 Matcher matcher = grepPattern.matcher(line);
                 if (matcher.find())
                 {
-                    write_line_to_output(str_to_bytes, line);
+                    writeLineToOutput(outputStreamWriter, line);
                 }
             }
 
@@ -54,7 +54,7 @@ public class Grep extends ShellProgram
                     Matcher matcher = grepPattern.matcher(line);
                     if (matcher.find())
                     {
-                        write_line_to_output(str_to_bytes, line);
+                        writeLineToOutput(outputStreamWriter, line);
                     }
                 }
             }

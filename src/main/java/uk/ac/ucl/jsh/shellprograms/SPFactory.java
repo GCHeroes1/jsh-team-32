@@ -26,7 +26,7 @@ public class SPFactory
         ShellProgram instance = programs.get(program);
         if(instance == null)
         {
-            throw new RuntimeException("appName: : program not found");
+            throw new RuntimeException("appName: program not found");
         }
 
         return instance;

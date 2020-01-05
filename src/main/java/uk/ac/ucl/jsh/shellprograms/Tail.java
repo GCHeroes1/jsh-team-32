@@ -12,7 +12,7 @@ public class Tail extends ShellProgram
     @Override
     public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
     {
-        OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(stdout);
         BufferedReader reader;
         int tailLines = 10; //default number of lines
 
@@ -48,21 +48,21 @@ public class Tail extends ShellProgram
                     throw new RuntimeException("tail: wrong argument " + args[1]);
                 }
                 reader = new BufferedReader(new InputStreamReader(stdin));
-                count_and_write(reader, str_to_bytes, tailLines);
+                countAndWrite(reader, outputStreamWriter, tailLines);
                 return;
             case 1:
                 tailArg = args[0];
                 break;
             default:
                 reader = new BufferedReader(new InputStreamReader(stdin));
-                count_and_write(reader, str_to_bytes, tailLines);
+                countAndWrite(reader, outputStreamWriter, tailLines);
                 return;
         }
 
         Path filePath = Paths.get(currentDirectory + File.separator + tailArg);
         try (BufferedReader fileReader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8))
         {
-            count_and_write(fileReader, str_to_bytes, tailLines);
+            countAndWrite(fileReader, outputStreamWriter, tailLines);
         }
         catch (IOException e)
         {
@@ -70,7 +70,7 @@ public class Tail extends ShellProgram
         }
     }
 
-    private void count_and_write(BufferedReader reader, OutputStreamWriter str_to_bytes, int tailLines) throws IOException
+    private void countAndWrite(BufferedReader reader, OutputStreamWriter outputStreamWriter, int tailLines) throws IOException
     {
         String line;
         ArrayList<String> lines = new ArrayList<>();
@@ -85,7 +85,7 @@ public class Tail extends ShellProgram
             int index = Math.max(lines.size() - tailLines, 0);
             for (; index < lines.size(); index++)
             {
-                write_line_to_output(str_to_bytes, lines.get(index));
+                writeLineToOutput(outputStreamWriter, lines.get(index));
             }
         }
     }

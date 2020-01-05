@@ -10,7 +10,7 @@ public class Find extends ShellProgram
     @Override
     public void execute(String[] args, InputStream stdin, OutputStream stdout) throws IOException
     {
-        OutputStreamWriter str_to_bytes = new OutputStreamWriter(stdout);
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(stdout);
 
         boolean is_absolute = false;
         boolean has_path = false;
@@ -59,15 +59,15 @@ public class Find extends ShellProgram
         {
             if(is_absolute)
             {
-                write_line_to_output(str_to_bytes, found_file_path.toString());
+                writeLineToOutput(outputStreamWriter, found_file_path.toString());
             }
             else if(has_path)
             {
-                write_line_to_output(str_to_bytes, args[0] + File.separator + target_path.relativize(found_file_path).toString());
+                writeLineToOutput(outputStreamWriter, args[0] + File.separator + target_path.relativize(found_file_path).toString());
             }
             else
             {
-                write_line_to_output(str_to_bytes, "." + File.separator + target_path.relativize(found_file_path).toString());
+                writeLineToOutput(outputStreamWriter, "." + File.separator + target_path.relativize(found_file_path).toString());
 
             }
         }
