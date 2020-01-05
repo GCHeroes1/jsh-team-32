@@ -1,6 +1,5 @@
 package uk.ac.ucl.jsh;
 
-import org.apache.commons.io.output.NullOutputStream;
 import uk.ac.ucl.jsh.shellprograms.ShellProgram;
 
 import java.io.*;
