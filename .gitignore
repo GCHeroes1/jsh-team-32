@@ -334,5 +334,6 @@ ASALocalRun/
 target
 /target/
 temp.txt
-newfile.txt
-DaoOutput.txt
+run_tests.sh
+test_output
+tests.py
