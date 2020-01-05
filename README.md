@@ -2,7 +2,9 @@
 This repository refactors and extends the legacy JSH shell.
 
 ##JSH
+
 The following are the classes that JSH is built with:
+
 ##### Jsh
 Jsh is the main class. The program enters in the PSVM located in this class, and the main function calls either the
 interactive shell, or if the `-c` flag was passed, executes whatever command is after said `-c` flag on the command
