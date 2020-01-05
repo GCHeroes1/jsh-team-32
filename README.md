@@ -1,8 +1,7 @@
 # Jsh Team 32
 This repository refactors and extends the legacy JSH shell.
 
-##JSH
-
+## JSH
 The following are the classes that JSH is built with:
 
 ##### Jsh
