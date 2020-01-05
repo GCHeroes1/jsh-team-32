@@ -69,7 +69,7 @@ absolute path will be printed anyway.
 Built according to specification
 #### head
 Built according to specification
-####ls
+#### ls
 Built according to specification
 #### pwd
 Built according to specification
