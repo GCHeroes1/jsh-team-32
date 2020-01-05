@@ -147,4 +147,10 @@ public class SedTest {
         jsh.eval("sed 's/./B/g' bad.txt", out);
     }
 
+    @Test
+    public void test_sed_unquoted_special_characters() throws IOException {
+        thrown.expect(RuntimeException.class);
+        jsh.eval("sed s;a;b; bad.txt", out);
+    }
+
 }
