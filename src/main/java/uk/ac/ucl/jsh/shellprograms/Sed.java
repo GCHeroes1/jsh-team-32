@@ -26,23 +26,31 @@ public class Sed extends ShellProgram
         }
         else
         {
-            separator = regexString.charAt(1);
-            String[] regex_split = regexString.split(Pattern.quote(String.valueOf(separator)));
-            if (regex_split.length == 3)
+            try
             {
-                target = regex_split[2];
-                regexString = regex_split[1];
+                separator = regexString.charAt(1);
+                String[] regex_split = regexString.split(Pattern.quote(String.valueOf(separator)));
+                if (regex_split.length == 3)
+                {
+                    target = regex_split[2];
+                    regexString = regex_split[1];
+                }
+                else if (regex_split.length == 4 && regex_split[3].equals("g"))
+                {
+                    target = regex_split[2];
+                    regexString = regex_split[1];
+                    global = true;
+                }
+                else
+                {
+                    throw new RuntimeException("sed: invalid pattern provided");
+                }
             }
-            else if (regex_split.length == 4 && regex_split[3].equals("g"))
+            catch (StringIndexOutOfBoundsException e)
             {
-                target = regex_split[2];
-                regexString = regex_split[1];
-                global = true;
+                throw new RuntimeException("sed: bad pattern", e);
             }
-            else
-            {
-                throw new RuntimeException("sed: invalid pattern provided");
-            }
+
         }
 
 

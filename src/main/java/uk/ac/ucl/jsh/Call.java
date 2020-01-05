@@ -190,8 +190,8 @@ public class Call extends Jsh implements CommandInterface
         int splitIndex, openingBackquoteIndex, closingBackquoteIndex;
         InputStream input = new ByteArrayInputStream(new byte[0]);
         String cmdoutput;
-        for (splitIndex = 0; splitIndex < command.length(); splitIndex++)
-        {                     // iterates through the command line characters
+        for (splitIndex = 0; splitIndex < command.length(); splitIndex++) // iterates through the command line characters
+            {
             char ch = command.charAt(splitIndex);                                               // isolates each character of the command line input
             if (ch == '`' && is_quote_not_disabled(command, splitIndex))
             {
