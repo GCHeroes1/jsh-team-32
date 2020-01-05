@@ -45,14 +45,14 @@ Call receives a String as the command, as well as an input stream and an output 
     Once IO redirection and globbing have been performed, a different method from the first quoting method will then
     remove quotes from the input arguments, where they aren't inside other quotes (in which case they are kept). 
 
-##Shell programs
-####Cat
+## Shell programs
+#### cat
 Built according to specification
-####cd
+#### cd
 Added support for absolute paths. The specification was ambiguous about whether or not absolute paths is supported. 
-####echo
+#### echo
 Built according to specification
-####find
+#### find
 The specification calls for printing of relative paths; however we felt like adhering to the POSIX-defined behaviour
 of `find`.
 - When no search path is specified, print the relative path to the present working directory, prefixed with `./`.
@@ -65,19 +65,19 @@ absolute path will be printed anyway.
 
     ![Example image](https://cdn.discordapp.com/attachments/622838479608348672/663238382864039946/unknown.png)
     
-####grep
+#### grep
 Built according to specification
-####head
+#### head
 Built according to specification
 ####ls
 Built according to specification
-####pwd
+#### pwd
 Built according to specification
-####sed
+#### sed
 Built according to specification
-####Tail
+#### Tail
 Built according to specification
-####Wc
+#### Wc
 Built according to specification
 ___    
 #### SPFactory
